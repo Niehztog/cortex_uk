@@ -1,0 +1,24 @@
+AuthType Basic
+AuthName "CORTEX Administration"
+AuthUserFile /xampp/htdocs/cortex/.htpasswd01
+<Files "ad_index_frame.php">
+require valid-user
+</Files>
+<Files "ad_menu.php">
+require valid-user
+</Files>
+<Files "admin.php">
+require valid-user
+</Files>
+<Files "create.php">
+require valid-user
+</Files>
+<Files "vp_index_frame.php">
+require valid-user
+</Files>
+<Files "vp_menu.php">
+require valid-user
+</Files>
+<Files "vpview.php">
+require valid-user
+</Files>
