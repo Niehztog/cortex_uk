@@ -18,3 +18,26 @@ define( 'TABELLE_LABORE'			, 'c_lab'		);	//
 define( 'TABELLE_EXP_TO_LAB'		, 'c_exp2lab'	);	//
 
 define( 'CSS_OLD_STYLE', true );
+
+// ***COPYRIGHT RELATED***
+define('IMPRINT_CONTENTS_FULLNAME', '');
+define('IMPRINT_CONTENTS_ADDITION_1', '');
+define('IMPRINT_CONTENTS_ADDITION_2', '');
+define('IMPRINT_CONTENTS_STREET', '');
+define('IMPRINT_CONTENTS_ZIPCODE', '');
+define('IMPRINT_CONTENTS_CITY', '');
+define('IMPRINT_CONTENTS_PHONE', '');
+define('IMPRINT_CONTENTS_FAX', '');
+define('IMPRINT_CONTENTS_EMAIL', '');
+define('IMPRINT_CONTENTS_LINK', '');
+
+define('IMPRINT_TECHNICAL_FULLNAME', '');
+define('IMPRINT_TECHNICAL_ADDITION_1', '');
+define('IMPRINT_TECHNICAL_ADDITION_2', '');
+define('IMPRINT_TECHNICAL_STREET', '');
+define('IMPRINT_TECHNICAL_ZIPCODE', '');
+define('IMPRINT_TECHNICAL_CITY', '');
+define('IMPRINT_TECHNICAL_PHONE', '');
+define('IMPRINT_TECHNICAL_FAX', '');
+define('IMPRINT_TECHNICAL_EMAIL', '');
+define('IMPRINT_TECHNICAL_LINK', '');
