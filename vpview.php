@@ -82,6 +82,9 @@ if(isset($_GET['expid'])) {
 		?><h1><?= $data['exp_name'] ?>: Versuchspersonen</h1><?php
 	}
 }
+else {
+	?><h1>Versuchspersonen</h1><?php
+}
 
 require_once 'backend/ad_vp_list.php';
 
