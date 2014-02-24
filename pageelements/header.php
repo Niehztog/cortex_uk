@@ -43,11 +43,12 @@ if('index.php' !== basename($_SERVER['PHP_SELF'])) {
 <script type="text/javascript" src="js/jquery/jquery-ui-1.10.4.custom.min.js"></script>
 <script type="text/javascript" src="js/jquery/jquery-ui-i18n.min.js"></script>
 <script type="text/javascript" src="js/jquery/jquery.insertatcaret.min.js"></script>
-<script type="text/javascript" src="js/termin_creator.js"></script>
+<script type="text/javascript" src="js/main.js"></script>
 <script type="text/javascript" src="js/fullcalendar/fullcalendar.min.js"></script>
 <?php
 if('index.php' !== basename($_SERVER['PHP_SELF'])) {
 	?>
+	<script type="text/javascript" src="js/backend.js"></script>
 	<script type="text/javascript">jQuery.migrateMute = true;</script>
 	<script type="text/javascript" src="js/jquery/jquery-migrate-1.2.1.js"></script>
 	<script type="text/javascript" src="js/jquery/jquery.timePicker.js"></script>

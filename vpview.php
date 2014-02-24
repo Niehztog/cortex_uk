@@ -1,5 +1,5 @@
 <?php
-require_once dirname(__FILE__) . '/include/functions.php';
+require_once __DIR__ . '/include/functions.php';
 require_once 'include/class/DatabaseFactory.class.php';
 $dbf = new DatabaseFactory();
 $mysqli = $dbf->get();
@@ -7,15 +7,7 @@ $mysqli = $dbf->get();
 /* WENN VP GELÖSCHT WURDE(N) */
 /*---------------------------*/
 if(isset($_POST['vpid']) && (isset($_POST['delvp'])||(isset($_POST['action']) && 'delete' === $_POST['action']))) {
-	$delArray = array();
-	if(is_array($_POST['vpid'])) {
-		foreach($_POST['vpid'] as $vpId) {
-			$delArray[] = (int) $vpId;
-		}
-	}
-	else {
-		$delArray[] = (int) $_POST['vpid'];
-	}
+	$delArray = castToIntArray($_POST['vpid']);
 
 	$delete = sprintf( '
 		DELETE FROM %1$s WHERE id IN (%2$s)'

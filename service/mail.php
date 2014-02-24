@@ -3,87 +3,102 @@ require_once __DIR__ . '/../include/functions.php';
 require_once __DIR__ . '/../include/class/DatabaseFactory.class.php';
 $dbf = new DatabaseFactory();
 $mysqli = $dbf->get();
-?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-</head>
-<body>
-<?php
 
-if (isset($_GET['betreff'])) {
-	
+/* E-MAILS VERSCHICKEN */
+/* ------------------- */
+if(isset($_GET['betreff']) && isset($_GET['vpIdList'])) {
+
+	$vpIdList = array_map('intval', explode(',', $_GET['vpIdList']));
 	$letter_template = $_GET['content'];
 	$letter_template = str_replace("<br>","\n",$letter_template);
-	
-	
-	$abfrage = "SELECT * FROM ".TABELLE_EXPERIMENTE." WHERE id='$_GET[expid]'" ;
-	$erg = $mysqli->query($abfrage);
-	$data = $erg->fetch_assoc();
-	if(null !== $data) {
-		$letter_template = str_replace("!exp_name!",$data['exp_name'],$letter_template);
-		$letter_template = str_replace("!exp_ort!",$data['exp_ort'],$letter_template);
-		
-		$letter_template = str_replace("!vl_name!",$data['vl_name'],$letter_template);
-		$letter_template = str_replace("!vl_telefon!",$data['vl_tele'],$letter_template);
-		$letter_template = str_replace("!vl_email!",$data['vl_email'],$letter_template);
-		
-		$vl_email = $data['vl_email'];
-	}
-	
-	$abfrage = "SELECT * FROM ".TABELLE_SITZUNGEN." WHERE id='$_GET[termin]'" ;
-	$erg = $mysqli->query($abfrage);
-	$data = $erg->fetch_assoc();
-	if(null !== $data) {
-		$termin = formatMysqlDate($data['tag']);
-		$letter_template = str_replace("!termin!",$termin,$letter_template);
-		$letter_template = str_replace("!beginn!",substr($data['session_s'],0,5),$letter_template);
-		$letter_template = str_replace("!ende!",substr($data['session_e'],0,5),$letter_template);
-	}
-	
-	$abfrage = "SELECT * FROM ".TABELLE_VERSUCHSPERSONEN." WHERE exp='$_GET[expid]' AND termin='$_GET[termin]'" ;
-	$erg = $mysqli->query($abfrage);
-	while ($data = $erg->fetch_assoc()) {
-		$letter = $letter_template;
-		if ($data['geschlecht'] == "männlich") { $letter = str_replace("!liebe/r!","Lieber",$letter); }
-		else if ($data['geschlecht'] == "weiblich") { $letter = str_replace("!liebe/r!","Liebe",$letter); }
-		else {$letter = str_replace("!liebe/r!","Liebe/r",$letter);}
-		
-		$letter = str_replace("!vp_vorname!",$data['vorname'],$letter);
-		$letter = str_replace("!vp_nachname!",$data['nachname'],$letter);
-		
+
+	$stmtExp = $mysqli->prepare(
+		sprintf( '
+			SELECT		exp.exp_name,
+						exp.exp_ort,
+						exp.vl_name,
+						exp.vl_tele,
+						exp.vl_email
+			FROM		%1$s AS exp
+			WHERE		exp.id = ?'
+			, TABELLE_EXPERIMENTE
+		)
+	);
+
+	$stmtSes = $mysqli->prepare(
+		sprintf( 'SELECT tag, session_s, session_e  FROM %1$s WHERE id = ?', TABELLE_SITZUNGEN )
+	);
+
+	$sql = sprintf( '
+		SELECT		exp,
+					email,
+					geschlecht,
+					vorname,
+					nachname,
+					termin
+		FROM		%1$s
+		WHERE		id IN (%2$s)'
+		, TABELLE_VERSUCHSPERSONEN
+		, implode(',', $vpIdList)
+	);
+	$resultVp = $mysqli->query($sql);
+	while($rowVp = $resultVp->fetch_assoc()) {
+
+		$thisLetter = $letter_template;
+		if ($rowVp['geschlecht'] == "männlich") { $thisLetter = str_replace("!liebe/r!", "Lieber", $thisLetter); }
+		else if ($rowVp['geschlecht'] == "weiblich") { $thisLetter = str_replace("!liebe/r!", "Liebe", $thisLetter); }
+		else {$thisLetter = str_replace("!liebe/r!", "Liebe/r", $thisLetter);}
+
+		$thisLetter = str_replace("!vp_vorname!", $rowVp['vorname'], $thisLetter);
+		$thisLetter = str_replace("!vp_nachname!", $rowVp['nachname'], $thisLetter);
+
+		$stmtExp->bind_param('i', $rowVp['exp']);
+		$stmtExp->execute();
+		$resultExp = $stmtExp->get_result();
+		$rowExp = $resultExp->fetch_assoc();
+		if(null !== $rowExp) {
+			$thisLetter = str_replace("!exp_name!", $rowExp['exp_name'], $thisLetter);
+			$thisLetter = str_replace("!exp_ort!", $rowExp['exp_ort'], $thisLetter);
+
+			$thisLetter = str_replace("!vl_name!", $rowExp['vl_name'], $thisLetter);
+			$thisLetter = str_replace("!vl_telefon!", $rowExp['vl_tele'], $thisLetter);
+			$thisLetter = str_replace("!vl_email!", $rowExp['vl_email'], $thisLetter);
+
+			$vl_email = $rowExp['vl_email'];
+		}
+
+		$stmtSes->bind_param('i', $rowVp['termin']);
+		$stmtSes->execute();
+		$resultSes = $stmtSes->get_result();
+		$rowSes = $resultSes->fetch_assoc();
+		if(null !== $rowSes) {
+			$termin = formatMysqlDate($rowSes['tag']);
+			$thisLetter = str_replace("!termin!", $termin, $thisLetter);
+			$thisLetter = str_replace("!beginn!", substr($rowSes['session_s'], 0, 5), $thisLetter);
+			$thisLetter = str_replace("!ende!", substr($rowSes['session_e'], 0, 5), $thisLetter);
+		}
+
 		$header = "From:" . $vl_email . "\r\n" . "MIME-Version: 1.0\r\nContent-type: text/plain; charset=UTF-8\r\n";
-		mail($data['email'],$_GET['betreff'],$letter,$header);  
+		mail($rowVp['email'], $_GET['betreff'], $thisLetter, $header);
 	
 	}
+	$stmtExp->close();
+	$stmtSes->close();
 }
-elseif (!isset($_GET['betreff']) && !isset($_GET['tn'])) {
-	$counter = 0;
-	
-	$abfrage = "SELECT * FROM ".TABELLE_VERSUCHSPERSONEN." WHERE exp='$_GET[expid]' AND termin='$_GET[termin]'" ;
+
+/* TEILNEHMER EINES TERMINES AUFLISTEN */
+/* ----------------------------------- */
+elseif (!isset($_GET['betreff'])) {
+	$abfrage = "SELECT id, vorname, nachname, email FROM ".TABELLE_VERSUCHSPERSONEN." WHERE exp='$_GET[expid]' AND termin='$_GET[termin]'" ;
 	$erg = $mysqli->query($abfrage);
+	$result = array();
 	while ($data = $erg->fetch_assoc()) {  
-		if ( $counter > 0 ) { echo ', '; }
-		echo substr($data['vorname'],0,1) . '. ' . $data['nachname'] . ' (' . $data['email'] . ')'; 	
-		$counter++;
+		$result[] = array(
+			'id'	=> $data['id'],
+			'name'	=> substr($data['vorname'],0,1) . '. ' . $data['nachname'],
+			'email'	=> $data['email']
+		);
 	}
-
-}
-elseif (isset($_GET['tn'])) {
-
-	$counter = 0;
-	
-	$abfrage = "SELECT * FROM ".TABELLE_VERSUCHSPERSONEN." WHERE exp='$_GET[expid]' AND termin='$_GET[termin]'" ;
-	$erg = $mysqli->query($abfrage);
-	while ($data = $erg->fetch_assoc()) {  
-		$counter++;
-	}
-	
-	echo $counter;
-
+	echo json_encode($result);
 }
 
-?>
-</body>
-</html>

@@ -1,36 +1,61 @@
 <?php
 /* EMAIL AN VERSUCHSPERSONEN SENDEN */
 
-require_once dirname(__FILE__) . '/../include/functions.php';
-require_once dirname(__FILE__) . '/../include/class/DatabaseFactory.class.php';
+require_once __DIR__ . '/../include/functions.php';
+require_once __DIR__ . '/../include/class/DatabaseFactory.class.php';
 $dbf = new DatabaseFactory();
 $mysqli = $dbf->get();
 
 if(isset($_GET['expid'])) {
-	$abfrage = sprintf( '
-		SELECT		id AS exp,
-					vl_email
-		FROM		%1$s
-		WHERE		`id` = %2$d
-		LIMIT		1'
-		, TABELLE_EXPERIMENTE
+	$sqlVp = sprintf( '
+		SELECT		vp.id,
+					vp.vorname,
+					vp.nachname,
+					vp.email
+		FROM		%1$s AS vp
+		WHERE		vp.exp = %2$d
+			AND		vp.termin = %3$d'
+		, TABELLE_VERSUCHSPERSONEN
 		, $_GET['expid']
+		, $_GET['terminid']
 	);
-	$erg = $mysqli->query($abfrage) or die($mysqli->error);
-	$dataExp = $erg->fetch_assoc();
 }
 elseif(isset($_GET['vpid'])) {
 
-	$sql = sprintf( '
-		SELECT		vp.vorname,
+	$idArr = castToIntArray($_GET['vpid']);
+
+	$sqlVp = sprintf( '
+		SELECT		vp.id,
+					vp.vorname,
 					vp.nachname,
 					vp.email
 		FROM		%1$s AS vp
 		WHERE		vp.id IN(%2$s)'
-		, TABELLE_VERSUCHSPERSONENE
-		,
+		, TABELLE_VERSUCHSPERSONEN
+		, implode(',', $idArr)
 	);
 }
+
+$erg = $mysqli->query($sqlVp);
+$vpArr = array();
+$vpIdArr = array();
+while($data = $erg->fetch_assoc()) {
+	$vpArr[] = substr($data['vorname'],0,1) . '. ' . $data['nachname'] . ' (' . $data['email'] . ')';
+	$vpIdArr[] = $data['id'];
+}
+$vpList = implode(', ', $vpArr);
+
+$sqlExp = sprintf( '
+		SELECT		id AS exp,
+					vl_email
+		FROM		%1$s
+		WHERE		`id` = %2$s
+		LIMIT		1'
+	, TABELLE_EXPERIMENTE
+	, isset($_GET['expid']) ? (int)$_GET['expid'] : '(SELECT exp FROM c_vpn GROUP BY exp ORDER BY COUNT(exp) DESC LIMIT 1)'
+);
+$erg = $mysqli->query($sqlExp) or die($mysqli->error);
+$dataExp = $erg->fetch_assoc();
 
 ?>
 <html>
@@ -41,16 +66,20 @@ $( document ).ready(function() {
 		$(this).tooltip({ content: $(this).attr("title")});
 	});	// It allows html content to tooltip.
 	$('input[type="button"], input[type="submit"]').button();
-	<?php if(isset($_GET['expid'])) {?>
-		showEmailRecipients(<?php echo $dataExp['exp'];?>, <?php echo $_GET['terminid'];?>);
-	<?php } ?>
+	inputField = getInputFieldVpId();
+	inputField.val("<?php echo implode(',', $vpIdArr);?>");
+	$('input[name="vpmsgbut"]').on('click', function(e) {
+		inputField = getInputFieldVpId();
+		sendmsg(inputField.val(), 'nachrichtTermin', 'terminmailpreview');
+	})
 });
 </script>
 </head>
 <body>
 
-<form action="admin.php?<?php echo http_build_query(array('expid' => $dataExp['exp']));?>" method="post" enctype="multipart/form-data">
 <table style="margin-left:10px; margin-top:10px;">
+	<?php
+	if(!isset($_GET['vpid'])) { ?>
 	<tr>
 		<td class="ad_edit_headline"><b>Termin:</b></td>
 		<td class="ad_edit_headline">
@@ -80,10 +109,15 @@ $( document ).ready(function() {
 			</select>
 		</td>
 	</tr>
+	<?php
+	}
+	?>
 	<tr>
 		<td class="ad_edit_headline"><b>Empfänger:</b></td>
 		<td class="ad_edit_headline">
-			<div id="namelist" style="width: 235px; height: 35px; font-size: 10px; font-style: italic; overflow:auto;"></div>
+			<div id="namelist" style="height: 35px; font-size: 10px; font-style: italic; overflow:auto;">
+				<?php echo $vpList;?>
+			</div>
 		</td>
 	</tr>
 	<tr>
@@ -113,20 +147,14 @@ $( document ).ready(function() {
 		</td>
 		<td class="ad_edit_headline">
 			<textarea name="nachricht" id="nachrichtTermin" cols="50" rows="10"></textarea><br><br>
-			<input type="hidden" name="expid" value="<?php echo $dataExp['exp'];?>">	
-			<input type="button" name="vpmsgbut" value="Senden" onclick="sendmsg($('#termin').val(), 'nachrichtTermin', 'terminmailpreview');" style="width:80px;" />
+			<input type="button" name="vpmsgbut" value="Senden" />
 			<input type="button" onclick="javascript:showEmailPreview('nachrichtTermin', $('#termin').val(), 'terminmailpreview');" value="Vorschau" />
-			<input type="button" name="delexpn" onclick="javascript: window.parent.$('[id^=send_msg_]').dialog('close');" value="Abbrechen"  style="width:80px;" />
-			
-			<? if ( isset($_POST['vpmsgbut'])) { ?>
-				&nbsp;&nbsp;&nbsp;<font color="#ff0000"><b>Nachricht versendet!</b></font>
-			<? } ?>
-			<br />
+			<input type="button" name="delexpn" onclick="javascript: window.parent.$('div[id^=send_msg_], div.send_msg').dialog('close');" value="Abbrechen"  style="width:80px;" />
+
+			<span id="terminmailpreview" style="width:486px; font-size:11px; overflow:auto; font-weight: bold; color:#FF0000;"></span>
 		</td>
 	</tr>
 </table>
-<div id="terminmailpreview" style="width:486px; font-size:11px; overflow:auto;"></div>
-</form>	
 
 </body>
 </html>

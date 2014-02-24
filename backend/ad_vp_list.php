@@ -205,7 +205,11 @@ if(!isset($_GET['expid'])) {
 				e.preventDefault();
 				var inputNodes = $('input[type=checkbox]:checked', oTable.fnGetNodes());
 				var count = inputNodes.length;
-				if(count == 0 || !confirm(count + ' Versuchspersonen wirklich löschen?')) {
+				if(count == 0) {
+					alert('Es sind keine Personen ausgewählt.');
+					return;
+				}
+				if(!confirm(count + ' Versuchspersonen wirklich löschen?')) {
 					return;
 				}
 				var newForm = $('<form>', { 'method': 'post', 'action': 'vpview.php'});
@@ -218,6 +222,7 @@ if(!isset($_GET['expid'])) {
 				e.preventDefault();
 				var inputNodes = $('input[type=checkbox]:checked', oTable.fnGetNodes());
 				if(inputNodes.length == 0) {
+					alert('Es sind keine Personen ausgewählt.');
 					return;
 				}
 				var $dialogSendMsg = $('<div class="send_msg"></div>')
