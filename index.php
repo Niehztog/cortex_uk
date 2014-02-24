@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/include/functions.php';
+require_once __DIR__ . '/include/config.php';
 require_once __DIR__ . '/include/class/DatabaseFactory.class.php';
 require_once __DIR__ . '/include/class/calendar/CalendarDataProvider.class.php';
 require_once __DIR__ . '/include/class/controller/SessionController.class.php';
@@ -23,9 +24,10 @@ if(!isset($_GET['menu'])) {
 	}
 
 	foreach($laufendeExperimente as $data) {
+		$idObfuscated = md5($data['id'] . ID_OBFUSCATION_SALT);
 		?>	
-		<h2><a href="index.php?menu=experiment&amp;expid=<?= $data['id']?>" style="color: #4A71D6;">&nbsp;&nbsp;<img src="images/arrow.gif" width="4" height="10" border="0" alt="" />&nbsp;<?= $data['exp_name'] ?></a></h2>
-		<div id="mainframe_exp">&nbsp;&nbsp;&nbsp;<a href="index.php?menu=experiment&amp;expid=<?= $data['id']?>"><?= htmlspecialchars(substr($data['exp_zusatz'],0,250)) ?> [...]</a></div>
+		<h2><a href="index.php?menu=experiment&amp;expid=<?php echo $idObfuscated;?>" style="color: #4A71D6;">&nbsp;&nbsp;<img src="images/arrow.gif" width="4" height="10" border="0" alt="" />&nbsp;<?= $data['exp_name'] ?></a></h2>
+		<div id="mainframe_exp">&nbsp;&nbsp;&nbsp;<a href="index.php?menu=experiment&amp;expid=<?php echo $idObfuscated;?>"><?= htmlspecialchars(substr($data['exp_zusatz'],0,250)) ?> [...]</a></div>
 		<? 
 	}
 }
@@ -36,8 +38,8 @@ if(!isset($_GET['menu'])) {
 /******************************/
 
 elseif(($_GET['menu'] == 'experiment') && (isset($_GET['expid'])) && (!isset($_POST['chosendate']))&& (!isset($_POST['add']))) {
-	
-	$edp = new ExperimentDataProvider((int)$_GET['expid']);
+	$edp = ExperimentDataProvider::getInstanceByEncryptedId($_GET['expid']);
+	$expId = $edp->getExpId();
 	if(!$edp->isSignUpAllowed()) {
 		storeMessageInSession(sprintf(MESSAGE_BOX_ERROR, 'Anmeldungen für dieses Experiment sind derzeit nicht möglich. Bitte versuchen Sie es zu einem späteren Zeitpunkt noch einmal.'));
 		require_once 'pageelements/header.php';
@@ -51,7 +53,7 @@ elseif(($_GET['menu'] == 'experiment') && (isset($_GET['expid'])) && (!isset($_P
 		WHERE	id = %2$d
 			AND	visible = "1"'
 		, TABELLE_EXPERIMENTE
-		, $_GET['expid']
+		, $expId
 	);
 
 	$erg4 = $mysqli->query($abfrage2);
@@ -62,7 +64,7 @@ elseif(($_GET['menu'] == 'experiment') && (isset($_GET['expid'])) && (!isset($_P
 	
 	try {
 		$cdp = new CalendarDataProvider();
-		$calendarData = $cdp->getAvailableSessionsFor((int)$_GET['expid']);
+		$calendarData = $cdp->getAvailableSessionsFor($expId);
 	}
 	catch(Exception $e) {
 		trigger_error($e, E_USER_WARNING);
@@ -166,7 +168,7 @@ elseif(($_GET['menu'] == 'experiment') && (isset($_GET['expid'])) && (!isset($_P
 		</tr>
 		<?
 		
-		$abfrage = "SELECT * FROM ".TABELLE_SITZUNGEN." WHERE `exp` = '$_GET[expid]' ORDER BY tag, session_s ASC" ;
+		$abfrage = "SELECT * FROM ".TABELLE_SITZUNGEN." WHERE `exp` = '$expId' ORDER BY tag, session_s ASC" ;
 		$erg = $mysqli->query($abfrage);
 		while ($data = $erg->fetch_assoc()) {
 			?>
@@ -179,7 +181,7 @@ elseif(($_GET['menu'] == 'experiment') && (isset($_GET['expid'])) && (!isset($_P
 				<td class="termin"><div><?=substr($data['session_s'], 0, 5) . '-' . substr($data['session_e'], 0, 5) ?></div></td>
 				<?php
 				$vpcur = 0; $tempcur = 0;  
-				$abfrage3 = "SELECT * FROM ".TABELLE_VERSUCHSPERSONEN." WHERE `exp` = '$_GET[expid]' AND `termin` = '$data[id]'";
+				$abfrage3 = "SELECT * FROM ".TABELLE_VERSUCHSPERSONEN." WHERE `exp` = '$expId' AND `termin` = '$data[id]'";
 				$erg3 = $mysqli->query($abfrage3);
 				while ($data3 = $erg3->fetch_assoc()) {
 					$vpcur = $tempcur + 1;
@@ -189,7 +191,7 @@ elseif(($_GET['menu'] == 'experiment') && (isset($_GET['expid'])) && (!isset($_P
 				$vpcur = $data['maxtn'] - $tempcur;
 				$maxtnvar = $data['maxtn'];
 				
-				if ($_GET['expid'] == 41) {
+				if ($expId == 41) {
 					if ($tempcur < 2) { $vpcur++; $vpcur++; };
 				};
 				
@@ -223,13 +225,16 @@ elseif(($_GET['menu'] == 'experiment') && (isset($_GET['expid'])) && (!isset($_P
   
 elseif (isset($_POST['chosendate'])) {
 
+	$edp = ExperimentDataProvider::getInstanceByEncryptedId($_GET['expid']);
+	$expId = $edp->getExpId();
+
 	$abfrage = sprintf( '
 		SELECT	*
 		FROM	%1$s
 		WHERE	id = %2$d
 			AND	visible = "1"'
 		, TABELLE_EXPERIMENTE
-		, $_GET['expid']
+		, $expId
 	);
 	$erg5 = $mysqli->query($abfrage);
 	$data = $erg5->fetch_assoc(); 
@@ -270,12 +275,12 @@ elseif (isset($_POST['chosendate'])) {
 	?>
 		<select name="termin">
 	<?php
-	$abfrage2 = "SELECT * FROM ".TABELLE_SITZUNGEN." WHERE `exp` = '$_GET[expid]' ORDER BY tag, session_s ASC" ;
+	$abfrage2 = "SELECT * FROM ".TABELLE_SITZUNGEN." WHERE `exp` = '$expId' ORDER BY tag, session_s ASC" ;
 	$erg2 = $mysqli->query($abfrage2);
 	while ($data2 = $erg2->fetch_assoc()) {
 	
 	$vpcur = 0; $tempcur = 0;  
-	$abfrage3 = "SELECT * FROM ".TABELLE_VERSUCHSPERSONEN." WHERE `exp` = '$_GET[expid]' AND `termin` = '$data2[id]' ";
+	$abfrage3 = "SELECT * FROM ".TABELLE_VERSUCHSPERSONEN." WHERE `exp` = '$expId' AND `termin` = '$data2[id]' ";
 	$erg3 = $mysqli->query($abfrage3);
 	while ($data3 = $erg3->fetch_assoc()) {
 	   $vpcur = $tempcur + 1;
@@ -475,8 +480,10 @@ elseif (isset($_POST['chosendate'])) {
 /************************************/
 
 elseif(isset($_POST['add']) && !isset($_POST['admin'])) {
-	
-	$edp = new ExperimentDataProvider((int)$_GET['expid']);
+
+	$edp = ExperimentDataProvider::getInstanceByEncryptedId($_GET['expid']);
+	$expId = $edp->getExpId();
+
 	if(!$edp->isSignUpAllowed()) {
 		storeMessageInSession(sprintf(MESSAGE_BOX_ERROR, 'Anmeldungen für dieses Experiment sind derzeit nicht möglich. Bitte versuchen Sie es zu einem späteren Zeitpunkt noch einmal.'));
 		require_once 'pageelements/header.php';
@@ -494,7 +501,7 @@ elseif(isset($_POST['add']) && !isset($_POST['admin'])) {
 		WHERE	id = %2$d
 			AND	visible = "1"'
 		, TABELLE_EXPERIMENTE
-		, $_GET['expid']
+		, $expId
 	);
 	$erg6 = $mysqli->query($abfrage);
 	$data = $erg6->fetch_assoc();
@@ -630,11 +637,11 @@ elseif(isset($_POST['add']) && !isset($_POST['admin'])) {
 			$terminEnd = $termin->getEnd();
 			
 			$cdp = new CalendarDataProvider();
-			$labId = $cdp->getFirstLabWhereTimeSlotFits($_GET['expid'], $terminStart, $terminEnd);
+			$labId = $cdp->getFirstLabWhereTimeSlotFits($expId, $terminStart, $terminEnd);
 			
 			$sc = new SessionController();
 			$terminId = $sc->create(
-				$_GET['expid'],
+				$expId,
 				$terminStart->format('d.m.Y'),
 				$terminStart->format('H:i'),
 				$terminEnd->format('H:i'),
@@ -682,7 +689,7 @@ elseif(isset($_POST['add']) && !isset($_POST['admin'])) {
 			(`exp`, `vorname`, `nachname`, `geschlecht`, `gebdat`, `fach`, `semester`, `anschrift`, `telefon1`, `telefon2`, `email`, `geldvps`, `andere`, `weitere`, `termin`)
 			VALUES (%2$d, \'%3$s\', \'%4$s\', \'%5$s\', \'%6$s\', \'%7$s\', \'%8$s\', \'%9$s\', \'%10$s\', \'%11$s\', \'%12$s\', \'%13$s\', \'%14$s\', \'%15$s\', %16$d)'
 			, /*  1 */ TABELLE_VERSUCHSPERSONEN
-			, /*  2 */ $_GET['expid']
+			, /*  2 */ $expId
 			, /*  3 */ isset($_POST['vorname'])?$mysqli->real_escape_string($_POST['vorname']):''
 			, /*  4 */ isset($_POST['nachname'])?$mysqli->real_escape_string($_POST['nachname']):''
 			, /*  5 */ isset($_POST['geschlecht'])?$mysqli->real_escape_string($_POST['geschlecht']):''
@@ -708,7 +715,7 @@ elseif(isset($_POST['add']) && !isset($_POST['admin'])) {
 			}
 		} 
 		
-		$abfrage = "SELECT exp_name FROM ".TABELLE_EXPERIMENTE." WHERE `id` = '$_GET[expid]'" ;
+		$abfrage = "SELECT exp_name FROM ".TABELLE_EXPERIMENTE." WHERE `id` = '$expId'" ;
 		$erg = $mysqli->query($abfrage);
 		while ($data = $erg->fetch_assoc())
 			{
@@ -726,7 +733,7 @@ elseif(isset($_POST['add']) && !isset($_POST['admin'])) {
 		</tr>
 		<tr>
 			<td>
-		<? $abfrage = "SELECT * FROM ".TABELLE_EXPERIMENTE." WHERE `id` = '$_POST[expid]'" ;
+		<? $abfrage = "SELECT * FROM ".TABELLE_EXPERIMENTE." WHERE `id` = '$expId'" ;
 		$erg = $mysqli->query($abfrage);
 		while ($data2 = $erg->fetch_assoc())
 			{  
@@ -736,35 +743,33 @@ elseif(isset($_POST['add']) && !isset($_POST['admin'])) {
 		Sollten sie noch weitere Fragen haben, können Sie sich gerne per Telefon an uns wenden oder eine Email schreiben.<br /><br />
 		<?
 		
-		$abfrage2 = "SELECT * FROM ".TABELLE_SITZUNGEN." WHERE `id` = '$_POST[termin]'" ;
+		$abfrage2 = "SELECT * FROM ".TABELLE_SITZUNGEN." WHERE `id` = '$terminId'" ;
 		$erg2 = $mysqli->query($abfrage2);
-		while ($data3 = $erg2->fetch_assoc())
-			  {  
-		
-		$termin = formatMysqlDate($data3['tag']);
-		
-		$letter = htmlspecialchars_decode($data2['exp_mail'], ENT_QUOTES);
-		
-		
-		if (isset($_POST['geschlecht']) && $_POST['geschlecht'] == "männlich") { $letter = str_replace("!liebe/r!","Lieber",$letter); }
-		else { $letter = str_replace("!liebe/r!","Liebe",$letter); }
-		
-		$letter = str_replace("!vp_vorname!",$_POST['vorname'],$letter);
-		$letter = str_replace("!vp_nachname!",$_POST['nachname'],$letter);
-		
-		$letter = str_replace("!termin!",$termin,$letter);
-		$letter = str_replace("!beginn!",substr($data3['session_s'],0,5),$letter);
-		$letter = str_replace("!ende!",substr($data3['session_e'],0,5),$letter);
-		
-		$letter = str_replace("!exp_name!",htmlspecialchars_decode($data2['exp_name'], ENT_QUOTES),$letter);
-		$letter = str_replace("!exp_ort!",htmlspecialchars_decode($data2['exp_ort'], ENT_QUOTES),$letter);
-		
-		$letter = str_replace("!vl_name!",htmlspecialchars_decode($data2['vl_name'], ENT_QUOTES),$letter);
-		$letter = str_replace("!vl_telefon!",htmlspecialchars_decode($data2['vl_tele'], ENT_QUOTES),$letter);
-		$letter = str_replace("!vl_email!",htmlspecialchars_decode($data2['vl_email'], ENT_QUOTES),$letter);
-	
-		$header = "From:" . $data2['vl_email'] . "\r\n" . "MIME-Version: 1.0\r\nContent-type: text/plain; charset=UTF-8\r\n";
-		mail($_POST['email'],'Terminbestätigung',$letter,$header);
+		while ($data3 = $erg2->fetch_assoc()) {
+			$termin = formatMysqlDate($data3['tag']);
+
+			$letter = htmlspecialchars_decode($data2['exp_mail'], ENT_QUOTES);
+
+
+			if (isset($_POST['geschlecht']) && $_POST['geschlecht'] == "männlich") { $letter = str_replace("!liebe/r!","Lieber",$letter); }
+			else { $letter = str_replace("!liebe/r!","Liebe",$letter); }
+
+			$letter = str_replace("!vp_vorname!",$_POST['vorname'],$letter);
+			$letter = str_replace("!vp_nachname!",$_POST['nachname'],$letter);
+
+			$letter = str_replace("!termin!",$termin,$letter);
+			$letter = str_replace("!beginn!",substr($data3['session_s'],0,5),$letter);
+			$letter = str_replace("!ende!",substr($data3['session_e'],0,5),$letter);
+
+			$letter = str_replace("!exp_name!",htmlspecialchars_decode($data2['exp_name'], ENT_QUOTES),$letter);
+			$letter = str_replace("!exp_ort!",htmlspecialchars_decode($data2['exp_ort'], ENT_QUOTES),$letter);
+
+			$letter = str_replace("!vl_name!",htmlspecialchars_decode($data2['vl_name'], ENT_QUOTES),$letter);
+			$letter = str_replace("!vl_telefon!",htmlspecialchars_decode($data2['vl_tele'], ENT_QUOTES),$letter);
+			$letter = str_replace("!vl_email!",htmlspecialchars_decode($data2['vl_email'], ENT_QUOTES),$letter);
+
+			$header = "From:" . $data2['vl_email'] . "\r\n" . "MIME-Version: 1.0\r\nContent-type: text/plain; charset=UTF-8\r\n";
+			mail($_POST['email'],'Terminbestätigung',$letter,$header);
 		}
 		}
 		?>
@@ -790,7 +795,7 @@ elseif(isset($_POST['add']) && !isset($_POST['admin'])) {
 	/* ANMELDUNG KEINE PLÄTZE FREI! */  	  
 		  
 	else {
-		$abfrage = "SELECT exp_name FROM ".TABELLE_EXPERIMENTE." WHERE `id` = '$_GET[expid]'" ;
+		$abfrage = "SELECT exp_name FROM ".TABELLE_EXPERIMENTE." WHERE `id` = '$expId'" ;
 		$erg = $mysqli->query($abfrage);
 		while ($data = $erg->fetch_assoc()) {
 			?>

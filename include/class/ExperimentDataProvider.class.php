@@ -8,6 +8,13 @@ class ExperimentDataProvider extends DatabaseClient {
 	public function __construct($expId) {
 		$this->setExpId($expId);
 	}
+
+	public static function getInstanceByEncryptedId($obfuscatedId) {
+		$instance = new self(null);
+		$id = $instance->decryptId($obfuscatedId);
+		$instance->setExpId($id);
+		return $instance;
+	}
 	
 	public function setExpId($expId) {
 		$this->expId = $expId;
@@ -145,6 +152,24 @@ class ExperimentDataProvider extends DatabaseClient {
 			$result[] = $data;
 		}
 		return $result;
+	}
+
+	public function decryptId($obfuscatedId) {
+		$mysqli = $this->getDatabase();
+		$sql = sprintf('
+			SELECT	id
+			FROM	%1$s
+			WHERE	md5(CONCAT(id, "%2$s")) = "%3$s"'
+			, TABELLE_EXPERIMENTE
+			, ID_OBFUSCATION_SALT
+			, $mysqli->real_escape_string($obfuscatedId)
+		);
+		$erg = $mysqli->query($sql);
+		if(1 !== $erg->num_rows) {
+			return false;
+		}
+		$row = $erg->fetch_assoc();
+		return $row['id'];
 	}
 	
 }

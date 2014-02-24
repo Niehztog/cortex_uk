@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/../../functions.php';
 require_once 'include/class/DatabaseFactory.class.php';
 require_once 'include/class/menu/MenuItem.class.php';
 require_once 'include/class/menu/MenuSeparator.class.php';
@@ -85,7 +86,7 @@ class Menu {
 		foreach($laufendeExperimente as $data) {
 			$subItem = $this->getMenuItemInstance(
 				$data['exp_name'],
-				"index.php?menu=experiment&expid=" . $data['id']
+				"index.php?menu=experiment&expid=" . md5($data['id'] . ID_OBFUSCATION_SALT)
 			);
 			$subItem->incLevel();
 			$subMenu[] = $subItem;
