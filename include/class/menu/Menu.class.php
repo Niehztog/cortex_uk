@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../../functions.php';
+require_once __DIR__ . '/../../config.php';
 require_once 'include/class/DatabaseFactory.class.php';
 require_once 'include/class/menu/MenuItem.class.php';
 require_once 'include/class/menu/MenuSeparator.class.php';
