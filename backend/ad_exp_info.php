@@ -3,6 +3,7 @@ if(basename($_SERVER['SCRIPT_NAME']) === basename(__FILE__)) {
 	header('HTTP/1.1 404 Not Found');
 	exit;
 }
+require_once __DIR__ . '/../include/config.php';
 require_once __DIR__ . '/../include/functions.php';
 require_once __DIR__ . '/../include/class/calendar/CalendarDataProvider.class.php';
 require_once __DIR__ . '/../include/class/controller/SessionController.class.php';
@@ -440,7 +441,18 @@ $( document ).ready(function() {
 			</tr>
 			<tr>
 				<td><i>In Liste anzeigen</i></td>
-				<td colspan="2"><? if ( 'true' === $data['show_in_list'] ) { ?><span style="font-weight:bold;color:#00FF00;">&#x2713;</span><? } else { ?> <span style="font-weight:bold;color:#FF0000;">&#x2717;</span><? } ?></td>
+				<td colspan="2">
+					<?php
+					$idObfuscated = md5($data['id'] . ID_OBFUSCATION_SALT);
+					if ( 'true' === $data['show_in_list'] ) {
+						?><span style="font-weight:bold;color:#00FF00;">&#x2713;</span><?
+					}
+					else {
+						?><span style="font-weight:bold;color:#FF0000;">&#x2717;</span><?php
+						echo sprintf('&nbsp;<a href="index.php?menu=experiment&amp;expid=%1$s" style="color: #4A71D6;" target="_blank">(Geheimer Link)</a>', $idObfuscated);
+					}
+					?>
+				</td>
 			</tr>
 			<tr>
 				<td><i>Sitzungsdauer</i></td>
