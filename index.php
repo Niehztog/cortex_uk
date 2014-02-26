@@ -38,10 +38,18 @@ if(!isset($_GET['menu'])) {
 /******************************/
 
 elseif(($_GET['menu'] == 'experiment') && (isset($_GET['expid'])) && (!isset($_POST['chosendate']))&& (!isset($_POST['add']))) {
-	$edp = ExperimentDataProvider::getInstanceByEncryptedId($_GET['expid']);
-	$expId = $edp->getExpId();
-	if(!$edp->isSignUpAllowed()) {
-		storeMessageInSession(sprintf(MESSAGE_BOX_ERROR, 'Anmeldungen für dieses Experiment sind derzeit nicht möglich. Bitte versuchen Sie es zu einem späteren Zeitpunkt noch einmal.'));
+	try {
+		$edp = ExperimentDataProvider::getInstanceByEncryptedId($_GET['expid']);
+		$expId = $edp->getExpId();
+		if(!$edp->isSignUpAllowed()) {
+			storeMessageInSession(sprintf(MESSAGE_BOX_ERROR, 'Anmeldungen für dieses Experiment sind derzeit nicht möglich. Bitte versuchen Sie es zu einem späteren Zeitpunkt noch einmal.'));
+			require_once 'pageelements/header.php';
+			require_once 'pageelements/footer.php';
+			exit;
+		}
+	}
+	catch(Exception $e) {
+		storeMessageInSession(sprintf(MESSAGE_BOX_ERROR, 'Interner Fehler. Bitte versuchen Sie es zu einem späteren Zeitpunkt noch einmal.'));
 		require_once 'pageelements/header.php';
 		require_once 'pageelements/footer.php';
 		exit;
@@ -113,7 +121,7 @@ elseif(($_GET['menu'] == 'experiment') && (isset($_GET['expid'])) && (!isset($_P
 	else if ( $data2['exp_vps'] == 1 && $data2['exp_geld'] < 1)
 		  {
 	?>	
-	<b><?= $data2['exp_vpsnum']?> <?= $credit_points ?></b>.
+	<b><?= $data2['exp_vpsnum']?> VP-Stunden</b>.
 	<?
 		  }
 		}
