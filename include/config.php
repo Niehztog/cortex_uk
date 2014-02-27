@@ -43,3 +43,5 @@ define('IMPRINT_TECHNICAL_PHONE', '');
 define('IMPRINT_TECHNICAL_FAX', '');
 define('IMPRINT_TECHNICAL_EMAIL', '');
 define('IMPRINT_TECHNICAL_LINK', '');
+
+define('ID_OBFUSCATION_SALT','xxx');
