@@ -35,7 +35,7 @@ function displayMessagesFromSession() {
 }
 
 function initSession($onlyExisting = false) {
-	if($onlyExisting && !isset($_COOKIE['PHPSESSID'])) {
+	if($onlyExisting && !isset($_COOKIE['PHPSESSID']) && '' === session_id()) {
 		return false;
 	}
 	if('' === session_id()) {

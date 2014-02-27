@@ -1,9 +1,7 @@
 @CHARSET "UTF-8";
 
 .optionGroup {
-	/*margin-left:15px;
-	margin-top:20px;*/
-	white-space:nowrap;
+	white-space:normal;
 }
 
 fieldset {
@@ -65,4 +63,8 @@ label.halbbreit {
 
 input.rechtsplatz {
 	margin-right:4px;
+}
+
+div.time-picker {
+	z-index: 101!important;
 }

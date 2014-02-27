@@ -467,7 +467,6 @@ elseif (isset($_POST['chosendate'])) {
 		<td></td>
 		<td colspan="2" class="eintragen">
 			<input name="expid" type="hidden" value="<?php echo $_GET['expid']; ?>" />
-			<input name="maxtn" type="hidden" value="<?php echo $_POST['maxtn']; ?>" />
 			<input name="add" type="submit" value="Anmelden" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 			<input name="addcancel" type="submit" value="Abbrechen" onclick="javascript:history.back();" />		
 		</td>
@@ -501,7 +500,8 @@ elseif(isset($_POST['add']) && !isset($_POST['admin'])) {
 
 	# CHECK: PFLICHTFELDER / FEHLER #
 	
-	$Fehler="N";
+	$Fehler = false;
+	$Feld = '';
 	
 	$abfrage = sprintf( '
 		SELECT	*
@@ -516,20 +516,20 @@ elseif(isset($_POST['add']) && !isset($_POST['admin'])) {
 	
 	$exp_name=$data['exp_name'];
 	
-	if ( $_POST['vorname'] == "" ) { $Fehler ="Y"; $Feld   = $Feld."&bull; " . $forename . "<br />";  };
-	if ( $_POST['nachname'] == "" ) { $Fehler ="Y"; $Feld   = $Feld."&bull; " . $surname . "<br />";  };
-	if ( $_POST['email'] == "" ) { $Fehler ="Y"; $Feld   = $Feld."&bull; " . $email_address . "<br />"; }
+	if ( $_POST['vorname'] == "" ) { $Fehler = true; $Feld .= "&bull; Vorname<br />";  };
+	if ( $_POST['nachname'] == "" ) { $Fehler = true; $Feld .= "&bull; Nachname<br />";  };
+	if ( $_POST['email'] == "" ) { $Fehler = true; $Feld .= "&bull; Email-Adresse<br />"; }
 	
-	if ( $data['vpn_gebdat'] == 2 ) { if ( $_POST['gebdat'] == "" ) { $Fehler ="Y"; $Feld   = $Feld."&bull; " . $dob . "<br />"; } };
-	if ( $data['vpn_fach'] == 2 ) { if ( $_POST['fach'] == "" ) { $Fehler ="Y"; $Feld   = $Feld."&bull; " . $field_study . "<br />"; } };
-	if ( $data['vpn_semester'] == 2 ) { if ( $_POST['semester'] == "" ) { $Fehler ="Y"; $Feld   = $Feld."&bull; " . $semester . "<br />"; } };
-	if ( $data['vpn_adresse'] == 2 ) { if ( $_POST['anschrift'] == "" ) { $Fehler ="Y"; $Feld   = $Feld."&bull; " . $address . "<br />"; } };
-	if ( $data['vpn_tele1'] == 2 ) { if ( $_POST['telefon1'] == "" ) { $Fehler ="Y"; $Feld   = $Feld."&bull; " . $phone . "1<br />"; } };
-	if ( $data['vpn_tele2'] == 2 ) { if ( $_POST['telefon2'] == "" ) { $Fehler ="Y"; $Feld   = $Feld."&bull; " . $phone . "2<br />"; } };
+	if ( $data['vpn_gebdat'] == 2 ) { if ( empty($_POST['gebdat']) ) { $Fehler = true; $Feld .= "&bull; Geburtsdatum<br />"; } };
+	if ( $data['vpn_fach'] == 2 ) { if ( empty($_POST['fach']) ) { $Fehler = true; $Feld .= "&bull; Studienfach<br />"; } };
+	if ( $data['vpn_semester'] == 2 ) { if ( empty($_POST['semester']) ) { $Fehler = true; $Feld .= "&bull; Semester<br />"; } };
+	if ( $data['vpn_adresse'] == 2 ) { if ( empty($_POST['anschrift']) ) { $Fehler = true; $Feld .= "&bull; Adresse<br />"; } };
+	if ( $data['vpn_tele1'] == 2 ) { if ( empty($_POST['telefon1']) ) { $Fehler = true; $Feld .= "&bull; Telefon1<br />"; } };
+	if ( $data['vpn_tele2'] == 2 ) { if ( empty($_POST['telefon2']) ) { $Fehler = true; $Feld .= "&bull; Telefon2<br />"; } };
 	
 	require_once 'pageelements/header.php';
 	
-	if($Fehler == "Y") {
+	if(true == $Fehler) {
 		?>
 		<table> 
 		<tr>
@@ -544,9 +544,9 @@ elseif(isset($_POST['add']) && !isset($_POST['admin'])) {
 		<tr>
 			<td>
 		<?  
-		echo $field_error . "<br /><br />";
+		echo "Die folgenden Pflichtfelder wurden nicht ausgefüllt:<br /><br />";
 		echo "$Feld<br /><br />";
-		echo $go_back;
+		echo 'Bitte gehen Sie <a href="javascript: history.back();">zurück</a> und überprüfen Sie ihre Eingabe.';
 		?>
 			</td>
 		</tr>
@@ -559,16 +559,16 @@ elseif(isset($_POST['add']) && !isset($_POST['admin'])) {
 	}
 	  
 	if ( $data['vpn_gebdat'] == 2 ) {
-		$Fehler = "N";
+		$Fehler = false;
 		
-		if (substr_count($_POST[gebdat], '.') != 2) {
-			$Fehler = "Y";
+		if(substr_count($_POST['gebdat'], '.') != 2) {
+			$Fehler = true;
 		}
-		if (strlen($_POST[gebdat]) != 10 ) {
-			$Fehler = "Y";
+		if(strlen($_POST['gebdat']) != 10 ) {
+			$Fehler = true;
 		}
 		
-		if ($Fehler == "Y") {
+		if(true == $Fehler) {
 			?>  
 			<table> 
 			<tr>
@@ -597,16 +597,16 @@ elseif(isset($_POST['add']) && !isset($_POST['admin'])) {
 		}
 	}
 	
-	$Fehler = "N";
+	$Fehler = false;
 	
 	if (!strstr($_POST['email'],"@")) {
-		$Fehler = "Y";
+		$Fehler = true;
 	}
 	if (!strstr($_POST['email'],".")) {
-		$Fehler = "Y";
+		$Fehler = true;
 	}
 	
-	if($Fehler == "Y") {
+	if(true == $Fehler) {
 		?>  
 		<table> 
 		<tr>
@@ -666,27 +666,25 @@ elseif(isset($_POST['add']) && !isset($_POST['admin'])) {
 
 	}
 	else {
-		$vpcur = 0; $tempcur = 0;  
-		$abfrage3 = "SELECT * FROM ".TABELLE_VERSUCHSPERSONEN." WHERE termin = '$_POST[termin]'";
+		$terminId = (int)$_POST['termin'];
+
+		$sqlSes = "SELECT maxtn FROM ".TABELLE_SITZUNGEN." WHERE `exp` = '$expId' AND id = $terminId" ;
+		$resultSes = $mysqli->query($sqlSes);
+		$dataSes = $resultSes->fetch_assoc();
+
+		$abfrage3 = "SELECT COUNT(termin) AS count FROM ".TABELLE_VERSUCHSPERSONEN." WHERE termin = '$terminId'";
 		$erg3 = $mysqli->query($abfrage3);
 		  
-		while ($data3 = $erg3->fetch_assoc())
-		  {
-		   $vpcur = $tempcur + 1;
-		   $tempcur = $vpcur;
-		  } 
+		$data3 = $erg3->fetch_assoc();
+		$signUpCount = (int)$data3['count'];
 		
-		$vpcur = $_POST['maxtn'] - $tempcur;
-		
-		$terminId = (int)$_POST['termin'];
+		$freeSlots = (int)$dataSes['maxtn'] - $signUpCount;
+
 	}
-	
-	
-	
+
 	/* ANMELDUNG: PLÄTZE FREI! */  
-	
-	if ($vpcur > 0)
-	{
+	/***************************/
+	if($freeSlots > 0) {
 	
 		if(isset($_POST['gebdat'])) {
 			$gebdat = formatDateForMysql($_POST['gebdat']);
