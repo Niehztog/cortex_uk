@@ -271,7 +271,7 @@ function showEmailRecipients(expid, terminid) {
 }
 
 function terminchange() {
-	expid = $.QueryString("expid");
+	expid = QueryString.get("expid");
 	terminid = document.getElementById("termin").value;
 	showEmailRecipients(expid, terminid);
 	showEmailPreview('nachricht', terminid, 'terminmailpreview');
