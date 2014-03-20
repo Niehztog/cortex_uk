@@ -26,7 +26,7 @@ if(isset($_GET['betreff']) && isset($_GET['vpIdList'])) {
 	);
 
 	$stmtSes = $mysqli->prepare(
-		sprintf( 'SELECT tag, session_s, session_e  FROM %1$s WHERE id = ?', TABELLE_SITZUNGEN )
+		sprintf( 'SELECT tag, session_s, session_e FROM %1$s WHERE id = ?', TABELLE_SITZUNGEN )
 	);
 
 	$sql = sprintf( '
@@ -54,9 +54,11 @@ if(isset($_GET['betreff']) && isset($_GET['vpIdList'])) {
 
 		$stmtExp->bind_param('i', $rowVp['exp']);
 		$stmtExp->execute();
-		$resultExp = $stmtExp->get_result();
-		$rowExp = $resultExp->fetch_assoc();
-		if(null !== $rowExp) {
+
+		$rowExp = array();
+		$stmtExp->bind_result($rowExp['exp_name'], $rowExp['exp_ort'], $rowExp['vl_name'], $rowExp['vl_tele'], $rowExp['vl_email']);
+		$resultExp = $stmtExp->fetch();
+		if(true === $resultExp) {
 			$thisLetter = str_replace("!exp_name!", $rowExp['exp_name'], $thisLetter);
 			$thisLetter = str_replace("!exp_ort!", $rowExp['exp_ort'], $thisLetter);
 
@@ -66,17 +68,27 @@ if(isset($_GET['betreff']) && isset($_GET['vpIdList'])) {
 
 			$vl_email = $rowExp['vl_email'];
 		}
+		elseif(false === $resultExp) {
+			trigger_error($stmtExp->error, E_USER_WARNING);
+		}
+		$stmtExp->free_result();
 
 		$stmtSes->bind_param('i', $rowVp['termin']);
 		$stmtSes->execute();
-		$resultSes = $stmtSes->get_result();
-		$rowSes = $resultSes->fetch_assoc();
-		if(null !== $rowSes) {
+
+		$rowSes = array();
+		$stmtSes->bind_result($rowSes['tag'], $rowSes['session_s'], $rowSes['session_e']);
+		$resultSes = $stmtSes->fetch();
+		if(true === $resultSes) {
 			$termin = formatMysqlDate($rowSes['tag']);
 			$thisLetter = str_replace("!termin!", $termin, $thisLetter);
 			$thisLetter = str_replace("!beginn!", substr($rowSes['session_s'], 0, 5), $thisLetter);
 			$thisLetter = str_replace("!ende!", substr($rowSes['session_e'], 0, 5), $thisLetter);
 		}
+		elseif(false === $resultSes) {
+			trigger_error($stmtSes->error, E_USER_WARNING);
+		}
+		$stmtSes->free_result();
 
 		$header = "From:" . $vl_email . "\r\n" . "MIME-Version: 1.0\r\nContent-type: text/plain; charset=UTF-8\r\n";
 		mail($rowVp['email'], $_GET['betreff'], $thisLetter, $header);
