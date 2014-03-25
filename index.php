@@ -637,7 +637,7 @@ elseif(isset($_POST['add']) && !isset($_POST['admin'])) {
 	
 	
 	/* CHECK: PLÄTZE FREI */ 
-	
+	$freeSlotsAvailable = true;
 	if('automatisch' === $data['terminvergabemodus']) {
 		try {
 			$termin = TimeSlotTemporary::getInstanceByTemporaryId($_POST['termin']);
@@ -660,7 +660,7 @@ elseif(isset($_POST['add']) && !isset($_POST['admin'])) {
 		}
 		catch(Exception $e) {
 			trigger_error($e, E_USER_WARNING);
-			storeMessageInSession(sprintf(MESSAGE_BOX_ERROR, sprintf('Interner Fehler bei der Anmeldung. Bitte wenden Sie sich per Email an den Versuchsleiter. (%1$d)', __LINE__)));
+			$freeSlotsAvailable = false;
 		}
 		
 
@@ -679,12 +679,15 @@ elseif(isset($_POST['add']) && !isset($_POST['admin'])) {
 		$signUpCount = (int)$data3['count'];
 		
 		$freeSlots = (int)$dataSes['maxtn'] - $signUpCount;
+		if($freeSlots <= 0) {
+			$freeSlotsAvailable = false;
+		}
 
 	}
 
 	/* ANMELDUNG: PLÄTZE FREI! */  
 	/***************************/
-	if($freeSlots > 0) {
+	if($freeSlotsAvailable) {
 	
 		if(isset($_POST['gebdat'])) {
 			$gebdat = formatDateForMysql($_POST['gebdat']);
