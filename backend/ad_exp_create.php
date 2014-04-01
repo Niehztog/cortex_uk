@@ -148,7 +148,77 @@ if(isset($_GET['action']) && $_GET['action'] == 'create') {
 				value: $('#tabs-1').is(':visible') ? 'automatisch' : 'manuell',
 			}).appendTo($(this));
 		});
-	
+
+		var copyOldSelect = $('#copy_old');
+		$.ajax({
+			type: "GET",
+			url: "service/exp.php",
+			data: {
+				'method': 'list'
+			},
+			dataType: "json",
+			success: function( data ) {
+				copyOldSelect.append(
+					$('<option />').val(0).html('-')
+				);
+				$.each( data, function( key, value ) {
+					copyOldSelect.append(
+						$('<option />').val(value.id).html(value.name)
+					);
+				});
+			}
+		});
+		copyOldSelect.on('change', function() {
+			if($(this).val() > 0) {
+				var decision = confirm("Daten des gewählten Experiments in das aktuelle Formular laden (bereits eingegebene Daten werden überschrieben)?");
+				if (decision) {
+					$.ajax({
+						type: "GET",
+						url: "service/exp.php",
+						data: {
+							'method': 'single',
+							'id': $(this).val()
+						},
+						dataType: "json",
+						success: function( data ) {
+							var expData = data[0];
+							$('input[name=vl_name]').val(expData.vl_name);
+							$('input[name=vl_tele]').val(expData.vl_tele);
+							$('input[name=vl_email]').val(expData.vl_email);
+							$('input[name=exp_name]').val(expData.exp_name);
+							$('textarea[name=exp_zusatz]').val(expData.exp_zusatz);
+							$('textarea[name=exp_ort]').val(expData.exp_ort);
+							$('textarea[name=exp_mail]').val(expData.exp_mail);
+							$('input[name=exp_vps]').prop('checked', '1'==expData.exp_vps);
+							$('input[name=exp_vpsnum]').val(expData.exp_vpsnum);
+							$('input[name=exp_geld]').prop('checked', '1'==expData.exp_geld);
+							$('input[name=exp_geldnum]').val(expData.exp_geldnum);
+							$('input[name=show_in_list]').prop('checked', '1'==expData.visible);
+							$('input[name=session_duration]').val(expData.session_duration);
+							$('input[name=exp_start]').val(expData.exp_start);
+							$('input[name=exp_end]').val(expData.exp_end);
+							$('input[name=max_vp]').val(expData.max_vp);
+							$('input[name=max_simultaneous_sessions]').val(expData.max_simultaneous_sessions);
+							$('input[name=exp_teiln]').val(expData.exp_vps);
+							$('input[name=vpn_geschlecht]').prop('checked', expData.vpn_geschlecht>0);
+							$('input[name=vpn_name]').prop('checked', expData.vpn_name>0);
+							$('input[name=vpn_gebdat]').prop('checked', expData.vpn_gebdat>0);
+							$('input[name=vpn_fach]').prop('checked', expData.vpn_fach>0);
+							$('input[name=vpn_semester]').prop('checked', expData.vpn_semester>0);
+							$('input[name=vpn_adresse]').prop('checked', expData.vpn_adresse>0);
+							$('input[name=vpn_tele1]').prop('checked', expData.vpn_tele1>0);
+							$('input[name=vpn_tele2]').prop('checked', expData.vpn_tele2>0);
+							$('input[name=vpn_email]').prop('checked', expData.vpn_email>0);
+							$('input[name=vpn_ifreward]').prop('checked', expData.vpn_ifreward>0);
+							$('input[name=vpn_ifbereits]').prop('checked', expData.vpn_ifbereits>0);
+							$('input[name=vpn_ifbenach]').prop('checked', expData.vpn_ifbenach>0);
+							$('#tabs').tabs("option", "active", 'automatisch'==expData.terminvergabemodus ? 0 : 1);
+						}
+					});
+				}
+			}
+		})
+
 	});
 </script>
 
@@ -158,24 +228,29 @@ if(isset($_GET['action']) && $_GET['action'] == 'create') {
 <h1>Experiment hinzufügen</h1>
 
 <table class="optionGroup">
-  <tr>
-	<td colspan="3" class="ad_edit_headline"><h3>Daten zum Versuchsleiter</h3></td>
-  </tr>
-  <tr>
-	<td style="width:200px;" class="ad_edit_headline">Name des VLs</td>
-	<td class="ad_edit_headline"><input name="vl_name" id="vl_name" type="text" size="45" maxlength="200" /></td>
-	<td class="ad_edit_headline"><img src="images/info.gif" width="17" height="17" title="Diese Angaben werden veröffentlicht und als Kontaktdaten für das Experiment angegeben." alt="" /></td>	
-  </tr>
-  <tr>
-	<td class="ad_edit_headline">Telefonnummer des VLs</td>
-	<td class="ad_edit_headline"><input name="vl_tele" id="vl_tele" type="text" size="45" maxlength="200" /></td>
-	<td class="ad_edit_headline"></td>
-  </tr>
-  <tr>
-	<td class="ad_edit_headline">Emailadresse des VLs</td>
-	<td class="ad_edit_headline"><input name="vl_email" id="vl_email" type="text" size="45" maxlength="200" /></td>
-	<td class="ad_edit_headline"></td>
-  </tr>
+	<tr>
+		<td class="ad_edit_headline">Daten kopieren von</td>
+		<td class="ad_edit_headline"><select name="copy_old" id="copy_old" style="width: 343px;" /></td>
+		<td class="ad_edit_headline"></td>
+	</tr>
+	<tr>
+		<td colspan="3" class="ad_edit_headline"><h3>Daten zum Versuchsleiter</h3></td>
+	</tr>
+	<tr>
+		<td style="width:200px;" class="ad_edit_headline">Name des VLs</td>
+		<td class="ad_edit_headline"><input name="vl_name" id="vl_name" type="text" size="45" maxlength="200" /></td>
+		<td class="ad_edit_headline"><img src="images/info.gif" width="17" height="17" title="Diese Angaben werden veröffentlicht und als Kontaktdaten für das Experiment angegeben." alt="" /></td>
+	</tr>
+	<tr>
+		<td class="ad_edit_headline">Telefonnummer des VLs</td>
+		<td class="ad_edit_headline"><input name="vl_tele" id="vl_tele" type="text" size="45" maxlength="200" /></td>
+		<td class="ad_edit_headline"></td>
+	</tr>
+	<tr>
+		<td class="ad_edit_headline">Emailadresse des VLs</td>
+		<td class="ad_edit_headline"><input name="vl_email" id="vl_email" type="text" size="45" maxlength="200" /></td>
+		<td class="ad_edit_headline"></td>
+	</tr>
 </table>
 	
 <table class="optionGroup">
