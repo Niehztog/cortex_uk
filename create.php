@@ -12,7 +12,7 @@
 if (!isset($_POST['createme'])) {
 ?>  
 <font color="#FF0000"><b>Achtung: es wird empfohlen vor dem Ausführen ein Backup ggf. vorhandener Daten zu machen.</b></font>
-<form action="<?php echo $_SERVER['PHP_SELF'] . '?' . http_build_query($_GET);?>" method="post" enctype="multipart/form-data" name="create">
+<form action="<?php echo $_SERVER['PHP_SELF']?>" method="post" name="create">
 <input type="submit" value="Create database" name="createme" />
 </form>
 <?php
@@ -25,6 +25,10 @@ if (!isset($_POST['createme'])) {
 
 if ( isset($_POST['createme']) )
 {
+	require_once __DIR__ . '/include/class/DatabaseFactory.class.php';
+	$dbf = new DatabaseFactory();
+	$mysqli = $dbf->get();
+
 	$createTableQueries = array(
 			
 		TABELLE_EXPERIMENTE =>
