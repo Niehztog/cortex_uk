@@ -17,8 +17,6 @@ define( 'TABELLE_SITZUNGEN'		, 'c_sessions'	);	//
 define( 'TABELLE_LABORE'			, 'c_lab'		);	//
 define( 'TABELLE_EXP_TO_LAB'		, 'c_exp2lab'	);	//
 
-define( 'CSS_OLD_STYLE', true );
-
 // ***COPYRIGHT RELATED***
 define('IMPRINT_CONTENTS_FULLNAME', '');
 define('IMPRINT_CONTENTS_ADDITION_1', '');
