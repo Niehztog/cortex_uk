@@ -8,23 +8,23 @@ initSession(true);
 <head>
 <meta charset="UTF-8" />
 <title>CORTEX - COmputer-aided Registration Tool for EXperiments<?php if('admin.php' === basename($_SERVER['PHP_SELF'])){echo ' (Administration)';}?></title>
-<link rel="stylesheet" href="css/<?php if(CSS_OLD_STYLE) {echo 'old/';}?>reset.css" />
+<link rel="stylesheet" href="css/reset.css" />
 
-<link rel="stylesheet" href="css/<?php if(CSS_OLD_STYLE) {echo 'old/';}?>menu.css" />
-<link rel="stylesheet" href="css/<?php if(CSS_OLD_STYLE) {echo 'old/';}?>main.css" />
+<link rel="stylesheet" href="css/menu.css" />
+<link rel="stylesheet" href="css/main.css" />
 
-<link rel="stylesheet" href="css/<?php if(CSS_OLD_STYLE) {echo 'old/';}?>copyright.css" />
+<link rel="stylesheet" href="css/copyright.css" />
 <link rel="stylesheet" href="externals/fullcalendar/fullcalendar.css" />
-<link rel="stylesheet" href="css/<?php if(CSS_OLD_STYLE) {echo 'old/';}?>fullcalendar.custom.css" />
+<link rel="stylesheet" href="css/fullcalendar.custom.css" />
 <link rel="stylesheet" href="externals/fullcalendar/fullcalendar.print.css" media='print' />
 
 <?php //jquery ui wird benötigt für die anmeldeseite (datepicker zur auswahl geburtsdatum)?>
-<link rel="stylesheet" href="css/<?php if(CSS_OLD_STYLE) {echo 'old/custom-theme';} else echo 'smoothness';?>/jquery-ui-1.10.4.custom.min.css" />
+<link rel="stylesheet" href="css/custom-theme/jquery-ui-1.10.4.custom.min.css" />
 
 <?php
 if('admin.php'===basename($_SERVER['PHP_SELF'])) {
 	?>
-	<link rel="stylesheet" href="css/<?php if(CSS_OLD_STYLE) {echo 'old/';}?>form_add.css" />
+	<link rel="stylesheet" href="css/form_add.css" />
 	<link rel="stylesheet" href="externals/jquery-timepicker/timePicker.css" />
 	<?php
 }
@@ -81,23 +81,9 @@ $( document ).ready(function() {
 			<a href="<?php sprintf('Location: http://%1$s%2$s', $_SERVER['HTTP_HOST'], $_SERVER['PHP_SELF']);?>">COmputer-aided Registration Tool for EXperiments</a>
 		</h2>
 	</div>
-	<?php
-	if(!CSS_OLD_STYLE) {
-		?>
-		<nav role="navigation" id="menu-container">
-			<?php
-				require_once 'pageelements/menu.php';
-			?>
-		</nav>
-		<?php
-	}
-	?>
 </div>
 
 <div id="mitte">
-	<?php
-	if(CSS_OLD_STYLE) {
-	?>
 	<div id="links">
 		<nav role="navigation" id="menu-container">
 			<?php
@@ -106,9 +92,6 @@ $( document ).ready(function() {
 		</nav>
 		
 	</div>
-	<?php
-	}
-	?>
 
 	<div id="content">
 	

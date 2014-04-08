@@ -1,8 +1,8 @@
 <html>
 <head>
 <title>CORTEX Creator</title>
-<link rel="stylesheet" href="css/<?php if(CSS_OLD_STYLE) {echo 'old/';}?>menu.css">
-<link rel="stylesheet" href="css/<?php if(CSS_OLD_STYLE) {echo 'old/';}?>calender.css">
+<link rel="stylesheet" href="css/menu.css">
+<link rel="stylesheet" href="css/calender.css">
 </head>
 <body>
 <div style="text-align:center">

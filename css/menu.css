@@ -1,83 +1,40 @@
 @CHARSET "UTF-8";
 
 #menu-container {
-	background: none repeat scroll 0 0 rgba(0, 0, 0, 0);
-	clear: both;
-	display: block;
-	float: left;
-	margin: 37px auto 6px;
-	width: 100%;
-	padding-left:30px;
+	position:relative;
+	width:230px;
+	min-height:400px;
+	padding:10px; 
+	margin-left:10px;
+	margin-top:0px;
+	margin-right:0px;
+	border:1px #FFFFFF solid;
 }
 
-#menu-container ul {
-  font-size: 13px;
-  list-style: none outside none;
-  margin: 0 0 0 -0.8125em;
-  padding-left: 0;
+ul.menu li.menu-item {
+	font-size:14px;
+	font-weight:bold;
+	font-family:Arial, Helvecita;
+	color:#4A71D6;
+	line-height:18px;
+	margin-bottom: 5px;
 }
 
-#menu-container li {
-	border-left: 16px solid #41799E;
-	float: left;
-	min-width: 8.5em;
-	position: relative;
+ul.sub-menu li.menu-item {
+	font-size:13px;
+	font-weight:normal;
+	font-family:Arial, Helvecita;
+	color:#4A71D6;
+	line-height:14px;
 }
 
-#menu-container a {
-  color: #555555;
-  display: block;
-  font-size: 0.85em;
-  line-height: 16px;
-  padding: 0 8px;
-  text-decoration: none;
+ul.sub-menu {
+	position:relative;
+	margin-left:20px;
+	margin-bottom:20px;
+	list-style-type:none;
 }
 
-#menu-container .menu_item_active > a, #menu-container .current-menu-ancestor > a, #menu-container .current_page_item > a, #menu-container .current_page_ancestor > a {
-  font-weight: bold;
-}
-
-#menu-container .menu_item_active > a, #menu-container .current-menu-ancestor > a, #menu-container .current_page_item > a, #menu-container .current_page_ancestor > a {
-  font-weight: bold;
-}
-
-#menu-container ul ul {
-	background-color: #F7F7F7;
-	box-shadow: 0 3px 3px rgba(0, 0, 0, 0.2);
-	display: none;
-	float: left;
-	left: -16px;
-	margin: 0;
-	position: absolute;
-	top: 16px;
-	width: 188px;
-	z-index: 99999;
-}
-
-#menu-container ul ul li {
-  left: 0;
-  margin-top: 1px;
-}
-
-#menu-container ul ul a {
-  background: none repeat scroll 0 0 #F9F9F9;
-  border-bottom: 1px dotted #DDDDDD;
-  color: #444444;
-  font-size: 0.85em;
-  font-weight: normal;
-  height: auto;
-  line-height: 1.4em;
-  padding: 10px;
-  width: 168px;
-}
-
-#menu-container li:hover > a, #menu-container ul ul *:hover > a, #menu-container a:focus {
-}
-#menu-container li:hover > a, #menu-container a:focus {
-}
-#menu-container ul li:hover > ul {
-    display: block;
-}
-#menu-container .menu_item_active > a, #menu-container .current-menu-ancestor > a, #menu-container .current_page_item > a, #menu-container .current_page_ancestor > a {
-    font-weight: bold;
+ul.sub-menu li.inactive a {
+	color: #A4A4A4;
 }
