@@ -68,11 +68,7 @@ class Menu {
 			$menu[] = $labore;
 		}
 		
-		$impressum			= $this->getMenuItemInstance('Impressum', 'impressum.php');
-		
-		$menu[] = $impressum;
-
-		return $menu; 
+		return $menu;
 		
 	}
 	

@@ -19,7 +19,7 @@ initSession(true);
 <link rel="stylesheet" href="externals/fullcalendar/fullcalendar.print.css" media='print' />
 
 <?php //jquery ui wird benötigt für die anmeldeseite (datepicker zur auswahl geburtsdatum)?>
-<link rel="stylesheet" href="css/custom-theme/jquery-ui-1.10.4.custom.min.css" />
+<link rel="stylesheet" href="css/smoothness/jquery-ui-1.10.4.custom.min.css" />
 
 <?php
 if('admin.php'===basename($_SERVER['PHP_SELF'])) {
@@ -81,17 +81,15 @@ $( document ).ready(function() {
 			<a href="<?php sprintf('Location: http://%1$s%2$s', $_SERVER['HTTP_HOST'], $_SERVER['PHP_SELF']);?>">COmputer-aided Registration Tool for EXperiments</a>
 		</h2>
 	</div>
+
+    <nav role="navigation" id="menu-container">
+        <?php
+        require_once 'pageelements/menu.php';
+        ?>
+    </nav>
 </div>
 
 <div id="mitte">
-	<div id="links">
-		<nav role="navigation" id="menu-container">
-			<?php
-				require_once 'pageelements/menu.php';
-			?>
-		</nav>
-		
-	</div>
 
 	<div id="content">
 	
