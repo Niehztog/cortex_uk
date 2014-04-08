@@ -32,7 +32,7 @@ div#header div.hgroup {
 #site-title {
 	height: 28px;
 	overflow: hidden;
-	padding: 50px 0 0 50px;
+	padding: 26px 0 0 50px;
 }
 
 #site-title a {
@@ -69,11 +69,11 @@ a {
 /*** Imported END ***/
 
 #site-title a {
-	letter-spacing:1.3em;
+	/*letter-spacing:1.3em;*/
 }
 
 #site-description a {
-	letter-spacing:0.2em;
+	/*letter-spacing:0.2em;*/
 }
 
 #mitte {
@@ -106,9 +106,9 @@ a {
 	position:relative;
 	padding:0px; 
 	width:230px;
-	font-size:9px;
+	font-size:12px;
 	margin-left:23px;
-	margin-top:10px;
+	margin-top:20px;
 }
 
 #content {

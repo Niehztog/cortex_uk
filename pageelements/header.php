@@ -13,7 +13,6 @@ initSession(true);
 <link rel="stylesheet" href="css/menu.css" />
 <link rel="stylesheet" href="css/main.css" />
 
-<link rel="stylesheet" href="css/copyright.css" />
 <link rel="stylesheet" href="externals/fullcalendar/fullcalendar.css" />
 <link rel="stylesheet" href="css/fullcalendar.custom.css" />
 <link rel="stylesheet" href="externals/fullcalendar/fullcalendar.print.css" media='print' />
@@ -76,9 +75,10 @@ $( document ).ready(function() {
 
 <div id="header">
 	<div class="hgroup">
-		<h1 id="site-title"><span><a rel="home" href="<?php sprintf('Location: http://%1$s%2$s', $_SERVER['HTTP_HOST'], $_SERVER['PHP_SELF']);?>">CORTEX</a></span></h1>
+		<h1 id="site-title"><span><a href="http://www.uni-koeln.de/">Universität zu Köln</a></span></h1>
 		<h2 id="site-description">
-			<a href="<?php sprintf('Location: http://%1$s%2$s', $_SERVER['HTTP_HOST'], $_SERVER['PHP_SELF']);?>">COmputer-aided Registration Tool for EXperiments</a>
+            <a href="http://psychologie.hf.uni-koeln.de/">Department Psychologie</a>&nbsp;<a href="http://www.hf.uni-koeln.de/">(Humanwissenschaftliche Fakultät)</a>
+			<br/><a href="#">COmputer-aided Registration Tool for EXperiments</a>
 		</h2>
 	</div>
 
