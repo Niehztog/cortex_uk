@@ -135,7 +135,16 @@ function initCalendar(eventData, purpose) {
 			
 		}
 	}
-	
+
+	//check if today is weekend, if yes start calendar for next week
+	var today = new Date();
+	if(today.getDay() == 6) {
+		today.setDate(today.getDate()+2);
+	}
+	else if(today.getDay() == 0) {
+		today.setDate(today.getDate()+1);
+	}
+
 	var calendar = $('#calendar').fullCalendar($.extend(
 		{
 			theme: true,
@@ -148,14 +157,20 @@ function initCalendar(eventData, purpose) {
 			minTime: 8,
 			maxTime: 19,
 			defaultView: 'agendaWeek',
-			hiddenDays: [0, 6],
+			//hiddenDays: [0, 6],
+			weekends: false,
 			events: eventData,
 			ignoreTimezone: true,
-			eventTextColor: '#000000'
+			eventTextColor: '#000000',
+			year: today.getFullYear(),
+			month: today.getMonth(),
+			date: today.getDate()
 		}
 		, localOptions
 		, interactionOptions
 	));
+
+
 }
 
 

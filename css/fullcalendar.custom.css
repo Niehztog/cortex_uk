@@ -6,6 +6,11 @@
 	/*margin: 0 auto;*/
 }
 
+#calendar_footer {
+	width: 860px;
+	text-align:right;
+}
+
 /*das bestimmt die hintergrundfarbe der termin-boxen*/
 div#calendar .fc-event {
 	background-color: #D2DBF8;

@@ -87,6 +87,26 @@ elseif(($_GET['menu'] == 'experiment') && (isset($_GET['expid'])) && (!isset($_P
 		$( document ).ready(function() {
 			calendarData = [<?php echo $calendarData;?>];
 			initCalendar(calendarData, 'signup');
+			$( "button#cal_prev" ).button({
+				icons: {
+					primary: "ui-icon-triangle-1-w"
+				},
+				text: false
+			});
+			$( "button#cal_next" ).button({
+				icons: {
+					primary: "ui-icon-triangle-1-e"
+				},
+				text: false
+			});
+
+			$( "button#cal_prev" ).on('click', function() {
+				$('#calendar').fullCalendar('prev');
+			});
+			$( "button#cal_next" ).on('click', function() {
+				$('#calendar').fullCalendar('next');
+			});
+
 		});
 	</script>
 	
@@ -157,6 +177,11 @@ elseif(($_GET['menu'] == 'experiment') && (isset($_GET['expid'])) && (!isset($_P
 
 	<h2>Termine</h2>
 	<div id='calendar'></div>
+
+	<div id="calendar_footer">
+		<button id="cal_prev" style="height:20px;"></button>
+		<button id="cal_next" style="height:20px;"></button>
+	</div>
 	
 	<?php 
 	/*
