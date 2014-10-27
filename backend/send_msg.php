@@ -52,7 +52,7 @@ $sqlExp = sprintf( '
 		WHERE		`id` = %2$s
 		LIMIT		1'
 	, TABELLE_EXPERIMENTE
-	, isset($_GET['expid']) ? (int)$_GET['expid'] : '(SELECT exp FROM c_vpn GROUP BY exp ORDER BY COUNT(exp) DESC LIMIT 1)'
+	, isset($_GET['expid']) ? (int)$_GET['expid'] : '(SELECT exp FROM '.TABELLE_VERSUCHSPERSONEN.' GROUP BY exp ORDER BY COUNT(exp) DESC LIMIT 1)'
 );
 $erg = $mysqli->query($sqlExp) or die($mysqli->error);
 $dataExp = $erg->fetch_assoc();
