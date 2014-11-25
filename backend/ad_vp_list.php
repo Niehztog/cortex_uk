@@ -88,10 +88,8 @@ if(false === $resultVp) {
 			},
 			"aaData":[<?
 			while($dataVp = $resultVp->fetch_assoc()) {
-				//$gebdat = formatMysqlDate($dataVp['gebdat']);
-
 				echo PHP_EOL . sprintf(
-					'["%1$d","%2$s","%3$s","%4$s","%5$s","%6$d","%7$d"],'
+					'["%1$d","%2$s","%3$s","%4$s","%5$s","%6$d","%7$d","%8$s"],'
 					, /* 1 */ $dataVp['id']
 					, /* 2 */ $dataVp['nachname'] . ", " . $dataVp['vorname']
 					, /* 3 */ $dataVp['email']
@@ -99,6 +97,7 @@ if(false === $resultVp) {
 					, /* 5 */ $dataVp['exp_name']
 					, /* 6 */ $dataVp['exp']
 					, /* 7 */ $dataVp['termin']
+					, /* 8 */ $dataVp['tag'] . $dataVp['session_s']
 				);
 			}
 			?>],
@@ -131,6 +130,7 @@ if(false === $resultVp) {
 					"sTitle":"Termin"
 					, "aTargets":[ 3 ]
 					, "bSortable": true
+                    , "iDataSort": 7
 					, "mRender": function ( termin, type, full ) {
 						return '<a class="termin_change_'+full[6]+'" href="backend/ad_termin_change.php?terminid='+full[6]+'">'+termin+'</a>';
 					}
@@ -154,6 +154,11 @@ if(false === $resultVp) {
 					, "bVisible": false
 					, "aTargets": [ 6 ]
 				}
+                ,{
+                    "sTitle":""
+                    , "bVisible": false
+                    , "aTargets": [ 7 ]
+                }
 			]
 		}).columnFilter({
 			aoColumns: [
