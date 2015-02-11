@@ -6,8 +6,10 @@ if(basename($_SERVER['SCRIPT_NAME']) === basename(__FILE__)) {
 require_once __DIR__ . '/../include/functions.php';
 require_once __DIR__ . '/../include/class/controller/SessionController.class.php';
 require_once __DIR__ . '/../include/class/DatabaseFactory.class.php';
+require_once __DIR__ . '/../include/class/user/AccessControl.class.php';
 $dbf = new DatabaseFactory();
 $mysqli = $dbf->get();
+$auth = new AccessControl();
 
 /* WENN EXPERIMENT ERSTELLT WURDE */
 /* ------------------------------ */
@@ -17,7 +19,7 @@ if(isset($_POST['createexp'])) {
 	$success = validateExpData();
 	
 	if($success) {
-	
+
 		$eintrag = sprintf( '
 			INSERT INTO `%1$s`
 			(`vl_name`, `vl_tele`, `vl_email`, `exp_name`, `exp_ort`, `exp_vps`, `exp_vpsnum`, `exp_geld`, `exp_geldnum`, `exp_zusatz`, `exp_mail`, `exp_start`, `exp_end`, `vpn_name`, `vpn_geschlecht`, `vpn_gebdat`, `vpn_fach`, `vpn_semester`, `vpn_adresse`, `vpn_tele1`, `vpn_tele2`, `vpn_email`, `vpn_ifreward`, `vpn_ifbereits`, `vpn_ifbenach`, `visible`, `max_vp`, `terminvergabemodus`, `show_in_list`, `session_duration`, `max_simultaneous_sessions`)
@@ -55,51 +57,52 @@ if(isset($_POST['createexp'])) {
 			, /* 31 */ isset($_POST['session_duration'])?$_POST['session_duration']:0
 			, /* 32 */ isset($_POST['max_simultaneous_sessions'])?$_POST['max_simultaneous_sessions']:0
 		);
-		$ergebnis = $mysqli->query($eintrag) OR die($mysqli->error); 
+		$ergebnis = $mysqli->query($eintrag) OR die($mysqli->error);
 		$expid = $mysqli->insert_id;
-		
-		if('automatisch' === $_POST['terminvergabemodus'] && isset($_POST['lab_id'])) {
-			foreach($_POST['lab_id'] as $labId) {
-				$eintrag = sprintf( '
-					INSERT INTO %1$s (`exp_id`, `lab_id`)
-					VALUES (%2$d, %3$d)'
-					, TABELLE_EXP_TO_LAB
-					, $expid
-					, $labId
-				);
-				$ergebnis = $mysqli->query($eintrag) OR die($mysqli->error);
-			}
-		}
-		else {
-			//hier werden die einzelnen termine des experiments angelegt
-			$sc = new SessionController();
-			for ( $x = 1; $x <= $_POST['days']; $x++ ) {
-				$temp_help = $_POST['exp_tag' . $x];
-				for ( $y = 1; $y <= $_POST['sessions']; $y++ ) {
-					$temp_session_s = $_POST['exp_session' . $y . 's'];
-					$temp_session_e = $_POST['exp_session' . $y . 'e'];   
-					$sc->create(
-						$expid,
-						$temp_help,
-						$temp_session_s,
-						$temp_session_e,
-						$_POST['exp_teiln']
-					);
-				}
-			}
-		}
-		
-		$location = sprintf(
-			'http://%1$s%2$s?expid=%3$d'
-			, $_SERVER['HTTP_HOST']
-			, $_SERVER['PHP_SELF']
-			, $expid
-		);
-		header('Location: ' . $location);
-		exit;
-	}
 
-}  
+        if($auth->mayEditExpLab()){
+            if('automatisch' === $_POST['terminvergabemodus'] && isset($_POST['lab_id'])) {
+                foreach($_POST['lab_id'] as $labId) {
+                    $eintrag = sprintf( '
+                        INSERT INTO %1$s (`exp_id`, `lab_id`)
+                        VALUES (%2$d, %3$d)'
+                        , TABELLE_EXP_TO_LAB
+                        , $expid
+                        , $labId
+                    );
+                    $ergebnis = $mysqli->query($eintrag) OR die($mysqli->error);
+                }
+            }
+            else {
+                //hier werden die einzelnen termine des experiments angelegt
+                $sc = new SessionController();
+                for ( $x = 1; $x <= $_POST['days']; $x++ ) {
+                    $temp_help = $_POST['exp_tag' . $x];
+                    for ( $y = 1; $y <= $_POST['sessions']; $y++ ) {
+                        $temp_session_s = $_POST['exp_session' . $y . 's'];
+                        $temp_session_e = $_POST['exp_session' . $y . 'e'];
+                        $sc->create(
+                            $expid,
+                            $temp_help,
+                            $temp_session_s,
+                            $temp_session_e,
+                            $_POST['exp_teiln']
+                        );
+                    }
+                }
+            }
+
+            $location = sprintf(
+                'http://%1$s%2$s?expid=%3$d'
+                , $_SERVER['HTTP_HOST']
+                , $_SERVER['PHP_SELF']
+                , $expid
+            );
+            header('Location: ' . $location);
+            exit;
+        }
+    }
+}
 
 require_once 'pageelements/header.php';
 
@@ -327,6 +330,9 @@ if(isset($_GET['action']) && $_GET['action'] == 'create') {
 		</li>
 	</ul>
 
+    <?php
+        if($auth->mayEditExpTimeFrame() || $auth->mayEditExpLab()) {
+    ?>
 	<div id="tabs">
 		<ul>
 			<li><a href="#tabs-1">Automatisch</a></li>
@@ -351,12 +357,21 @@ if(isset($_GET['action']) && $_GET['action'] == 'create') {
 					</select></li>
 				<li><label for="exp_start">Beginn des Expepriments<img src="images/info.gif" width="17" height="17" title="Frühester Termin, der vergeben wird" alt="" /></label><input type="text" name="exp_start" id="exp_start" class="datepicker" size="11" maxlength="10"/></li>
 				<li><label for="exp_end">Ende des Experiments<img src="images/info.gif" width="17" height="17" title="Spätester Termin, der vergeben wird" alt="" /></label><input type="text" name="exp_end" id="exp_end" class="datepicker" size="11" maxlength="10"/></li>
+                <?php
+                }
+                else {
+                    echo '<ul>';
+                }
+                ?>
 				<li><label for="max_vp">Maximale Anzahl VP<img src="images/info.gif" width="17" height="17" title="Terminvergabe endet automatisch, wenn diese Anzahl an VP angemeldet ist" alt="" /></label><input type="text" name="max_vp" id="max_vp" size="11" maxlength="10" class="spinner"/></li>
 				<li>
 					<label for="max_simultaneous_sessions">Max. Zahl gleichzeitiger Sitzungen</label>
 					<input name="max_simultaneous_sessions" id="max_simultaneous_sessions" type="text" size="5" maxlength="5" class="spinner" />
 				</li>
 			</ul>
+        <?php
+            if($auth->mayEditExpTimeFrame() || $auth->mayEditExpLab()) {
+        ?>
 		</div>
 		<div id="tabs-2" class="tabs">
 			<ul>
@@ -375,6 +390,12 @@ if(isset($_GET['action']) && $_GET['action'] == 'create') {
 			</ul>
 		</div>
 	</div>
+    <?php
+    }
+    else {
+        echo '<br/>';
+    }
+    ?>
 </div>
 
 <div class="optionGroup">

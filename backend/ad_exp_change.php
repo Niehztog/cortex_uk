@@ -1,7 +1,10 @@
 <?php
-require_once dirname(__FILE__) . '/../include/class/DatabaseFactory.class.php';
+require_once __DIR__ . '/../include/class/DatabaseFactory.class.php';
+require_once __DIR__ . '/../include/class/user/AccessControl.class.php';
+
 $dbf = new DatabaseFactory();
 $mysqli = $dbf->get();
+$auth = new AccessControl();
 
 if(!isset($_GET['expid'])) {
 	die('Expid fehlt');
@@ -72,13 +75,14 @@ $( document ).ready(function() {
 		$('<input/>').attr({
 			type: 'hidden',
 			name: 'terminvergabemodus',
-			value: $('#subtabs-1').is(':visible') ? 'automatisch' : 'manuell'
+			value: $('#subtabs-2').is(':visible') ? 'manuell' : 'automatisch'
 		}).appendTo($(this));
 	});
 });
 </script>
 </head>
 <body>
+<div id="mitte">
 <form action="admin.php?<?php echo http_build_query($_GET);?>" method="post" enctype="multipart/form-data" name="change">
 	<input id="sessions" name="sessions" type="hidden" value="" />
 	<input id="days" name="days" type="hidden" value="" />
@@ -162,7 +166,7 @@ $( document ).ready(function() {
 	</table>
 
 	<div class="optionGroup">
-		<h3>Terminvergabe</h3>
+        <h3>Terminvergabe</h3>
 		<ul>
 			<li>
 				<label for="show_in_list">In Liste anzeigen&nbsp;<img src="images/info.gif" width="17" height="17" title="Diese Option entscheidet, ob das Experiment im öffentlichen Teil von Cortex angezeigt wird. Wird es nicht angezeigt, kann es dennoch über einen speziellen Link angesteuert werden." alt="" /></label>
@@ -173,7 +177,9 @@ $( document ).ready(function() {
 				<input type="text" name="session_duration" id="session_duration" value="<?php echo $data['session_duration'];?>" size="5" class="spinner" />
 			</li>
 		</ul>
-	
+        <?php
+        if($auth->mayEditExpTimeFrame() || $auth->mayEditExpLab()) {
+        ?>
 		<div id="tabgroup_change">
 			<ul>
 				<li><a href="#subtabs-1">Automatisch</a></li>
@@ -181,10 +187,10 @@ $( document ).ready(function() {
 			</ul>
 			<div id="subtabs-1" class="tabs">
 				<ul>
-					<li><label for="lab_id">Labore</label>
-						<select name="lab_id[]" id="lab_id" size="5" style="width:200px;" multiple="multiple">
-							<?php
-							$sql = sprintf( '
+                        <li><label for="lab_id">Labore</label>
+                            <select name="lab_id[]" id="lab_id" size="5" style="width:200px;" multiple="multiple">
+                                <?php
+                                $sql = sprintf('
 								SELECT		lab.id,
 											lab.label,
 											IF(e2l.id IS NULL,\'0\', \'1\') AS selected
@@ -193,24 +199,54 @@ $( document ).ready(function() {
 									ON		e2l.lab_id = lab.id
 									AND		e2l.exp_id = %3$d
 								WHERE		lab.active = \'true\' OR NOT e2l.id IS NULL'
-								, TABELLE_LABORE							
-								, TABELLE_EXP_TO_LAB
-								, $_GET['expid']
-							);
-							$ergebnis = $mysqli->query($sql) OR die($mysqli->error);
-							
-							while($row = $ergebnis->fetch_assoc()) {
-								echo sprintf('<option value="%1$d"%2$s>%3$s</option>', $row['id'], ('1' === $row['selected'] ? ' selected="selected"' : '') ,$row['label']);
-							}
-							?>
-						</select></li>
-					<li><label for="exp_start">Beginn des Expepriments<img src="images/info.gif" width="17" height="17" title="Frühester Termin, der vergeben wird" alt="" /></label><input type="text" name="exp_start" id="exp_start" class="datepicker" value="<?php if(is_numeric($data['exp_start'])) { echo date('d.m.Y', $data['exp_start']);}?>" size="11" maxlength="10"/></li>
-					<li><label for="exp_end">Ende des Experiments<img src="images/info.gif" width="17" height="17" title="Spätester Termin, der vergeben wird" alt="" /></label><input type="text" name="exp_end" id="exp_end" class="datepicker" value="<?php if(is_numeric($data['exp_end'])) { echo date('d.m.Y', $data['exp_end']);}?>" size="11" maxlength="10"/></li>
-					<li><label for="max_vp">Maximale Anzahl VP<img src="images/info.gif" width="17" height="17" title="Terminvergabe endet automatisch, wenn diese Anzahl an VP angemeldet ist" alt="" /></label><input type="text" name="max_vp" id="max_vp" value="<?php echo $data['max_vp'];?>" size="11" maxlength="10" class="spinner"/></li>
+                                    , TABELLE_LABORE
+                                    , TABELLE_EXP_TO_LAB
+                                    , $_GET['expid']
+                                );
+                                $ergebnis = $mysqli->query($sql) OR die($mysqli->error);
+
+                                while ($row = $ergebnis->fetch_assoc()) {
+                                    echo sprintf('<option value="%1$d"%2$s>%3$s</option>', $row['id'], ('1' === $row['selected'] ? ' selected="selected"' : ''), $row['label']);
+                                }
+                                ?>
+                            </select></li>
+
+                        <li><label for="exp_start">Beginn des Expepriments<img src="images/info.gif" width="17"
+                                                                               height="17"
+                                                                               title="Frühester Termin, der vergeben wird"
+                                                                               alt=""/></label><input type="text"
+                                                                                                      name="exp_start"
+                                                                                                      id="exp_start"
+                                                                                                      class="datepicker"
+                                                                                                      value="<?php if (is_numeric($data['exp_start'])) {
+                                                                                                          echo date('d.m.Y', $data['exp_start']);
+                                                                                                      } ?>" size="11"
+                                                                                                      maxlength="10"/>
+                        </li>
+                        <li><label for="exp_end">Ende des Experiments<img src="images/info.gif" width="17" height="17"
+                                                                          title="Spätester Termin, der vergeben wird"
+                                                                          alt=""/></label><input type="text"
+                                                                                                 name="exp_end"
+                                                                                                 id="exp_end"
+                                                                                                 class="datepicker"
+                                                                                                 value="<?php if (is_numeric($data['exp_end'])) {
+                                                                                                     echo date('d.m.Y', $data['exp_end']);
+                                                                                                 } ?>" size="11"
+                                                                                                 maxlength="10"/></li>
+                    <?php
+                    }
+                    else {
+                        echo '<ul>';
+                    }
+                    ?>
+                    <li><label for="max_vp">Maximale Anzahl VP<img src="images/info.gif" width="17" height="17" title="Terminvergabe endet automatisch, wenn diese Anzahl an VP angemeldet ist" alt="" /></label><input type="text" name="max_vp" id="max_vp" value="<?php echo $data['max_vp'];?>" size="11" maxlength="10" class="spinner"/></li>
 					<li>
 						<label for="max_simultaneous_sessions">Max. Zahl gleichzeitiger Sitzungen</label>
 						<input name="max_simultaneous_sessions" id="max_simultaneous_sessions" type="text" value="<?php echo $data['max_simultaneous_sessions'];?>" size="5" maxlength="5" class="spinner" />
 					</li>
+                    <?php
+                        if($auth->mayEditExpTimeFrame() || $auth->mayEditExpLab()) {
+                    ?>
 				</ul>
 			</div>
 			<div id="subtabs-2" class="tabs">
@@ -230,6 +266,12 @@ $( document ).ready(function() {
 				</ul>
 			</div>
 		</div>
+    <?php
+    }
+    else {
+        echo '<br/>';
+    }
+    ?>
 	</div>
 	
 	<table class="optionGroup">
@@ -354,5 +396,6 @@ $( document ).ready(function() {
 
 
 </form>
+</div>
 </body>
 </html>

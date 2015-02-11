@@ -75,8 +75,8 @@ function prepareIncomingVariables() {
 	$GLOBALS['exp_zusatz'] = htmlspecialchars($_POST['exp_zusatz'], ENT_QUOTES, 'UTF-8');
 	$GLOBALS['exp_mail'] = htmlspecialchars($_POST['exp_mail'], ENT_QUOTES, 'UTF-8');
 	$GLOBALS['exp_ort'] = htmlspecialchars($_POST['exp_ort'], ENT_QUOTES, 'UTF-8');
-	$GLOBALS['exp_start'] = date_parse_from_format('d.m.Y', $_POST['exp_start']);
-	$GLOBALS['exp_end'] = date_parse_from_format('d.m.Y', $_POST['exp_end']);
+	$GLOBALS['exp_start'] = isset($_POST['exp_start'])?date_parse_from_format('d.m.Y', $_POST['exp_start']):null;
+	$GLOBALS['exp_end'] = isset($_POST['exp_end'])?date_parse_from_format('d.m.Y', $_POST['exp_end']):null;
 	
 	if( isset($_POST['vpn_gebdat_o'])&&$_POST['vpn_gebdat_o'] == 1 ) { $GLOBALS['vpn_gebdat'] = 2; };
 	if( !isset($_POST['vpn_gebdat'])||$_POST['vpn_gebdat'] == 0 ) { $GLOBALS['vpn_gebdat'] = 0; };

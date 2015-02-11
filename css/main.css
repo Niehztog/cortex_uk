@@ -210,6 +210,13 @@ div#mitte h2, div#mitte h3, div#mitte h4, div#mitte h5, div#mitte h6 {
   margin: 0 0 0.8125em;
 }
 
+div#mitte h3 {
+    background: url('../images/arrow.gif') 0 center no-repeat;
+    position:relative;
+    display: inline-block;
+    padding-left:10px;
+}
+
 div#mitte h1, div#mitte h2, div#mitte h3, div#mitte h4, div#mitte h5, div#mitte h6 {
   clear: both;
 }

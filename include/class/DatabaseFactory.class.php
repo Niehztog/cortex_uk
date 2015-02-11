@@ -19,7 +19,7 @@ class DatabaseFactory {
 			);
 			
 			if (self::$mysqli->connect_errno) {
-				throw new RuntimeException( sprintf( "Connect failed: %s\n", $mysqli->connect_error));
+				throw new RuntimeException( sprintf( "Connect failed: %s\n", self::$mysqli->connect_error));
 			}
 		}
 		return self::$mysqli;

@@ -3,21 +3,22 @@ require_once __DIR__ . '/../../config.php';
 require_once 'include/class/DatabaseFactory.class.php';
 require_once 'include/class/menu/MenuItem.class.php';
 require_once 'include/class/menu/MenuSeparator.class.php';
+require_once 'include/class/user/AccessControl.class.php';
 require_once __DIR__ . '/../ExperimentDataProvider.class.php';
 
 class Menu {
 	
 	private $mysqli;
 	
-	private $adminMode = false;
+	private $auth;
 	
 	private $currentLink;
 	
 	//private $itemId = 0;
 	
-	public function __construct($currentLink = '', $adminMode = false) {
+	public function __construct($currentLink = '') {
 		$this->currentLink = $currentLink;
-		$this->adminMode = $adminMode;
+		$this->auth = new AccessControl();
 		$dbf = new DatabaseFactory();
 		$this->mysqli = $dbf->get();
 	}
@@ -52,20 +53,26 @@ class Menu {
 		$menu[] = $experimente;
 		
 		$administration		= $this->getMenuItemInstance('Administration', 'admin.php');
-		if(!$this->adminMode) {
+		if($this->auth->isGuest()) {
 			$menu[] = $administration;
 		}
 		else {
-			$administration->setChildren($this->getSubMenuAdministration());
-			$menu[] = $administration;
-			
-			$versuchspersonen	= $this->getMenuItemInstance('Versuchspersonen', 'vpview.php');
-			$versuchspersonen->setChildren($this->getSubMenuVersuchspersonen());
-			$menu[] = $versuchspersonen;
-			
-			$labore				= $this->getMenuItemInstance('Labore', 'admin.php?menu=lab');
-			$labore->setChildren($this->getSubMenuLabore());
-			$menu[] = $labore;
+            if($this->auth->mayAccessExpControl()) {
+                $administration->setChildren($this->getSubMenuAdministration());
+                $menu[] = $administration;
+            }
+
+            if($this->auth->mayAccessVpControl()) {
+                $versuchspersonen = $this->getMenuItemInstance('Versuchspersonen', 'vpview.php');
+                $versuchspersonen->setChildren($this->getSubMenuVersuchspersonen());
+                $menu[] = $versuchspersonen;
+            }
+
+            if($this->auth->mayAccessLabControl()) {
+                $labore = $this->getMenuItemInstance('Labore', 'admin.php?menu=lab');
+                $labore->setChildren($this->getSubMenuLabore());
+                $menu[] = $labore;
+            }
 		}
 		
 		return $menu;
@@ -182,14 +189,15 @@ class Menu {
 			$subItem->setEnabled('true'===$data['active']);
 			$subMenu[] = $subItem;
 		}
-		$subMenu[] = new MenuSeparator();
-		$subItem = $this->getMenuItemInstance(
-			'Labor hinzufügen',
-			"admin.php?menu=lab&action=create"
-		);
-		$subItem->incLevel();
-		$subMenu[] = $subItem;
-	
+		if($this->auth->mayEditLabInfo()) {
+            $subMenu[] = new MenuSeparator();
+            $subItem = $this->getMenuItemInstance(
+                'Labor hinzufügen',
+                "admin.php?menu=lab&action=create"
+            );
+            $subItem->incLevel();
+            $subMenu[] = $subItem;
+        }
 		return $subMenu;
 	
 	}

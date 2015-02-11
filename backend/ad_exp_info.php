@@ -9,8 +9,10 @@ require_once __DIR__ . '/../include/class/calendar/CalendarDataProvider.class.ph
 require_once __DIR__ . '/../include/class/controller/SessionController.class.php';
 require_once __DIR__ . '/../include/class/DatabaseFactory.class.php';
 require_once __DIR__ . '/../include/class/ExperimentDataProvider.class.php';
+require_once __DIR__ . '/../include/class/user/AccessControl.class.php';
 $dbf = new DatabaseFactory();
 $mysqli = $dbf->get();
+$auth = new AccessControl();
 
 if(!isset($_GET['expid'])) {
 	die('Expid missing');
@@ -19,7 +21,9 @@ if(!isset($_GET['expid'])) {
 /* WENN EXPERIMENT GELÖSCHT WURDE */
 /* ------------------------------ */
 if(isset($_POST['delexpq'])) {
-
+    if(!$auth->mayEditExpTimeFrame()) {
+        exit;
+    }
 	$delete = sprintf('DELETE FROM %1$s WHERE exp = %2$d', TABELLE_SITZUNGEN, $_GET['expid']);
 	$ergebnis = $mysqli->query($delete) OR die($mysqli->error);
 
@@ -61,8 +65,10 @@ if(isset($_POST['editexp'])) {
 					exp_geldnum = \'%10$s\',
 					exp_zusatz = \'%11$s\',
 					exp_mail = \'%13$s\',
+					%34$s
 					exp_start = \'%14$s\',
 					exp_end = \'%15$s\',
+					%35$s
 					vpn_name = %16$d,
 					vpn_geschlecht = %17$d,
 					vpn_gebdat = %18$d,
@@ -77,7 +83,9 @@ if(isset($_POST['editexp'])) {
 					vpn_ifbenach = %27$d,
 					/* hier fehlt exp.visible*/
 					max_vp = %28$d,
+					%34$s
 					terminvergabemodus = \'%29$s\',
+					%35$s
 					show_in_list = \'%30$s\',
 					session_duration = %31$d,
 					max_simultaneous_sessions = %32$d
@@ -115,47 +123,51 @@ if(isset($_POST['editexp'])) {
 			, /* 31 */ isset($_POST['session_duration'])?$_POST['session_duration']:0
 			, /* 32 */ isset($_POST['max_simultaneous_sessions'])?$_POST['max_simultaneous_sessions']:0
 			, /* 33 */ $_GET['expid']
+            , /* 34 */ !$auth->mayEditExpTimeFrame() ? '/*' : ''
+            , /* 35 */ !$auth->mayEditExpTimeFrame() ? '*/' : ''
 		);
 		$ergebnis = $mysqli->query($update) OR die($mysqli->error);
-	
-		if('automatisch' === $_POST['terminvergabemodus'] && isset($_POST['lab_id'])) {
-			$sql = sprintf( '
-				DELETE FROM %1$s WHERE exp_id = %2$d'
-				, TABELLE_EXP_TO_LAB
-				, $_GET['expid']
-			);
-			$ergebnis = $mysqli->query($sql) OR die($mysqli->error);
-	
-			foreach($_POST['lab_id'] as $labId) {
-				$eintrag = sprintf( '
-					INSERT IGNORE INTO %1$s (`exp_id`, `lab_id`)
-					VALUES (%2$d, %3$d)'
-					, TABELLE_EXP_TO_LAB
-					, $_GET['expid']
-					, $labId
-				);
-				$ergebnis = $mysqli->query($eintrag) OR die($mysqli->error);
-			}
-		}
-		else {
-			//hier werden die einzelnen termine des experiments angelegt
-			$sc = new SessionController();
-			for ( $x = 1; $x <= $_POST['days']; $x++ ) {
-				$temp_help = $_POST['exp_tag' . $x];
-				for ( $y = 1; $y <= $_POST['sessions']; $y++ ) {
-					$temp_session_s = $_POST['exp_session' . $y . 's'];
-					$temp_session_e = $_POST['exp_session' . $y . 'e'];
-					$sc->create(
-						$_GET['expid'],
-						$temp_help,
-						$temp_session_s,
-						$temp_session_e,
-						$_POST['exp_teiln']
-					);
-				}
-			}
-		}
-	}
+
+        if($auth->mayEditExpLab()){
+            if('automatisch' === $_POST['terminvergabemodus'] && isset($_POST['lab_id'])) {
+                $sql = sprintf( '
+                    DELETE FROM %1$s WHERE exp_id = %2$d'
+                    , TABELLE_EXP_TO_LAB
+                    , $_GET['expid']
+                );
+                $ergebnis = $mysqli->query($sql) OR die($mysqli->error);
+
+                foreach($_POST['lab_id'] as $labId) {
+                    $eintrag = sprintf( '
+                        INSERT IGNORE INTO %1$s (`exp_id`, `lab_id`)
+                        VALUES (%2$d, %3$d)'
+                        , TABELLE_EXP_TO_LAB
+                        , $_GET['expid']
+                        , $labId
+                    );
+                    $ergebnis = $mysqli->query($eintrag) OR die($mysqli->error);
+                }
+            }
+            else {
+                //hier werden die einzelnen termine des experiments angelegt
+                $sc = new SessionController();
+                for ( $x = 1; $x <= $_POST['days']; $x++ ) {
+                    $temp_help = $_POST['exp_tag' . $x];
+                    for ( $y = 1; $y <= $_POST['sessions']; $y++ ) {
+                        $temp_session_s = $_POST['exp_session' . $y . 's'];
+                        $temp_session_e = $_POST['exp_session' . $y . 'e'];
+                        $sc->create(
+                            $_GET['expid'],
+                            $temp_help,
+                            $temp_session_s,
+                            $temp_session_e,
+                            $_POST['exp_teiln']
+                        );
+                    }
+                }
+            }
+        }
+    }
 }
 
 
@@ -374,8 +386,13 @@ $( document ).ready(function() {
 	<input type="hidden" name="visible" value="1" />  
 	<input name="changevis" type="submit" value="Aktivieren" style="margin-left:10px;" />
 	<? } ?>
-	
-	<input name="delexpq" type="submit" value="Löschen" onclick="return confirm('Experiment wirklich löschen?');" style="margin-left:10px;" />
+    <?php
+    if($auth->mayEditExpTimeFrame()) {
+        ?>
+        <input name="delexpq" type="submit" value="Löschen" onclick="return confirm('Experiment wirklich löschen?');" style="margin-left:10px;"/>
+        <?php
+    }
+    ?>
 </form>
 
 <div style="clear:both;"></div>

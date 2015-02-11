@@ -812,7 +812,7 @@ elseif(isset($_POST['add']) && !isset($_POST['admin'])) {
 		<tr>
 			<td>
 			  <form action="<?php echo $_SERVER['PHP_SELF'] . '?' . http_build_query($_GET);?>" method="post" enctype="multipart/form-data" name="content">
-			  <input name="expid" type="hidden" value="<?= $_POST[expid] ?>" />
+			  <input name="expid" type="hidden" value="<?php echo $_POST['expid']; ?>" />
 			  <input name="addcancel" type="submit" value="Zurück" />		
 			  </form>
 			</td>

@@ -7,8 +7,10 @@ require_once __DIR__ . '/../include/functions.php';
 require_once __DIR__ . '/../include/class/DatabaseFactory.class.php';
 require_once __DIR__ . '/../include/class/calendar/CalendarDataProvider.class.php';
 require_once __DIR__ . '/../include/class/controller/SessionController.class.php';
+require_once __DIR__ . '/../include/class/user/AccessControl.class.php';
 $dbf = new DatabaseFactory();
 $mysqli = $dbf->get();
+$auth = new AccessControl();
 
 function insertJavaScript(TimeSlotPermanentCollection $calendarData = null) {
 	?>
@@ -50,23 +52,9 @@ function insertJavaScript(TimeSlotPermanentCollection $calendarData = null) {
 						}
 					}
 					calendarDataJson = JSON.stringify(calendarData, function(key, val) {
-						/*if (typeof val == "object") {
-							if (seen.indexOf(val) >= 0)
-								return
-							seen.push(val)
-						}*/
 						if(key=='source'||key[0]=='_') return undefined;
-						//if(this.editable == false) return undefined;
 						return val
 					});
-					/*$.ajax({
-						type: "POST",
-						url: $(this).attr('action'),
-						data: $(this).serialize()+'&calendar='+calendarDataJson,
-						success: function(msg) {
-							alert(msg);
-						}
-					});*/
 
 					$(this).append('<input type="hidden" name="calendar" value="'+encodeURIComponent(calendarDataJson)+'" />');
 					return true;
@@ -95,6 +83,9 @@ function validateInputData() {
 /* LABOR HINZUFÜGEN */
 /* -------------------------- */
 if(isset($_GET['action']) && 'create' === $_GET['action'] && !isset($_POST['createlab'])) {
+    if(!$auth->mayEditLabInfo()) {
+        exit;
+    }
 	require_once 'pageelements/header.php';
 	//displayMessagesFromSession();
 	insertJavaScript();
@@ -138,7 +129,9 @@ if(isset($_GET['action']) && 'create' === $_GET['action'] && !isset($_POST['crea
 	require_once 'pageelements/footer.php';
 }
 elseif( isset($_POST['createlab']) ) {
-
+    if(!$auth->mayEditLabInfo()) {
+        exit;
+    }
 	$calendarData = json_decode(urldecode($_POST['calendar']));
 
 	//daten validieren
@@ -207,29 +200,29 @@ elseif(isset($_POST['changelab'])) {
 	$calendarData = json_decode(urldecode($_POST['calendar']));
 
 	//daten validieren
-	if( true === validateInputData() && null !== $calendarData) {
-
-		$update = sprintf( '
-			UPDATE	%1$s
-			SET		label = \'%2$s\',
-					address = \'%3$s\',
-					room_number = \'%4$s\',
-					capacity = %5$d,
-					active = \'%6$s\'
-			WHERE	id = %7$d'
-			, /* 1 */ TABELLE_LABORE
-			, /* 2 */ $mysqli->real_escape_string($_POST['label'])
-			, /* 3 */ $mysqli->real_escape_string($_POST['address'])
-			, /* 4 */ $mysqli->real_escape_string($_POST['room_number'])
-			, /* 5 */ $_POST['capacity']
-			, /* 6 */ isset($_POST['active']) ? 'true' : 'false'
-			, /* 7 */ $_GET['id']
-		);
-		$ergebnis = $mysqli->query($update);
-		if(!$ergebnis) {
-			die($mysqli->error);
-		}
-
+	if( (!$auth->mayEditLabInfo() || true === validateInputData()) && null !== $calendarData) {
+        if($auth->mayEditLabInfo()) {
+            $update = sprintf( '
+                UPDATE	%1$s
+                SET		label = \'%2$s\',
+                        address = \'%3$s\',
+                        room_number = \'%4$s\',
+                        capacity = %5$d,
+                        active = \'%6$s\'
+                WHERE	id = %7$d'
+                , /* 1 */ TABELLE_LABORE
+                , /* 2 */ $mysqli->real_escape_string($_POST['label'])
+                , /* 3 */ $mysqli->real_escape_string($_POST['address'])
+                , /* 4 */ $mysqli->real_escape_string($_POST['room_number'])
+                , /* 5 */ $_POST['capacity']
+                , /* 6 */ isset($_POST['active']) ? 'true' : 'false'
+                , /* 7 */ $_GET['id']
+            );
+            $result = $mysqli->query($update);
+            if(!$result) {
+                die($mysqli->error);
+            }
+        }
 		$sc = new SessionController();
 		$terminIds = array();
 
@@ -237,7 +230,7 @@ elseif(isset($_POST['changelab'])) {
 
 			$start = strtotimeIgnoreTimeZone($termin->start);
 			$end = strtotimeIgnoreTimeZone($termin->end);
-			
+
 			if(empty($termin->id)) {
 				//neuer termin
 				$terminId = $sc->create(
@@ -265,14 +258,16 @@ elseif(isset($_POST['changelab'])) {
 			$terminIds[] = $terminId;
 		}
 
-		$sql = sprintf( '
+        if(!empty($terminIds)) {
+            $sql = sprintf('
 			DELETE FROM %1$s WHERE lab_id = %2$d AND exp = 0 AND id NOT IN (%3$s)'
-			, TABELLE_SITZUNGEN
-			, $_GET['id']
-			, implode(',', $terminIds)
-		);
+                , TABELLE_SITZUNGEN
+                , $_GET['id']
+                , implode(',', $terminIds)
+            );
 
-		$result = $mysqli->query($sql);
+            $result = $mysqli->query($sql);
+        }
 		if(false === $result) {
 			trigger_error($mysqli->error, E_USER_WARNING);
 			storeMessageInSession(sprintf(MESSAGE_BOX_ERROR, sprintf('Fehler beim Löschen von Sitzungen für Labor id %1$d', $_GET['id'])));
@@ -303,6 +298,9 @@ elseif(isset($_POST['changelab'])) {
 	}
 }
 elseif(isset($_POST['dellab']) && isset($_GET['id'])) {
+    if(!$auth->mayEditLabInfo()) {
+        exit;
+    }
 	$delete = sprintf( '
 		DELETE FROM %1$s WHERE id = %2$d LIMIT 1'
 		, /* 1 */ TABELLE_LABORE
@@ -413,7 +411,7 @@ if( isset( $daten ) ) {
 	<form action="admin.php?menu=lab&id=<?php echo (int)$_GET['id'];?>" method="post" enctype="multipart/form-data" name="<?php echo $action;?>" id="<?php echo $action;?>">
 
 	<h1 style="display:inline;">Labor <?php if(isset($daten['label'])){echo '"'.$daten['label'].'" ';}?><?php echo $versucheAktion;?></h1>
-	<?php if(isset($_GET['id'])) {?>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input name="dellab" type="submit" value="Löschen" onclick="return confirm('Labor wirklich löschen?');" /><?php }?>
+	<?php if(isset($_GET['id']) && $auth->mayEditLabInfo()) {?>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input name="dellab" type="submit" value="Löschen" onclick="return confirm('Labor wirklich löschen?');" /><?php }?>
 	
 	<div class="optionGroup">
 		<div id="tabs">
@@ -424,10 +422,10 @@ if( isset( $daten ) ) {
 			</ul>
 			<div id="tabs-1" class="tabs">
 				<ul>
-					<li><label for="label">Name des Labors</label><INPUT type="text" name="label" id="label" size="43" value="<?php echo $daten['label'];?>"></li>
-					<li><label for="address">Adresse</label><textarea name="address" id="address" rows="5" cols="40"><?php echo $daten['address'];?></textarea></li>
-					<li><label for="room_number">Zimmernummer</label><INPUT type="text" name="room_number" id="room_number" size="43" value="<?php echo $daten['room_number'];?>"></li>
-					<li><label for="capacity">Anzahl der Arbeitsplätze</label><INPUT type="text" name="capacity" id="capacity" size="40" value="<?php echo $daten['capacity'];?>" class="spinner"></li>
+					<li><label for="label">Name des Labors</label><?php if($auth->mayEditLabInfo()){?><INPUT type="text" name="label" id="label" size="43" value="<?php }echo $daten['label']; if($auth->mayEditLabInfo()){?>"><?php }?></li>
+					<li><label for="address">Adresse</label><?php if($auth->mayEditLabInfo()){?><textarea name="address" id="address" rows="5" cols="40"><?php }echo $daten['address']; if($auth->mayEditLabInfo()){?></textarea><?php }?></li>
+					<li><label for="room_number">Zimmernummer</label><?php if($auth->mayEditLabInfo()){?><INPUT type="text" name="room_number" id="room_number" size="43" value="<?php }echo $daten['room_number']; if($auth->mayEditLabInfo()){?>"><?php }?></li>
+					<li><label for="capacity">Anzahl der Arbeitsplätze</label><?php if($auth->mayEditLabInfo()){?><INPUT type="text" name="capacity" id="capacity" size="40" value="<?php }echo $daten['capacity']; if($auth->mayEditLabInfo()){?>" class="spinner"><?php }?></li>
 					<li><label for="active">Aktiviert</label><input type="checkbox" name="active" id="active"<?php if('true'===$daten['active']){echo ' checked="checked"';}?>/></li>
 				</ul>
 			</div>

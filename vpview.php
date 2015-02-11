@@ -1,6 +1,11 @@
 <?php
 require_once __DIR__ . '/include/functions.php';
 require_once 'include/class/DatabaseFactory.class.php';
+require_once 'include/class/user/AccessControl.class.php';
+$auth = new AccessControl();
+if(!$auth->mayAccessVpControl()) {
+    exit;
+}
 $dbf = new DatabaseFactory();
 $mysqli = $dbf->get();
 
