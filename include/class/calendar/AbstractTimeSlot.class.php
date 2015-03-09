@@ -42,6 +42,7 @@ abstract class AbstractTimeSlot {
 	 * @param int $id 
 	 * @param DateTime $start
 	 * @param DateTime $end
+     * @throws InvalidArgumentException
 	 */
 	public function __construct($id, DateTime $start, DateTime $end) {
 		
@@ -56,6 +57,7 @@ abstract class AbstractTimeSlot {
 	 * 
 	 * @param DateTime $start
 	 * @param DateTime $end
+     * @throws InvalidArgumentException
 	 */
 	private function validateStartEnd(DateTime $start, DateTime $end) {
 		if($start >= $end) {

@@ -164,8 +164,14 @@ class TimeSlotPermanentCollection extends AbstractTimeSlotCollection {
 			
 			$start = DateTime::createFromFormat('Y-m-d?H:i:s', $termin['start']);
 			$end = DateTime::createFromFormat('Y-m-d?H:i:s', $termin['end']);
-			
-			$item = new TimeSlotPermanent($id, $start, $end);
+
+            try {
+                $item = new TimeSlotPermanent($id, $start, $end);
+            }
+            catch(InvalidArgumentException $e) {
+                trigger_error($e, E_USER_WARNING);
+                continue;
+            }
 			if($readApplicationCount) {
 				$amount = $this->getApplicationCountForSession($id);
 				
