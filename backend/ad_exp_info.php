@@ -623,7 +623,7 @@ $( document ).ready(function() {
 				FROM		%1$s AS ses
 				LEFT JOIN	%2$s AS lab
 					ON		ses.lab_id = lab.id
-				WHERE		`exp` = %3$d
+				WHERE		ses.exp = %3$d
 				ORDER BY	ses.tag ASC, ses.session_s ASC'
 				, TABELLE_SITZUNGEN
 				, TABELLE_LABORE
@@ -643,6 +643,9 @@ $( document ).ready(function() {
 					, $termin['id']
 				);
 				$erg3 = $mysqli->query($abfrage3);
+                if('automatisch'===$data['terminvergabemodus'] && 0 === $erg3->num_rows) {
+                    continue;
+                }
 				?>
 				<tr>
 				<td class="termin">
@@ -659,7 +662,14 @@ $( document ).ready(function() {
 					<?php echo $ende;?>
 				</td>
 				<td class="termin">
-					<?php echo $termin['ort'];?>
+					<?php
+                    if(empty($termin['ort'])) {
+                        echo '<span style="font-style:italic;color:#d3d3d3">[manueller&nbsp;Termin]</span>';
+                    }
+                    else {
+                        echo $termin['ort'];
+                    }
+                    ?>
 				</td>
 				<td class="termin">
 					<?php
