@@ -26,6 +26,7 @@ body, input, textarea {
 }
 
 div#header div.hgroup {
+    height:125px;
 	margin: 0 7.6%;
 }
 
