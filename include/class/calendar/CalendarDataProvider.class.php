@@ -78,9 +78,15 @@ class CalendarDataProvider extends DatabaseClient {
 			, $expId
 		);
 		
-		return new TimeSlotPermanentCollection($sqlWhere);
+		return new TimeSlotPermanentCollection($sqlWhere, true, null, true);
 	}
-	
+
+    /**
+     * Returns list of timeslots for given experiment
+     *
+     * @param $expId
+     * @return TimeSlotPermanentCollection|TimeSlotTemporaryCollection
+     */
 	public function getAvailableSessionsFor($expId) {
 		
 		$mysqli = $this->getDatabase();

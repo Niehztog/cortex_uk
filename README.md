@@ -19,3 +19,7 @@ Installation
   * __the system should be ready for use now__
 6. _(optional)_ delete all obsolete files within the `externals` subfolder
   * _Hint:_ you will find a list of all mandatory files in the textfile `externals/.requiredFiles`
+  
+Troubleshooting
+---------------
+In case you see a "`Parse error`", make sure that in **php.ini** **short_open_tag** is enabled: `short_open_tag = On`

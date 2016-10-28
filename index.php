@@ -282,7 +282,7 @@ elseif (isset($_POST['chosendate'])) {
 	<tr>
 		<td>
 	<form action="<?php echo $_SERVER['PHP_SELF'] . '?' . http_build_query($_GET);?>" method="post" enctype="multipart/form-data" name="create">
-	<table style="margin-left:15px; margin-top:-20px;">
+	<table style="margin-left:15px;">
 	<tr>
 		<td colspan="4" class="ad_edit_headline"><h2>Anmeldung</h2></td>
 	</tr>
@@ -310,20 +310,16 @@ elseif (isset($_POST['chosendate'])) {
 	<?php
 	$abfrage2 = "SELECT * FROM ".TABELLE_SITZUNGEN." WHERE `exp` = '$expId' ORDER BY tag, session_s ASC" ;
 	$erg2 = $mysqli->query($abfrage2);
+	$chosenDateFound = false;
 	while ($data2 = $erg2->fetch_assoc()) {
-	
-	$vpcur = 0; $tempcur = 0;  
-	$abfrage3 = "SELECT * FROM ".TABELLE_VERSUCHSPERSONEN." WHERE `exp` = '$expId' AND `termin` = '$data2[id]' ";
-	$erg3 = $mysqli->query($abfrage3);
-	while ($data3 = $erg3->fetch_assoc()) {
-	   $vpcur = $tempcur + 1;
-	   $tempcur = $vpcur;
-	}
-	
-	
-		if ( $data2['maxtn'] > $vpcur ) {
+		$abfrage3 = "SELECT COUNT(termin) AS count FROM ".TABELLE_VERSUCHSPERSONEN." WHERE `exp` = '$expId' AND `termin` = '$data2[id]'";
+		$erg3 = $mysqli->query($abfrage3);
+		$data3 = $erg3->fetch_assoc();
+		$signUpCount = (int)$data3['count'];
+
+		if ( $data2['maxtn'] > $signUpCount ) {
 		?>
-		  <option value="<?= $data2['id'] ?>" <? if ($data2['id'] == $_POST['id']) {?>selected<? } ?>><?php echo formatMysqlDate($data2['tag']) . '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' . substr($data2['session_s'], 0, 5) . '-' . substr($data2['session_e'], 0, 5);?></option>
+		  <option value="<?= $data2['id'] ?>" <? if ($data2['id'] == $_POST['id']) {$chosenDateFound = true;?>selected<? } ?>><?php echo formatMysqlDate($data2['tag']) . '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' . substr($data2['session_s'], 0, 5) . '-' . substr($data2['session_e'], 0, 5);?></option>
 		<?php
 		}
 	}
@@ -331,6 +327,12 @@ elseif (isset($_POST['chosendate'])) {
 		</select>
 		
 		<?php
+			if(!$chosenDateFound) {
+				?>
+				<br/><font size="-2" color="#FF0000"><i>Achtung: Der gewählte Termin ist nichtmehr verfügbar.</i></font>
+				<?php
+			}
+
 			}
 		?>
 		
@@ -693,7 +695,7 @@ elseif(isset($_POST['add']) && !isset($_POST['admin'])) {
 	else {
 		$terminId = (int)$_POST['termin'];
 
-		$sqlSes = "SELECT maxtn FROM ".TABELLE_SITZUNGEN." WHERE `exp` = '$expId' AND id = $terminId" ;
+		$sqlSes = "SELECT maxtn FROM ".TABELLE_SITZUNGEN." WHERE `exp` = '$expId' AND id = $terminId";
 		$resultSes = $mysqli->query($sqlSes);
 		$dataSes = $resultSes->fetch_assoc();
 

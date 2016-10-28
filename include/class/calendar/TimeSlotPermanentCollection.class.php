@@ -3,11 +3,30 @@ require_once __DIR__ . '/TimeSlotPermanent.class.php';
 require_once __DIR__ . '/AbstractTimeSlotCollection.class.php';
 
 class TimeSlotPermanentCollection extends AbstractTimeSlotCollection {
-	
-	public function __construct($sqlWhere, $readApplicationCount = false, array $eventAttribues = null) {
-		$this->readSessionsFromDatabase($sqlWhere, $readApplicationCount, $eventAttribues);
+
+    /**
+     * TimeSlotPermanentCollection constructor.
+     *
+     * @param $sqlWhere
+     * @param bool $readApplicationCount
+     * @param array|null $eventAttribues
+     * @param bool $freeSlotsOnly
+     */
+	public function __construct(
+	    $sqlWhere,
+        $readApplicationCount = false,
+        array $eventAttribues = null,
+        $freeSlotsOnly = false
+    ) {
+		$this->readSessionsFromDatabase($sqlWhere, $readApplicationCount, $eventAttribues, $freeSlotsOnly);
 	}
-	
+
+    /**
+     * Counts the amount of signups for a specific timeslot
+     *
+     * @param $timeSlot
+     * @return mixed
+     */
 	public function getSignUpCountForSession($timeSlot) {
 		foreach($this->timeSlotList as $id => $currentTimeSlot) {
 			if(		$currentTimeSlot->getStart() == $timeSlot->getStart()
@@ -135,14 +154,20 @@ class TimeSlotPermanentCollection extends AbstractTimeSlotCollection {
 		}
 	}
 	
-	private function readSessionsFromDatabase($sqlWhere, $readApplicationCount = false, array $eventAttribues = null) {
+	private function readSessionsFromDatabase(
+	    $sqlWhere,
+        $readApplicationCount = false,
+        array $eventAttribues = null,
+        $freeSlotsOnly = false
+    ) {
 		$mysqli = $this->getDatabase();
 	
 		$sql = sprintf( '
 			SELECT	id,
 					CONCAT(tag,"T",session_s) as start,
 					CONCAT(tag,"T",session_e) as end,
-					exp
+					exp,
+					maxtn
 			FROM	%1$s
 			WHERE	%2$s'
 				, TABELLE_SITZUNGEN
@@ -172,15 +197,21 @@ class TimeSlotPermanentCollection extends AbstractTimeSlotCollection {
                 trigger_error($e, E_USER_WARNING);
                 continue;
             }
-			if($readApplicationCount) {
+			if($readApplicationCount || $freeSlotsOnly) {
 				$amount = $this->getApplicationCountForSession($id);
 				
-				if(0 === $amount) {
+				if(($freeSlotsOnly === false && 0 === $amount)
+                    || ($freeSlotsOnly && $amount >= (int)$termin['maxtn'])) {
 					continue;
 				}
-				$item->setAmount($amount);
+                if($readApplicationCount) {
+                    $item->setAmount($amount);
+                }
+                if($freeSlotsOnly) {
+                    $item->setCapacity((int)$termin['maxtn']);
+                }
 			}
-			else {
+			if(!$readApplicationCount) {
 				$item->setHideAmount(true);
 			}
 			
