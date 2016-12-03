@@ -52,7 +52,7 @@ $( document ).ready(function() {
   <tr>
 	<td colspan="5" class="ad_edit_headline">
 		<div style="text-align:center">
-			<input type="hidden" name="expid" value="<?= $_GET[expid]?>" />	
+			<input type="hidden" name="expid" value="<?php echo $_GET['expid'];?>" />
 			<input name="addsess" type="submit" value="Termin hinzufügen" />&nbsp;&nbsp;
 			<input name="addcancel" type="button" value="Abbrechen" onclick="javascript: window.parent.$('[id=add]').dialog('close');" / /></div>
 		</div>

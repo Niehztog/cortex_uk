@@ -515,362 +515,290 @@ elseif (isset($_POST['chosendate'])) {
 
 elseif(isset($_POST['add']) && !isset($_POST['admin'])) {
 
-	$edp = ExperimentDataProvider::getInstanceByEncryptedId($_GET['expid']);
-	$expId = $edp->getExpId();
+    try {
+        $edp = ExperimentDataProvider::getInstanceByEncryptedId($_GET['expid']);
+        $expId = $edp->getExpId();
 
-	if(!$edp->isSignUpAllowed()) {
-		storeMessageInSession(sprintf(MESSAGE_BOX_ERROR, 'Anmeldungen für dieses Experiment sind derzeit nicht möglich. Bitte versuchen Sie es zu einem späteren Zeitpunkt noch einmal.'));
-		require_once 'pageelements/header.php';
-		require_once 'pageelements/footer.php';
-		exit;
-	}
+        if (!$edp->isSignUpAllowed()) {
+            throw new RuntimeException('Anmeldungen für dieses Experiment sind derzeit nicht möglich. Bitte versuchen Sie es zu einem späteren Zeitpunkt noch einmal.');
+        }
 
-	# CHECK: PFLICHTFELDER / FEHLER #
-	
-	$Fehler = false;
-	$Feld = '';
-	
-	$abfrage = sprintf( '
+        $errorFields = array();
+
+        $abfrage = sprintf('
 		SELECT	*
 		FROM	%1$s
 		WHERE	id = %2$d
 			AND	visible = "1"'
-		, TABELLE_EXPERIMENTE
-		, $expId
-	);
-	$erg6 = $mysqli->query($abfrage);
-	$data = $erg6->fetch_assoc();
-	
-	$exp_name=$data['exp_name'];
-	
-	if ( $_POST['vorname'] == "" ) { $Fehler = true; $Feld .= "&bull; Vorname<br />";  };
-	if ( $_POST['nachname'] == "" ) { $Fehler = true; $Feld .= "&bull; Nachname<br />";  };
-	if ( $_POST['email'] == "" ) { $Fehler = true; $Feld .= "&bull; Email-Adresse<br />"; }
-	
-	if ( $data['vpn_gebdat'] == 2 ) { if ( empty($_POST['gebdat']) ) { $Fehler = true; $Feld .= "&bull; Geburtsdatum<br />"; } };
-	if ( $data['vpn_fach'] == 2 ) { if ( empty($_POST['fach']) ) { $Fehler = true; $Feld .= "&bull; Studienfach<br />"; } };
-	if ( $data['vpn_semester'] == 2 ) { if ( empty($_POST['semester']) ) { $Fehler = true; $Feld .= "&bull; Semester<br />"; } };
-	if ( $data['vpn_adresse'] == 2 ) { if ( empty($_POST['anschrift']) ) { $Fehler = true; $Feld .= "&bull; Adresse<br />"; } };
-	if ( $data['vpn_tele1'] == 2 ) { if ( empty($_POST['telefon1']) ) { $Fehler = true; $Feld .= "&bull; Telefon1<br />"; } };
-	if ( $data['vpn_tele2'] == 2 ) { if ( empty($_POST['telefon2']) ) { $Fehler = true; $Feld .= "&bull; Telefon2<br />"; } };
-	
-	require_once 'pageelements/header.php';
-	
-	if(true == $Fehler) {
-		?>
-		<table> 
-		<tr>
-			<td><h1><?= $exp_name ?></h1></td>
-		</tr>
-		<tr>
-			<td>
-		<table style="margin-left:15px; margin-top:-20px;">
-		<tr>
-			<td class="ad_edit_headline"><h2>Anmeldung</h2></td>
-		</tr>
-		<tr>
-			<td>
-		<?  
-		echo "Die folgenden Pflichtfelder wurden nicht ausgefüllt:<br /><br />";
-		echo "$Feld<br /><br />";
-		echo 'Bitte gehen Sie <a href="javascript: history.back();">zurück</a> und überprüfen Sie ihre Eingabe.';
-		?>
-			</td>
-		</tr>
-		</table>
-			</td>
-		</tr>
-		</table>
-		<?
-		exit();
-	}
-	  
-	if ( $data['vpn_gebdat'] == 2 ) {
-		$Fehler = false;
-		
-		if(substr_count($_POST['gebdat'], '.') != 2) {
-			$Fehler = true;
-		}
-		if(strlen($_POST['gebdat']) != 10 ) {
-			$Fehler = true;
-		}
-		
-		if(true == $Fehler) {
-			?>  
-			<table> 
-			<tr>
-				<td><h1><?= $exp_name ?></h1></td>
-			</tr>
-			<tr>
-				<td>
-			<table style="margin-left:15px; margin-top:-20px;">
-			<tr>
-				<td class="ad_edit_headline"><h2>Anmeldung</h2></td>
-			</tr>
-			<tr>
-				<td>
-			<?php
-			echo "Ihr Geburtsdatum ist in einem falschen Format angegeben. Bitte beachten Sie, dass Ihr Geburtsdatum unbedingt im Format <b>tt.mm.jjjj</b> angegeben werden muss." . "<br /><br />";
-			echo "Bitte gehen Sie <a href=\"javascript: history.back();\">zurück</a> und überprüfen Sie ihre Eingabe.";
-			?>
-				</td>
-			</tr>
-			</table>
-				</td>
-			</tr>
-			</table>
-			<?  
-			exit();
-		}
-	}
-	
-	$Fehler = false;
-	
-	if (!strstr($_POST['email'],"@")) {
-		$Fehler = true;
-	}
-	if (!strstr($_POST['email'],".")) {
-		$Fehler = true;
-	}
-	
-	if(true == $Fehler) {
-		?>  
-		<table> 
-		<tr>
-			<td><h1><?= $exp_name ?></h1></td>
-		</tr>
-		<tr>
-			<td>
-		<table style="margin-left:15px; margin-top:-20px;">
-		<tr>
-			<td class="ad_edit_headline"><h2>Anmeldung</h2></td>
-		</tr>
-		<tr>
-			<td>
-		<?  
-		echo "Die angegebene Mailadresse <b>" . (isset($_POST['email'])?$_POST['email']:'') . "</b> ist fehlerhaft." . "<br /><br />";
-		echo "Bitte gehen Sie <a href=\"javascript: history.back();\">zurück</a> und überprüfen Sie ihre Eingabe.";
-		?>
-			</td>
-		</tr>
-		</table>
-			</td>
-		</tr>
-		</table>  
-		<?
-		exit();
-	} 
-	
-	
-	
-	/* CHECK: PLÄTZE FREI */ 
-	$freeSlotsAvailable = true;
-	if('automatisch' === $data['terminvergabemodus']) {
-		try {
-			$termin = TimeSlotTemporary::getInstanceByTemporaryId($_POST['termin']);
-			$terminStart = $termin->getStart();
-			$terminEnd = $termin->getEnd();
-			
-			$cdp = new CalendarDataProvider();
-			$labId = $cdp->getFirstLabWhereTimeSlotFits($expId, $terminStart, $terminEnd);
-			
-			$sc = new SessionController();
-			$terminId = $sc->create(
-				$expId,
-				$terminStart->format('d.m.Y'),
-				$terminStart->format('H:i'),
-				$terminEnd->format('H:i'),
-				1,
-				$labId
-			);
-			$vpcur = 1;
-		}
-		catch(Exception $e) {
-			trigger_error($e, E_USER_WARNING);
-			$freeSlotsAvailable = false;
-		}
-		
+            , TABELLE_EXPERIMENTE
+            , $expId
+        );
+        $erg6 = $mysqli->query($abfrage);
+        $data = $erg6->fetch_assoc();
 
-	}
-	else {
-		$terminId = (int)$_POST['termin'];
+        $exp_name = $data['exp_name'];
 
-		$sqlSes = "SELECT maxtn FROM ".TABELLE_SITZUNGEN." WHERE `exp` = '$expId' AND id = $terminId";
-		$resultSes = $mysqli->query($sqlSes);
-		$dataSes = $resultSes->fetch_assoc();
+        if (empty(trim($_POST['vorname']))) {
+            $errorFields[] = 'Vorname';
+        };
+        if (empty(trim($_POST['nachname']))) {
+            $errorFields[] = 'Nachname';
+        };
+        if (empty(trim($_POST['email']))) {
+            $errorFields[] = 'Email-Adresse';
+        }
 
-		$abfrage3 = "SELECT COUNT(termin) AS count FROM ".TABELLE_VERSUCHSPERSONEN." WHERE termin = '$terminId'";
-		$erg3 = $mysqli->query($abfrage3);
-		  
-		$data3 = $erg3->fetch_assoc();
-		$signUpCount = (int)$data3['count'];
-		
-		$freeSlots = (int)$dataSes['maxtn'] - $signUpCount;
-		if($freeSlots <= 0) {
-			$freeSlotsAvailable = false;
-		}
+        if ($data['vpn_gebdat'] == 2) {
+            if (empty($_POST['gebdat'])) {
+                $errorFields[] = 'Geburtsdatum';
+            }
+        };
+        if ($data['vpn_fach'] == 2) {
+            if (empty($_POST['fach'])) {
+                $errorFields[] = 'Studienfach';
+            }
+        };
+        if ($data['vpn_semester'] == 2) {
+            if (empty($_POST['semester'])) {
+                $errorFields[] = 'Semester';
+            }
+        };
+        if ($data['vpn_adresse'] == 2) {
+            if (empty($_POST['anschrift'])) {
+                $errorFields[] = 'Adresse';
+            }
+        };
+        if ($data['vpn_tele1'] == 2) {
+            if (empty($_POST['telefon1'])) {
+                $errorFields[] = 'Telefon1';
+            }
+        };
+        if ($data['vpn_tele2'] == 2) {
+            if (empty($_POST['telefon2'])) {
+                $errorFields[] = 'Telefon2';
+            }
+        };
+        
+        if (!empty($errorFields)) {
+            throw new RuntimeException('Die folgenden Pflichtfelder wurden nicht ausgefüllt: ' . implode(', ', $errorFields));
+        }
 
-	}
+        if ($data['vpn_gebdat'] == 2) {
+            if (substr_count($_POST['gebdat'], '.') != 2 || strlen($_POST['gebdat']) != 10) {
+                throw new RuntimeException('Ihr Geburtsdatum ist in einem falschen Format angegeben. Bitte beachten Sie, dass Ihr Geburtsdatum unbedingt im Format tt.mm.jjjj angegeben werden muss.');
+            }
+        }
 
-	/* ANMELDUNG: PLÄTZE FREI! */  
-	/***************************/
-	if($freeSlotsAvailable) {
-	
-		if(isset($_POST['gebdat'])) {
-			$gebdat = formatDateForMysql($_POST['gebdat']);
-		}
-		
-		$eintrag = sprintf( '
-			INSERT INTO `%1$s`
-			(`exp`, `vorname`, `nachname`, `geschlecht`, `gebdat`, `fach`, `semester`, `anschrift`, `telefon1`, `telefon2`, `email`, `geldvps`, `andere`, `weitere`, `termin`)
-			VALUES (%2$d, \'%3$s\', \'%4$s\', \'%5$s\', \'%6$s\', \'%7$s\', \'%8$s\', \'%9$s\', \'%10$s\', \'%11$s\', \'%12$s\', \'%13$s\', \'%14$s\', \'%15$s\', %16$d)'
-			, /*  1 */ TABELLE_VERSUCHSPERSONEN
-			, /*  2 */ $expId
-			, /*  3 */ isset($_POST['vorname'])?$mysqli->real_escape_string($_POST['vorname']):''
-			, /*  4 */ isset($_POST['nachname'])?$mysqli->real_escape_string($_POST['nachname']):''
-			, /*  5 */ isset($_POST['geschlecht'])?$mysqli->real_escape_string($_POST['geschlecht']):''
-			, /*  6 */ isset($_POST['gebdat'])?$mysqli->real_escape_string($gebdat):'0000-00-00'
-			, /*  7 */ isset($_POST['fach'])?$mysqli->real_escape_string($_POST['fach']):''
-			, /*  8 */ isset($_POST['semester'])?$mysqli->real_escape_string($_POST['semester']):''
-			, /*  9 */ isset($_POST['anschrift'])?$mysqli->real_escape_string($_POST['anschrift']):''
-			, /* 10 */ isset($_POST['telefon1'])?$mysqli->real_escape_string($_POST['telefon1']):''
-			, /* 11 */ isset($_POST['telefon2'])?$mysqli->real_escape_string($_POST['telefon2']):''
-			, /* 12 */ isset($_POST['email'])?$mysqli->real_escape_string($_POST['email']):''
-			, /* 13 */ isset($_POST['geldvps'])?$mysqli->real_escape_string($_POST['geldvps']):''
-			, /* 14 */ isset($_POST['andere'])?$mysqli->real_escape_string($_POST['andere']):''
-			, /* 15 */ isset($_POST['weitere'])?$mysqli->real_escape_string($_POST['weitere']):''
-			, /* 16 */ $terminId
-		);
-		$ergebnis = $mysqli->query($eintrag);
-		if(false === $ergebnis) {
-			if( 1062 === $mysqli->errno) {
-				storeMessageInSession(sprintf(MESSAGE_BOX_ERROR, sprintf('Anmeldung nicht möglich. Für die Email Adresse %1$s liegt bereits eine Anmeldung für dieses Experiment vor.', $_POST['email'])));
-			}
-			else {
-				storeMessageInSession(sprintf(MESSAGE_BOX_ERROR, sprintf('Interner Fehler bei der Anmeldung. Bitte wenden Sie sich per Email an den Versuchsleiter. (%1$d)', __LINE__)));
-			}
-		} 
-		
-		$abfrage = "SELECT exp_name FROM ".TABELLE_EXPERIMENTE." WHERE `id` = '$expId'" ;
-		$erg = $mysqli->query($abfrage);
-		while ($data = $erg->fetch_assoc())
-			{
-		?>
-		<table> 
-		<tr>
-			<td><h1><?php echo $data['exp_name']; ?></h1></td>
-		</tr>
-		<?  } ?>  
-		<tr>
-			<td>
-		<table style="margin-left:15px; margin-top:-20px;">
-		<tr>
-			<td class="ad_edit_headline"><h2>Anmeldung</h2></td>
-		</tr>
-		<tr>
-			<td>
-		<? $abfrage = "SELECT * FROM ".TABELLE_EXPERIMENTE." WHERE `id` = '$expId'" ;
-		$erg = $mysqli->query($abfrage);
-		while ($data2 = $erg->fetch_assoc())
-			{  
-		?>
-		Vielen Dank für Ihre Anmeldung!<br />
-		Sie werden in Kürze eine Terminbestätigung in ihrem Email-Postfach finden.<br /><br />
-		Sollten sie noch weitere Fragen haben, können Sie sich gerne per Telefon an uns wenden oder eine Email schreiben.<br /><br />
-		<?
-		
-		$abfrage2 = "SELECT * FROM ".TABELLE_SITZUNGEN." WHERE `id` = '$terminId'" ;
-		$erg2 = $mysqli->query($abfrage2);
-		while ($data3 = $erg2->fetch_assoc()) {
-			$termin = formatMysqlDate($data3['tag']);
+        if (!strstr($_POST['email'], "@") || !strstr($_POST['email'], ".")) {
+            throw new RuntimeException(sprintf('Die angegebene Mailadresse %1$s ist fehlerhaft.', isset($_POST['email']) ? $_POST['email'] : ''));
+        }
 
-			$letter = htmlspecialchars_decode($data2['exp_mail'], ENT_QUOTES);
+        /* CHECK: PLÄTZE FREI */
+        $freeSlotsAvailable = true;
+        if ('automatisch' === $data['terminvergabemodus']) {
+            try {
+                $termin = TimeSlotTemporary::getInstanceByTemporaryId($_POST['termin']);
+                $terminStart = $termin->getStart();
+                $terminEnd = $termin->getEnd();
+
+                $cdp = new CalendarDataProvider();
+                $labId = $cdp->getFirstLabWhereTimeSlotFits($expId, $terminStart, $terminEnd);
+
+                $sc = new SessionController();
+                $terminId = $sc->create(
+                    $expId,
+                    $terminStart->format('d.m.Y'),
+                    $terminStart->format('H:i'),
+                    $terminEnd->format('H:i'),
+                    1,
+                    $labId
+                );
+                $vpcur = 1;
+            } catch (Exception $e) {
+                trigger_error($e, E_USER_WARNING);
+                $freeSlotsAvailable = false;
+            }
 
 
-			if (isset($_POST['geschlecht']) && $_POST['geschlecht'] == "männlich") { $letter = str_replace("!liebe/r!","Lieber",$letter); }
-			else { $letter = str_replace("!liebe/r!","Liebe",$letter); }
+        } else {
+            $terminId = (int)$_POST['termin'];
 
-			$letter = str_replace("!vp_vorname!",$_POST['vorname'],$letter);
-			$letter = str_replace("!vp_nachname!",$_POST['nachname'],$letter);
+            $sqlSes = "SELECT maxtn FROM " . TABELLE_SITZUNGEN . " WHERE `exp` = '$expId' AND id = $terminId";
+            $resultSes = $mysqli->query($sqlSes);
+            $dataSes = $resultSes->fetch_assoc();
 
-			$letter = str_replace("!termin!",$termin,$letter);
-			$letter = str_replace("!beginn!",substr($data3['session_s'],0,5),$letter);
-			$letter = str_replace("!ende!",substr($data3['session_e'],0,5),$letter);
+            $abfrage3 = "SELECT COUNT(termin) AS count FROM " . TABELLE_VERSUCHSPERSONEN . " WHERE termin = '$terminId'";
+            $erg3 = $mysqli->query($abfrage3);
 
-			$letter = str_replace("!exp_name!",htmlspecialchars_decode($data2['exp_name'], ENT_QUOTES),$letter);
-			$letter = str_replace("!exp_ort!",htmlspecialchars_decode($data2['exp_ort'], ENT_QUOTES),$letter);
+            $data3 = $erg3->fetch_assoc();
+            $signUpCount = (int)$data3['count'];
 
-			$letter = str_replace("!vl_name!",htmlspecialchars_decode($data2['vl_name'], ENT_QUOTES),$letter);
-			$letter = str_replace("!vl_telefon!",htmlspecialchars_decode($data2['vl_tele'], ENT_QUOTES),$letter);
-			$letter = str_replace("!vl_email!",htmlspecialchars_decode($data2['vl_email'], ENT_QUOTES),$letter);
+            $freeSlots = (int)$dataSes['maxtn'] - $signUpCount;
+            if ($freeSlots <= 0) {
+                $freeSlotsAvailable = false;
+            }
 
-			$header = "From:" . $data2['vl_email'] . "\r\n" . "MIME-Version: 1.0\r\nContent-type: text/plain; charset=UTF-8\r\n";
-			mail($_POST['email'],'Terminbestätigung',$letter,$header);
-		}
-		}
-		?>
-		</td>
-		</tr>
-		<tr>
-			<td>
-			  <form action="<?php echo $_SERVER['PHP_SELF'] . '?' . http_build_query($_GET);?>" method="post" enctype="multipart/form-data" name="content">
-			  <input name="expid" type="hidden" value="<?php echo $_POST['expid']; ?>" />
-			  <input name="addcancel" type="submit" value="Zurück" />		
-			  </form>
-			</td>
-		</tr>
-		</table>  
-		</td>
-		</tr>
-		</table>
-		<?
-	}
-		  
-		  
-	
-	/* ANMELDUNG KEINE PLÄTZE FREI! */  	  
-		  
-	else {
-		$abfrage = "SELECT exp_name FROM ".TABELLE_EXPERIMENTE." WHERE `id` = '$expId'" ;
-		$erg = $mysqli->query($abfrage);
-		while ($data = $erg->fetch_assoc()) {
-			?>
-			<table> 
-			<tr>
-				<td><h1><?= $data['exp_name'] ?></h1></td>
-			</tr>
-			<?
-		}
-		?>  
-		<tr>
-			<td>
-			<table style="margin-left:15px; margin-top:-20px;">
-				<tr>
-					<td class="ad_edit_headline">
-						<h2>Anmeldung</h2>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						Anmeldung fehlgeschlagen!<br />
-						Die Anmeldung ist fehlgeschlagen. Bitte stellen Sie sicher, dass der Termin, für den Sie sich anmelden wollte, nicht bereits voll belegt ist.<br />
-						<br />
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<form action="<?php echo $_SERVER['PHP_SELF'] . '?' . http_build_query($_GET);?>" method="post" enctype="multipart/form-data" name="content">
-						<input name="expid" type="hidden" value="<?= $_POST[expid] ?>" />
-						<input name="addcancel" type="submit" value="Zurück" />
-						</form>
-					</td>
-				 </tr>
-			</table> 
-			</td>
-		</tr>
-		</table>
-		<?
-	}
+        }
+
+        if (!$freeSlotsAvailable) {
+            throw new RuntimeException('Bitte stellen Sie sicher, dass der Termin, für den Sie sich anmelden wollte, nicht bereits voll belegt ist.');
+        }
+
+        if (isset($_POST['gebdat'])) {
+            $gebdat = formatDateForMysql($_POST['gebdat']);
+        }
+
+        $eintrag = sprintf('
+        INSERT INTO `%1$s`
+        (`exp`, `vorname`, `nachname`, `geschlecht`, `gebdat`, `fach`, `semester`, `anschrift`, `telefon1`, `telefon2`, `email`, `geldvps`, `andere`, `weitere`, `termin`)
+        VALUES (%2$d, \'%3$s\', \'%4$s\', \'%5$s\', \'%6$s\', \'%7$s\', \'%8$s\', \'%9$s\', \'%10$s\', \'%11$s\', \'%12$s\', \'%13$s\', \'%14$s\', \'%15$s\', %16$d)'
+            , /*  1 */ TABELLE_VERSUCHSPERSONEN
+            , /*  2 */ $expId
+            , /*  3 */ isset($_POST['vorname']) ? $mysqli->real_escape_string($_POST['vorname']) : ''
+            , /*  4 */ isset($_POST['nachname']) ? $mysqli->real_escape_string($_POST['nachname']) : ''
+            , /*  5 */ isset($_POST['geschlecht']) ? $mysqli->real_escape_string($_POST['geschlecht']) : ''
+            , /*  6 */ isset($_POST['gebdat']) ? $mysqli->real_escape_string($gebdat) : '0000-00-00'
+            , /*  7 */ isset($_POST['fach']) ? $mysqli->real_escape_string($_POST['fach']) : ''
+            , /*  8 */ isset($_POST['semester']) ? $mysqli->real_escape_string($_POST['semester']) : ''
+            , /*  9 */ isset($_POST['anschrift']) ? $mysqli->real_escape_string($_POST['anschrift']) : ''
+            , /* 10 */ isset($_POST['telefon1']) ? $mysqli->real_escape_string($_POST['telefon1']) : ''
+            , /* 11 */ isset($_POST['telefon2']) ? $mysqli->real_escape_string($_POST['telefon2']) : ''
+            , /* 12 */ isset($_POST['email']) ? $mysqli->real_escape_string($_POST['email']) : ''
+            , /* 13 */ isset($_POST['geldvps']) ? $mysqli->real_escape_string($_POST['geldvps']) : ''
+            , /* 14 */ isset($_POST['andere']) ? $mysqli->real_escape_string($_POST['andere']) : ''
+            , /* 15 */ isset($_POST['weitere']) ? $mysqli->real_escape_string($_POST['weitere']) : ''
+            , /* 16 */ $terminId
+        );
+        $ergebnis = $mysqli->query($eintrag);
+        if (false === $ergebnis) {
+            if (1062 === $mysqli->errno) {
+                throw new RuntimeException(sprintf('Für die Email Adresse %1$s liegt bereits eine Anmeldung für dieses Experiment vor.', $_POST['email']));
+            }
+            throw new RuntimeException(sprintf('Interner Fehler bei der Anmeldung. Bitte wenden Sie sich per Email an den Versuchsleiter. (%1$d)', __LINE__));
+        }
+
+        require_once 'pageelements/header.php';
+
+        $abfrage = "SELECT exp_name FROM " . TABELLE_EXPERIMENTE . " WHERE `id` = '$expId'";
+        $erg = $mysqli->query($abfrage);
+        while ($data = $erg->fetch_assoc()) {
+            ?>
+            <table>
+            <tr>
+                <td><h1><?php echo $data['exp_name']; ?></h1></td>
+            </tr>
+        <? } ?>
+        <tr>
+            <td>
+                <table style="margin-left:15px;">
+                    <tr>
+                        <td class="ad_edit_headline"><h2>Anmeldung</h2></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <? $abfrage = "SELECT * FROM " . TABELLE_EXPERIMENTE . " WHERE `id` = '$expId'";
+                            $erg = $mysqli->query($abfrage);
+                            while ($data2 = $erg->fetch_assoc()) {
+                                ?>
+                                Vielen Dank für Ihre Anmeldung!<br/>
+                                Sie werden in Kürze eine Terminbestätigung in ihrem Email-Postfach finden.<br/><br/>
+                                Sollten sie noch weitere Fragen haben, können Sie sich gerne per Telefon an uns wenden oder eine Email schreiben.
+                                <br/><br/>
+                                <?
+
+                                $abfrage2 = "SELECT * FROM " . TABELLE_SITZUNGEN . " WHERE `id` = '$terminId'";
+                                $erg2 = $mysqli->query($abfrage2);
+                                while ($data3 = $erg2->fetch_assoc()) {
+                                    $termin = formatMysqlDate($data3['tag']);
+
+                                    $letter = htmlspecialchars_decode($data2['exp_mail'], ENT_QUOTES);
+
+
+                                    if (isset($_POST['geschlecht']) && $_POST['geschlecht'] == "männlich") {
+                                        $letter = str_replace("!liebe/r!", "Lieber", $letter);
+                                    } else {
+                                        $letter = str_replace("!liebe/r!", "Liebe", $letter);
+                                    }
+
+                                    $letter = str_replace("!vp_vorname!", $_POST['vorname'], $letter);
+                                    $letter = str_replace("!vp_nachname!", $_POST['nachname'], $letter);
+
+                                    $letter = str_replace("!termin!", $termin, $letter);
+                                    $letter = str_replace("!beginn!", substr($data3['session_s'], 0, 5), $letter);
+                                    $letter = str_replace("!ende!", substr($data3['session_e'], 0, 5), $letter);
+
+                                    $letter = str_replace("!exp_name!", htmlspecialchars_decode($data2['exp_name'], ENT_QUOTES), $letter);
+                                    $letter = str_replace("!exp_ort!", htmlspecialchars_decode($data2['exp_ort'], ENT_QUOTES), $letter);
+
+                                    $letter = str_replace("!vl_name!", htmlspecialchars_decode($data2['vl_name'], ENT_QUOTES), $letter);
+                                    $letter = str_replace("!vl_telefon!", htmlspecialchars_decode($data2['vl_tele'], ENT_QUOTES), $letter);
+                                    $letter = str_replace("!vl_email!", htmlspecialchars_decode($data2['vl_email'], ENT_QUOTES), $letter);
+
+                                    $header = "From:" . $data2['vl_email'] . "\r\n" . "MIME-Version: 1.0\r\nContent-type: text/plain; charset=UTF-8\r\n";
+                                    mail($_POST['email'], 'Terminbestätigung', $letter, $header);
+                                }
+                            }
+                            ?>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <form action="<?php echo $_SERVER['PHP_SELF'] . '?' . http_build_query($_GET); ?>"
+                                  method="post" enctype="multipart/form-data" name="content">
+                                <input name="expid" type="hidden" value="<?php echo $_POST['expid']; ?>"/>
+                                <input name="addcancel" type="submit" value="Zurück"/>
+                            </form>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        </table>
+        <?
+    }
+    catch(RuntimeException $e) {
+        require_once 'pageelements/header.php';
+
+        $abfrage = "SELECT exp_name FROM " . TABELLE_EXPERIMENTE . " WHERE `id` = '$expId'";
+        $erg = $mysqli->query($abfrage);
+        while ($data = $erg->fetch_assoc()) {
+            ?>
+            <table>
+            <tr>
+                <td><h1><?php echo $data['exp_name']; ?></h1></td>
+            </tr>
+            <?
+        }
+        ?>
+        <tr>
+            <td>
+                <table style="margin-left:15px;">
+                    <tr>
+                        <td class="ad_edit_headline">
+                            <h2>Anmeldung fehlgeschlagen!</h2>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <?php echo $e->getMessage();?><br/>
+                            <br/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <form action="<?php echo $_SERVER['PHP_SELF'] . '?' . http_build_query($_GET); ?>"
+                                  method="post" enctype="multipart/form-data" name="content">
+                                <input name="expid" type="hidden" value="<?php echo $_POST['expid']; ?>"/>
+                                <input name="addcancel" type="submit" value="Zurück"/>
+                            </form>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        </table>
+        <?
+    }
 }
+
 require_once 'pageelements/footer.php';
-?>
