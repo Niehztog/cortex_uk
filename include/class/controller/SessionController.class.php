@@ -1,6 +1,6 @@
 <?php
-require_once dirname(__FILE__) . '/../../functions.php';
-require_once dirname(__FILE__) . '/../DatabaseFactory.class.php';
+require_once __DIR__ . '/../../functions.php';
+require_once __DIR__ . '/../DatabaseFactory.class.php';
 
 class SessionController {
 	

@@ -3,6 +3,10 @@
 define('MESSAGE_BOX_ERROR', '<div class="ui-state-error"><span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-alert"></span>%s</div>');
 define('MESSAGE_BOX_SUCCESSR', '<div class="ui-state-highlight"><span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>%s</div>');
 
+if(function_exists('formatMysqlDate')) {
+    return;
+}
+
 function formatMysqlDate($mysqlDate) {
 	if('0000-00-00' === substr($mysqlDate, 0, 10)) {
 		return '';

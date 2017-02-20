@@ -5,8 +5,8 @@ if(!isset($_GET['editvp'])) {
 	die('missing parameter editvp');
 }
 
-require_once dirname(__FILE__) . '/../include/functions.php';
-require_once dirname(__FILE__) . '/../include/class/DatabaseFactory.class.php';
+require_once __DIR__ . '/../include/functions.php';
+require_once __DIR__ . '/../include/class/DatabaseFactory.class.php';
 $dbf = new DatabaseFactory();
 $mysqli = $dbf->get();
 

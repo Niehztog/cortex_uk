@@ -1,6 +1,6 @@
 <?php
-require_once dirname(__FILE__) . '/../include/functions.php';
-require_once dirname(__FILE__) . '/../include/config.php';
+require_once __DIR__ . '/../include/functions.php';
+require_once __DIR__ . '/../include/config.php';
 initSession(true);
 ?>
 <!DOCTYPE html>
