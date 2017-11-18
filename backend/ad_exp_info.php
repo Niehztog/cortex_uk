@@ -372,20 +372,20 @@ $( document ).ready(function() {
 });
 </script>
 
-<h1 style="float:left;"><?= $data['exp_name'] ?></h1>
-<input id="vl_name" type="hidden" value="<?= $vl_name ?>" />
-<input id="vl_tele" type="hidden" value="<?= $vl_tele ?>" />
-<input id="vl_email" type="hidden" value="<?= $vl_email ?>" />
-<input id="exp_name" type="hidden" value="<?= $exp_name ?>" />
-<input id="exp_ort" type="hidden" value="<?= $exp_ort ?>" />
+<h1 style="float:left;"><?php echo  $data['exp_name']; ?></h1>
+<input id="vl_name" type="hidden" value="<?php echo $vl_name; ?>" />
+<input id="vl_tele" type="hidden" value="<?php echo $vl_tele; ?>" />
+<input id="vl_email" type="hidden" value="<?php echo $vl_email; ?>" />
+<input id="exp_name" type="hidden" value="<?php echo $exp_name; ?>" />
+<input id="exp_ort" type="hidden" value="<?php echo $exp_ort; ?>" />
 <form action="<?php echo $_SERVER['PHP_SELF'] . '?' . http_build_query($_GET);?>" method="post" enctype="multipart/form-data" style="float:left;">
-	<? if ( $data['visible'] == 1 ) { ?>
+	<?php if ( $data['visible'] == 1 ) { ?>
 	<input type="hidden" name="visible" value="0" />  
 	<input name="changevis" type="submit" value="Deaktivieren" style="margin-left:10px;" />
-	<? } else { ?>
+	<?php } else { ?>
 	<input type="hidden" name="visible" value="1" />  
 	<input name="changevis" type="submit" value="Aktivieren" style="margin-left:10px;" />
-	<? } ?>
+	<?php } ?>
     <?php
     if($auth->mayEditExpTimeFrame()) {
         ?>
@@ -410,15 +410,15 @@ $( document ).ready(function() {
 			</tr>
 			<tr>
 				<td><i>Name</i></td>
-				<td colspan="2"><?= $data['vl_name'] ?></td>
+				<td colspan="2"><?php echo  $data['vl_name']; ?></td>
 			</tr>  
 			<tr>
 				<td><i>Telefonnummer</i></td>
-				<td colspan="2"><?= $data['vl_tele'] ?></td>
+				<td colspan="2"><?php echo  $data['vl_tele']; ?></td>
 			</tr> 
 			<tr>
 				<td><i>Email-Adresse</i></td>
-				<td colspan="2"><?= $data['vl_email'] ?></td>
+				<td colspan="2"><?php echo  $data['vl_email']; ?></td>
 			</tr>   
 			
 			<tr><td><br /></td></tr>  
@@ -428,27 +428,27 @@ $( document ).ready(function() {
 			</tr>
 			<tr>
 				<td><i>Name</i></td>
-				<td colspan="2"><?= $data['exp_name'] ?></td>
+				<td colspan="2"><?php echo  $data['exp_name']; ?></td>
 			</tr>  
 			<tr>
 				<td><i>Beschreibung</i></td>
-				<td colspan="2"><?= substr(nl2br($data['exp_zusatz']),0,150) ?>...</td>
+				<td colspan="2"><?php echo  substr(nl2br($data['exp_zusatz']),0,150); ?>...</td>
 			</tr>  
 			<tr>
 				<td><i>Ort</i></td>
-				<td colspan="2"><?= nl2br($data['exp_ort']) ?></td>
+				<td colspan="2"><?php echo  nl2br($data['exp_ort']); ?></td>
 			</tr> 
 			<tr>
 				<td><i>Bestätigungsmail</i></td>
-				<td colspan="2"><?= substr(nl2br($data['exp_mail']),0,150) ?>...</td>
+				<td colspan="2"><?php echo  substr(nl2br($data['exp_mail']),0,150); ?>...</td>
 			</tr>  
 			<tr>
 				<td><i>VP-Stunden</i></td>
-				<td colspan="2"><? if ( $data['exp_vps'] == 1 ) { echo $data['exp_vpsnum']; } else { ?><span style="font-weight:bold;color:#FF0000;">&#x2717;</span><? } ?></td>
+				<td colspan="2"><?php if ( $data['exp_vps'] == 1 ) { echo $data['exp_vpsnum']; } else { ?><span style="font-weight:bold;color:#FF0000;">&#x2717;</span><?php } ?></td>
 			</tr>	
 			<tr>
 				<td><i>Geld</i></td>
-				<td colspan="2"><? if ( $data['exp_geld'] == 1 ) { echo $data['exp_geldnum']; } else { ?><span style="font-weight:bold;color:#FF0000;">&#x2717;</span><? } ?> EUR</td>
+				<td colspan="2"><?php if ( $data['exp_geld'] == 1 ) { echo $data['exp_geldnum']; } else { ?><span style="font-weight:bold;color:#FF0000;">&#x2717;</span><?php } ?> EUR</td>
 			</tr>
 			
 			<tr><td><br /></td></tr> 
@@ -462,8 +462,7 @@ $( document ).ready(function() {
 					<?php
 					$idObfuscated = md5($data['id'] . ID_OBFUSCATION_SALT);
 					if ( 'true' === $data['show_in_list'] ) {
-						?><span style="font-weight:bold;color:#00FF00;">&#x2713;</span><?
-					}
+						?><span style="font-weight:bold;color:#00FF00;">&#x2713;</span><?php 					}
 					else {
 						?><span style="font-weight:bold;color:#FF0000;">&#x2717;</span><?php
 						echo sprintf('&nbsp;<a href="index.php?menu=experiment&amp;expid=%1$s" style="color: #4A71D6;" target="_blank">(Geheimer Link)</a>', $idObfuscated);
@@ -473,11 +472,11 @@ $( document ).ready(function() {
 			</tr>
 			<tr>
 				<td><i>Sitzungsdauer</i></td>
-				<td colspan="2"><?= $data['session_duration'] ?> Minuten</td>
+				<td colspan="2"><?php echo  $data['session_duration']; ?> Minuten</td>
 			</tr>
 			<tr>
 				<td><i>Modus</i></td>
-				<td colspan="2"><?= $data['terminvergabemodus'] ?></td>
+				<td colspan="2"><?php echo  $data['terminvergabemodus']; ?></td>
 			</tr>
 			<?php
 			if('automatisch'===$data['terminvergabemodus']) {
@@ -504,11 +503,11 @@ $( document ).ready(function() {
 			</tr>
 			<tr>
 				<td><i>Max VP Anzahl</i></td>
-				<td colspan="2"><?= $data['max_vp'] ?></td>
+				<td colspan="2"><?php echo  $data['max_vp']; ?></td>
 			</tr>
 			<tr>
 				<td><i>Gleichzeitige Sitzungen</i></td>
-				<td colspan="2"><?= $data['max_simultaneous_sessions'] ?></td>
+				<td colspan="2"><?php echo  $data['max_simultaneous_sessions']; ?></td>
 			</tr>
 			<tr>
 				<td><i>Zugewiesene Labore</i></td>
@@ -543,31 +542,31 @@ $( document ).ready(function() {
 			</tr>  
 			<tr>
 				<td><i>Geschlecht</i></td>
-				<td colspan="2"><? if ( $data['vpn_geschlecht'] == 1 ) { ?><span style="font-weight:bold;color:#00FF00;">&#x2713;</span><? } else { ?> <span style="font-weight:bold;color:#FF0000;">&#x2717;</span><? } ?></td>
+				<td colspan="2"><?php if ( $data['vpn_geschlecht'] == 1 ) { ?><span style="font-weight:bold;color:#00FF00;">&#x2713;</span><?php } else { ?> <span style="font-weight:bold;color:#FF0000;">&#x2717;</span><?php } ?></td>
 			</tr>  
 			<tr>
 				<td><i>Geburtsdatum</i></td>
-				<td colspan="2"><? if ( $data['vpn_gebdat'] == 2 ) { ?><span style="font-weight:bold;color:#00FF00;">&#x2713;</span><font color="#00FF00">*</font><? } else if ( $data['vpn_gebdat'] == 1 ) { ?><span style="font-weight:bold;color:#00FF00;">&#x2713;</span><? } else { ?> <span style="font-weight:bold;color:#FF0000;">&#x2717;</span><? } ?></td>
+				<td colspan="2"><?php if ( $data['vpn_gebdat'] == 2 ) { ?><span style="font-weight:bold;color:#00FF00;">&#x2713;</span><font color="#00FF00">*</font><?php } else if ( $data['vpn_gebdat'] == 1 ) { ?><span style="font-weight:bold;color:#00FF00;">&#x2713;</span><?php } else { ?> <span style="font-weight:bold;color:#FF0000;">&#x2717;</span><?php } ?></td>
 			</tr>  
 			<tr>
 				<td><i>Studienfach</i></td>
-				<td colspan="2"><? if ( $data['vpn_fach'] == 2 ) { ?><span style="font-weight:bold;color:#00FF00;">&#x2713;</span><font color="#00FF00">*</font><? } else if ( $data['vpn_fach'] == 1 ) { ?><span style="font-weight:bold;color:#00FF00;">&#x2713;</span><? } else { ?> <span style="font-weight:bold;color:#FF0000;">&#x2717;</span><? } ?></td>
+				<td colspan="2"><?php if ( $data['vpn_fach'] == 2 ) { ?><span style="font-weight:bold;color:#00FF00;">&#x2713;</span><font color="#00FF00">*</font><?php } else if ( $data['vpn_fach'] == 1 ) { ?><span style="font-weight:bold;color:#00FF00;">&#x2713;</span><?php } else { ?> <span style="font-weight:bold;color:#FF0000;">&#x2717;</span><?php } ?></td>
 			</tr>  
 			<tr>
 				<td><i>Semester</i></td>
-				<td colspan="2"><? if ( $data['vpn_semester'] == 2 ) { ?><span style="font-weight:bold;color:#00FF00;">&#x2713;</span><font color="#00FF00">*</font><? } else if ( $data['vpn_semester'] == 1 ) { ?><span style="font-weight:bold;color:#00FF00;">&#x2713;</span><? } else { ?> <span style="font-weight:bold;color:#FF0000;">&#x2717;</span><? } ?></td>
+				<td colspan="2"><?php if ( $data['vpn_semester'] == 2 ) { ?><span style="font-weight:bold;color:#00FF00;">&#x2713;</span><font color="#00FF00">*</font><?php } else if ( $data['vpn_semester'] == 1 ) { ?><span style="font-weight:bold;color:#00FF00;">&#x2713;</span><?php } else { ?> <span style="font-weight:bold;color:#FF0000;">&#x2717;</span><?php } ?></td>
 			</tr>  
 			<tr>
 				<td><i>Adresse</i></td>
-				<td colspan="2"><? if ( $data['vpn_adresse'] == 2 ) { ?><span style="font-weight:bold;color:#00FF00;">&#x2713;</span><font color="#00FF00">*</font><? } else if ( $data['vpn_adresse'] == 1 ) { ?><span style="font-weight:bold;color:#00FF00;">&#x2713;</span><? } else { ?> <span style="font-weight:bold;color:#FF0000;">&#x2717;</span><? } ?></td>
+				<td colspan="2"><?php if ( $data['vpn_adresse'] == 2 ) { ?><span style="font-weight:bold;color:#00FF00;">&#x2713;</span><font color="#00FF00">*</font><?php } else if ( $data['vpn_adresse'] == 1 ) { ?><span style="font-weight:bold;color:#00FF00;">&#x2713;</span><?php } else { ?> <span style="font-weight:bold;color:#FF0000;">&#x2717;</span><?php } ?></td>
 			</tr>  
 			<tr>
 				<td><i>Telefon (Festznetz)</i></td>
-				<td colspan="2"><? if ( $data['vpn_tele1'] == 2 ) { ?><span style="font-weight:bold;color:#00FF00;">&#x2713;</span><font color="#00FF00">*</font><? } else if ( $data['vpn_tele1'] == 1 ) { ?><span style="font-weight:bold;color:#00FF00;">&#x2713;</span><? } else { ?> <span style="font-weight:bold;color:#FF0000;">&#x2717;</span><? } ?></td>
+				<td colspan="2"><?php if ( $data['vpn_tele1'] == 2 ) { ?><span style="font-weight:bold;color:#00FF00;">&#x2713;</span><font color="#00FF00">*</font><?php } else if ( $data['vpn_tele1'] == 1 ) { ?><span style="font-weight:bold;color:#00FF00;">&#x2713;</span><?php } else { ?> <span style="font-weight:bold;color:#FF0000;">&#x2717;</span><?php } ?></td>
 			</tr>  
 			<tr>
 				<td><i>Telefon (Mobil)</i></td>
-				<td colspan="2"><? if ( $data['vpn_tele2'] == 2 ) { ?><span style="font-weight:bold;color:#00FF00;">&#x2713;</span><font color="#00FF00">*</font><? } else if ( $data['vpn_tele2'] == 1 ) { ?><span style="font-weight:bold;color:#00FF00;">&#x2713;</span><? } else { ?> <span style="font-weight:bold;color:#FF0000;">&#x2717;</span><? } ?></td>
+				<td colspan="2"><?php if ( $data['vpn_tele2'] == 2 ) { ?><span style="font-weight:bold;color:#00FF00;">&#x2713;</span><font color="#00FF00">*</font><?php } else if ( $data['vpn_tele2'] == 1 ) { ?><span style="font-weight:bold;color:#00FF00;">&#x2713;</span><?php } else { ?> <span style="font-weight:bold;color:#FF0000;">&#x2717;</span><?php } ?></td>
 			</tr>  
 			<tr>
 				<td><i>Email-Adresse</i></td>
@@ -575,15 +574,15 @@ $( document ).ready(function() {
 			</tr>  
 			<tr>
 				<td><i>Geld/VP-Stunden?</i></td>
-				<td colspan="2"><? if ( $data['vpn_ifreward'] == 1 ) { ?><span style="font-weight:bold;color:#00FF00;">&#x2713;</span><? } else { ?> <span style="font-weight:bold;color:#FF0000;">&#x2717;</span><? } ?></td>
+				<td colspan="2"><?php if ( $data['vpn_ifreward'] == 1 ) { ?><span style="font-weight:bold;color:#00FF00;">&#x2713;</span><?php } else { ?> <span style="font-weight:bold;color:#FF0000;">&#x2717;</span><?php } ?></td>
 			</tr>  
 			<tr>
 				<td><i>Bereits?</i></td>
-				<td colspan="2"><? if ( $data['vpn_ifbereits'] == 1 ) { ?><span style="font-weight:bold;color:#00FF00;">&#x2713;</span><? } else { ?> <span style="font-weight:bold;color:#FF0000;">&#x2717;</span><? } ?></td>
+				<td colspan="2"><?php if ( $data['vpn_ifbereits'] == 1 ) { ?><span style="font-weight:bold;color:#00FF00;">&#x2713;</span><?php } else { ?> <span style="font-weight:bold;color:#FF0000;">&#x2717;</span><?php } ?></td>
 			</tr>  
 			<tr>
 				<td><i>Liste?</i></td>
-				<td colspan="2"><? if ( $data['vpn_ifbenach'] == 1 ) { ?><span style="font-weight:bold;color:#00FF00;">&#x2713;</span><? } else { ?> <span style="font-weight:bold;color:#FF0000;">&#x2717;</span><? } ?></td>
+				<td colspan="2"><?php if ( $data['vpn_ifbenach'] == 1 ) { ?><span style="font-weight:bold;color:#00FF00;">&#x2713;</span><?php } else { ?> <span style="font-weight:bold;color:#FF0000;">&#x2717;</span><?php } ?></td>
 			</tr>
 		</table>
 		<br />
@@ -715,8 +714,7 @@ $( document ).ready(function() {
 					</form>
 				</td>
 			</tr>
-			<?
-			}
+			<?php 			}
 			?>
 		</table>
 		<?php

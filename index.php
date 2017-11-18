@@ -26,9 +26,9 @@ if(!isset($_GET['menu'])) {
 	foreach($laufendeExperimente as $data) {
 		$idObfuscated = md5($data['id'] . ID_OBFUSCATION_SALT);
 		?>	
-		<h2><a href="index.php?menu=experiment&amp;expid=<?php echo $idObfuscated;?>" style="color: #4A71D6;">&nbsp;&nbsp;<img src="images/arrow.gif" width="4" height="10" border="0" alt="" />&nbsp;<?= $data['exp_name'] ?></a></h2>
-		<div id="mainframe_exp">&nbsp;&nbsp;&nbsp;<a href="index.php?menu=experiment&amp;expid=<?php echo $idObfuscated;?>"><?= htmlspecialchars(substr($data['exp_zusatz'],0,250)) ?> [...]</a></div>
-		<? 
+		<h2><a href="index.php?menu=experiment&amp;expid=<?php echo $idObfuscated;?>" style="color: #4A71D6;">&nbsp;&nbsp;<img src="images/arrow.gif" width="4" height="10" border="0" alt="" />&nbsp;<?php echo $data['exp_name']; ?></a></h2>
+		<div id="mainframe_exp">&nbsp;&nbsp;&nbsp;<a href="index.php?menu=experiment&amp;expid=<?php echo $idObfuscated;?>"><?php echo htmlspecialchars(substr($data['exp_zusatz'],0,250)); ?> [...]</a></div>
+		<?php
 	}
 }
 
@@ -112,46 +112,38 @@ elseif(($_GET['menu'] == 'experiment') && (isset($_GET['expid'])) && (!isset($_P
 	
 	
 	<h1><?php echo $data2['exp_name']; ?></h1>
-	
-	<? # INCENTIVE # ?>
-		
+
 	<table class="optionGroup">	
 		<tr>
 			<td colspan="5" ><h2 style="margin-bottom:10px;">Informationen</h2></td>	
 		</tr>
 		<tr>
-			<td width="550px"><?= nl2br($data2['exp_zusatz']) ?><br /><br />
-	<? if ( $data2['exp_vps'] == 1  || $data2['exp_geld'] == 1 )
+			<td width="550px"><?php echo nl2br($data2['exp_zusatz']); ?><br /><br />
+	<?php if ( $data2['exp_vps'] == 1  || $data2['exp_geld'] == 1 )
 		{
 	?>
 	Sie erhalten für ihre Teilnahme
-	<?
-	if ( $data2['exp_vps'] == 1 && $data2['exp_geld'] == 1)
+	<?php 	if ( $data2['exp_vps'] == 1 && $data2['exp_geld'] == 1)
 		  {
 	?>	
-	<b><?= $data2['exp_vpsnum']?> VP-Stunden</b> oder <b><?= $data2['exp_geldnum']?> EURO</b>.
-	<?
-		  }
+	<b><?php echo $data2['exp_vpsnum']; ?> VP-Stunden</b> oder <b><?php echo $data2['exp_geldnum']; ?> EURO</b>.
+	<?php 		  }
 	else if ( $data2['exp_geld'] == 1 && $data2['exp_vps'] < 1)
 		  {
 	?>	
-	<b><?= $data2['exp_geldnum']?> EURO</b>.
-	<?
-		  }
+	<b><?php echo $data2['exp_geldnum']; ?> EURO</b>.
+	<?php 		  }
 	else if ( $data2['exp_vps'] == 1 && $data2['exp_geld'] < 1)
 		  {
 	?>	
-	<b><?= $data2['exp_vpsnum']?> VP-Stunden</b>.
-	<?
-		  }
+	<b><?php echo $data2['exp_vpsnum']; ?> VP-Stunden</b>.
+	<?php 		  }
 		}
 	?>
 			</td>
 		</tr>
 	</table>
-	
-	<? # ORT # ?>
-		
+
 	<table class="optionGroup">	
 		<tr>
 			<td colspan="5" ><h2 style="margin-bottom:10px;">Adresse</h2></td>	
@@ -159,19 +151,17 @@ elseif(($_GET['menu'] == 'experiment') && (isset($_GET['expid'])) && (!isset($_P
 		<tr>
 			<td width="550px">
 				Das Experiment findet an folgender Adresse statt:<br />
-				<b><?= nl2br($data2['exp_ort']) ?></b>
+				<b><?php echo nl2br($data2['exp_ort']); ?></b>
 			</td>
 		</tr>
 	</table>
-	
-	<? # KONTAKT # ?>
-	
+
 	<table class="optionGroup">	
 		<tr>
 			<td colspan="5" ><h2 style="margin-bottom:10px;">Kontakt</h2></td>	
 		</tr>
 		<tr>
-			<td><div><?= $data2['vl_name'] ?>&nbsp;&nbsp;&bull;&nbsp;&nbsp;<a href="mailto:<?= $data2['vl_email'] ?>" id="mainframe_exp_link"><?= $data2['vl_email'] ?></a><? if ($data2['vl_tele'] != "") { ?>&nbsp;&nbsp;&bull;&nbsp;&nbsp;<?= $data2['vl_tele'] ?><? } ?><br /></div></td>
+			<td><div><?php echo $data2['vl_name']; ?>&nbsp;&nbsp;&bull;&nbsp;&nbsp;<a href="mailto:<?php echo $data2['vl_email']; ?>" id="mainframe_exp_link"><?php echo $data2['vl_email']; ?></a><?php if ($data2['vl_tele'] != "") { ?>&nbsp;&nbsp;&bull;&nbsp;&nbsp;<?php echo $data2['vl_tele']; ?><?php } ?><br /></div></td>
 		</tr>
 	</table>
 
@@ -184,72 +174,6 @@ elseif(($_GET['menu'] == 'experiment') && (isset($_GET['expid'])) && (!isset($_P
 	</div>
 	
 	<?php 
-	/*
-	 # TERMINE #
-	 ?>
-		
-	<table class="optionGroup">	
-		<tr>
-			<td colspan="5" ><h2 style="margin-bottom:10px;">Termine</h2></td>	
-		</tr>
-		<tr>
-			<td width="100px"><div><b>Datum</b></div></td>
-			<td width="100px"><div><b>Uhrzeit</b></div></td>
-			<td width="110px"><div style="text-align:center"><b>Freie Plätze</b></div></td>
-			<td width="100px"></td>
-			<td></td>  
-		</tr>
-		<?
-		
-		$abfrage = "SELECT * FROM ".TABELLE_SITZUNGEN." WHERE `exp` = '$expId' ORDER BY tag, session_s ASC" ;
-		$erg = $mysqli->query($abfrage);
-		while ($data = $erg->fetch_assoc()) {
-			?>
-			<tr>
-				<td class="termin">
-					<div>
-						<?php echo formatMysqlDate($data['tag']);?>
-					</div>
-				</td>
-				<td class="termin"><div><?=substr($data['session_s'], 0, 5) . '-' . substr($data['session_e'], 0, 5) ?></div></td>
-				<?php
-				$vpcur = 0; $tempcur = 0;  
-				$abfrage3 = "SELECT * FROM ".TABELLE_VERSUCHSPERSONEN." WHERE `exp` = '$expId' AND `termin` = '$data[id]'";
-				$erg3 = $mysqli->query($abfrage3);
-				while ($data3 = $erg3->fetch_assoc()) {
-					$vpcur = $tempcur + 1;
-					$tempcur = $vpcur;
-				} 
-				
-				$vpcur = $data['maxtn'] - $tempcur;
-				$maxtnvar = $data['maxtn'];
-				
-				if ($expId == 41) {
-					if ($tempcur < 2) { $vpcur++; $vpcur++; };
-				};
-				
-				?>  
-				<td class="termin"><div style="text-align:center"><?=$vpcur?></div></td> 
-				<td class="termin">
-					<? if ($vpcur > 0) {
-					?>
-					<form action="<?php echo $_SERVER['PHP_SELF'] . '?' . http_build_query($_GET);?>" method="post" enctype="multipart/form-data">		
-						  <input name="maxtn" type="hidden" value="<?= $data['maxtn'] ?>" />
-						  <input name="id" type="hidden" value="<?= $data['id'] ?>" />
-						  <input name="expid" type="hidden" value="<?= $_GET['expid'] ?>" />	  
-						  <input name="chosendate" type="submit" value="Anmelden" />
-					</form>	  
-					<? }
-					?>	 
-				</td>
-			</tr>
-			<? 
-		}
-		?>
-	</table> 
-	
-	<?php
-	*/
 }
 
 /*********************************************/
@@ -319,7 +243,7 @@ elseif (isset($_POST['chosendate'])) {
 
 		if ( $data2['maxtn'] > $signUpCount ) {
 		?>
-		  <option value="<?= $data2['id'] ?>" <? if ($data2['id'] == $_POST['id']) {$chosenDateFound = true;?>selected<? } ?>><?php echo formatMysqlDate($data2['tag']) . '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' . substr($data2['session_s'], 0, 5) . '-' . substr($data2['session_e'], 0, 5);?></option>
+		  <option value="<?php echo $data2['id']; ?>" <?php if ($data2['id'] == $_POST['id']) {$chosenDateFound = true;?>selected<?php } ?>><?php echo formatMysqlDate($data2['tag']) . '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' . substr($data2['session_s'], 0, 5) . '-' . substr($data2['session_e'], 0, 5);?></option>
 		<?php
 		}
 	}
@@ -371,74 +295,67 @@ elseif (isset($_POST['chosendate'])) {
 			</td>
 			<td class="eintragen"></td>	
 		</tr>
-		<?
-	};
+		<?php 	};
 	if ( $data['vpn_gebdat'] > 0 ) {
 		?>  
 		<tr>					
-			<td class="eintragen"><b>Geburtsdatum</b> <? if ( $data['vpn_gebdat'] == 2 ) { ?>*<? } ?></td>
+			<td class="eintragen"><b>Geburtsdatum</b> <?php if ( $data['vpn_gebdat'] == 2 ) { ?>*<?php } ?></td>
 			<td class="eintragen">
 				<input type="text" name="date2" class="datepicker" size="12" maxlength="10" />&nbsp;&nbsp;&nbsp;
 			</td>
 			<td class="eintragen"><img src="images/info.gif" width="17" height="17" title="<b>Geburtsdatum</b><br />Bitte im Format <b>tt.mm.jjjj</b> angeben,<br />also z.B. 24.06.1984" alt="" />	</td>	
 		</tr>
-		<?
-	};
+		<?php 	};
 	if ( $data['vpn_fach'] > 0 )
 		{  
 	?>  
 	<tr>					
-		<td class="eintragen"><b>Studienfach</b> <? if ( $data['vpn_fach'] == 2 ) { ?>*<? } ?></td>
+		<td class="eintragen"><b>Studienfach</b> <?php if ( $data['vpn_fach'] == 2 ) { ?>*<?php } ?></td>
 		<td class="eintragen"><input name="fach" type="text" size="45" maxlength="255" /></td>
 		<td class="eintragen"></td>
 		<td class="eintragen"></td>	
 	</tr>
-	<?
-		};
+	<?php 		};
 	if ( $data['vpn_semester'] > 0 )
 		{  
 	?>	  
 	<tr>					
-		<td class="eintragen"><b>Semester</b> <? if ( $data['vpn_semester'] == 2 ) { ?>*<? } ?></td>
+		<td class="eintragen"><b>Semester</b> <?php if ( $data['vpn_semester'] == 2 ) { ?>*<?php } ?></td>
 		<td class="eintragen"><input name="semester" type="text" size="45" maxlength="10" /></td>
 		<td class="eintragen"></td>
 		<td class="eintragen"></td>	
 	</tr>
-	<?
-		};
+	<?php 		};
 	if ( $data['vpn_adresse'] > 0 )
 		{  
 	?>	
 	<tr>					
-		<td class="eintragen"><b>Adresse</b> <? if ( $data['vpn_adresse'] == 2 ) { ?>*<? } ?></td>
+		<td class="eintragen"><b>Adresse</b> <?php if ( $data['vpn_adresse'] == 2 ) { ?>*<?php } ?></td>
 		<td class="eintragen"><textarea name="anschrift" rows="3" cols="40"></textarea><br /><br /></td>
 		<td class="eintragen"></td>
 		<td class="eintragen"></td>		
 	</tr>  
-	 <?
-		};
+	 <?php 		};
 	if ( $data['vpn_tele1'] > 0 )
 		{  
 	?>	  
 	<tr>					
-		<td class="eintragen"><b>Telefon 1</b> <? if ( $data['vpn_tele1'] == 2 ) { ?>*<? } ?></td>
+		<td class="eintragen"><b>Telefon 1</b> <?php if ( $data['vpn_tele1'] == 2 ) { ?>*<?php } ?></td>
 		<td class="eintragen"><input name="telefon1" type="text" size="45" maxlength="20" /></td>
 		<td class="eintragen"></td>
 		<td class="eintragen"></td>	
 	</tr> 
-	<?
-		};
+	<?php 		};
 	if ( $data['vpn_tele2'] > 0 )
 		{  
 	?>	  
 	<tr>					
-		<td class="eintragen"><b>Telefon</b> <? if ( $data['vpn_tele2'] == 2 ) { ?>*<? } ?></td>
+		<td class="eintragen"><b>Telefon</b> <?php if ( $data['vpn_tele2'] == 2 ) { ?>*<?php } ?></td>
 		<td class="eintragen"><input name="telefon2" type="text" size="45" maxlength="20" /></td>
 		<td class="eintragen"></td>
 		<td class="eintragen"></td>	
 	</tr>  
-	<?
-		};
+	<?php 		};
 	if ( $data['vpn_email'] > 0 )
 		{  
 	?>	  
@@ -448,8 +365,7 @@ elseif (isset($_POST['chosendate'])) {
 		<td class="eintragen"></td>
 		<td class="eintragen"></td>	
 	</tr>  
-	<?
-		};
+	<?php 		};
 	if ( $data['vpn_ifreward'] > 0 )
 		{  
 	?>	  
@@ -459,8 +375,7 @@ elseif (isset($_POST['chosendate'])) {
 		<td class="eintragen"></td>	
 		<td class="eintragen"></td>	
 	</tr>  
-	<?
-		};
+	<?php 		};
 	if ( $data['vpn_ifbereits'] > 0 )
 		{  
 	?>	  
@@ -482,8 +397,7 @@ elseif (isset($_POST['chosendate'])) {
 	<tr>					
 		<td colspan=3 class="eintragen"><font size="-2" style="line-height:12px;">sollten Sie bereits eine persönliche Einladung per Mail zu diesem Experiment bekommen haben, lassen Sie dieses Feld leer</font></td>	
 	</tr>	 
-	<?
-		}
+	<?php 		}
 	?>  
 	  
 	<tr><td><br /></td></tr>
@@ -505,8 +419,7 @@ elseif (isset($_POST['chosendate'])) {
 	</tr>
 	</table>
 	
-	<?
-}
+	<?php }
 
 
 /************************************/
@@ -687,7 +600,7 @@ elseif(isset($_POST['add']) && !isset($_POST['admin'])) {
             <tr>
                 <td><h1><?php echo $data['exp_name']; ?></h1></td>
             </tr>
-        <? } ?>
+        <?php } ?>
         <tr>
             <td>
                 <table style="margin-left:15px;">
@@ -696,7 +609,7 @@ elseif(isset($_POST['add']) && !isset($_POST['admin'])) {
                     </tr>
                     <tr>
                         <td>
-                            <? $abfrage = "SELECT * FROM " . TABELLE_EXPERIMENTE . " WHERE `id` = '$expId'";
+                            <?php $abfrage = "SELECT * FROM " . TABELLE_EXPERIMENTE . " WHERE `id` = '$expId'";
                             $erg = $mysqli->query($abfrage);
                             while ($data2 = $erg->fetch_assoc()) {
                                 ?>
@@ -704,8 +617,7 @@ elseif(isset($_POST['add']) && !isset($_POST['admin'])) {
                                 Sie werden in Kürze eine Terminbestätigung in ihrem Email-Postfach finden.<br/><br/>
                                 Sollten sie noch weitere Fragen haben, können Sie sich gerne per Telefon an uns wenden oder eine Email schreiben.
                                 <br/><br/>
-                                <?
-
+                                <?php
                                 $abfrage2 = "SELECT * FROM " . TABELLE_SITZUNGEN . " WHERE `id` = '$terminId'";
                                 $erg2 = $mysqli->query($abfrage2);
                                 while ($data3 = $erg2->fetch_assoc()) {
@@ -754,8 +666,7 @@ elseif(isset($_POST['add']) && !isset($_POST['admin'])) {
             </td>
         </tr>
         </table>
-        <?
-    }
+        <?php     }
     catch(RuntimeException $e) {
         require_once 'pageelements/header.php';
 
@@ -767,8 +678,7 @@ elseif(isset($_POST['add']) && !isset($_POST['admin'])) {
             <tr>
                 <td><h1><?php echo $data['exp_name']; ?></h1></td>
             </tr>
-            <?
-        }
+            <?php         }
         ?>
         <tr>
             <td>
@@ -797,8 +707,7 @@ elseif(isset($_POST['add']) && !isset($_POST['admin'])) {
             </td>
         </tr>
         </table>
-        <?
-    }
+        <?php     }
 }
 
 require_once 'pageelements/footer.php';

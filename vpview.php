@@ -84,7 +84,7 @@ if(isset($_GET['expid'])) {
 	$data = $erg->fetch_assoc();
 	
 	if(null !== $data) {
-		?><h1><?= $data['exp_name'] ?>: Versuchspersonen</h1><?php
+		?><h1><?php echo $data['exp_name']; ?>: Versuchspersonen</h1><?php
 	}
 }
 else {

@@ -86,7 +86,7 @@ if(false === $resultVp) {
 					"sLast":	 "Letzter"
 				}
 			},
-			"aaData":[<?
+			"aaData":[<?php
 			while($dataVp = $resultVp->fetch_assoc()) {
 				echo PHP_EOL . sprintf(
 					'["%1$d","%2$s","%3$s","%4$s","%5$s","%6$d","%7$d","%8$s"],'

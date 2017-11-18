@@ -111,7 +111,7 @@ if($terminManuell) {
 		 <div style="text-align:center">
 		 <br />
 		<input type="hidden" name="change_id" value="<?php echo $termin['id'];?>" />
-		<input type="hidden" name="expid" value="<?= $_GET['expid']?>" />	
+		<input type="hidden" name="expid" value="<?php echo $_GET['expid'];?>" />
 		<input type="hidden" name="admin" value="1" />	
 		<input type="submit" name="editsess" value="Ändern" />&nbsp;&nbsp;
 		<input type="button" name="addcancel" value="Abbrechen" onclick="javascript: window.parent.$('[class^=d_termin_change_]').dialog('close');" />

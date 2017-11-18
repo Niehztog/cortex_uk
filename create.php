@@ -1,3 +1,8 @@
+<?php
+ini_set('display_errors', '1');
+error_reporting(-1);
+?>
+
 <html>
 <head>
 <title>CORTEX Creator</title>
@@ -8,7 +13,7 @@
 <div style="text-align:center">
 <br /><br /><br /><br /><br />
 <h1 style="text-align:center;">Cortex Database Creator</h1>
-<?
+<?php
 if (!isset($_POST['createme'])) {
 ?>  
 <font color="#FF0000"><b>Achtung: es wird empfohlen vor dem Ausführen ein Backup ggf. vorhandener Daten zu machen.</b></font>
@@ -18,8 +23,6 @@ if (!isset($_POST['createme'])) {
 <?php
 }
 ?>  
-
-
 
 <?php
 
@@ -143,7 +146,7 @@ if ( isset($_POST['createme']) )
 
 	?>
 	<font color="#FF0000"><b>Database successfully created</b></font>
-	<?
+	<?php
 }
 ?>
 

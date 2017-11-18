@@ -125,8 +125,7 @@ if(isset($_GET['action']) && 'create' === $_GET['action'] && !isset($_POST['crea
 	</form>
 	
 	
-	<?
-	require_once 'pageelements/footer.php';
+	<?php 	require_once 'pageelements/footer.php';
 }
 elseif( isset($_POST['createlab']) ) {
     if(!$auth->mayEditLabInfo()) {
@@ -495,6 +494,6 @@ if( isset( $daten ) ) {
 
 	</form>
 	
-	<?
-	require_once 'pageelements/footer.php';
+	<?php
+    require_once 'pageelements/footer.php';
 }

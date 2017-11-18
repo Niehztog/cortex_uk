@@ -93,16 +93,16 @@ $( document ).ready(function() {
 		</tr>
 		<tr>
 			<td width=200px class="ad_edit_headline">Name des VLs</td>
-			<td width=220px class="ad_edit_headline"><input id="vl_name" name="vl_name" type="text" size="45" maxlength="200" value="<?= $data['vl_name'] ?>" /></td>
+			<td width=220px class="ad_edit_headline"><input id="vl_name" name="vl_name" type="text" size="45" maxlength="200" value="<?php echo  $data['vl_name']; ?>" /></td>
 			<td width=30px class="ad_edit_headline"><img src="images/info.gif" width="17" height="17" title="Diese Angaben werden veröffentlicht und als Kontaktdaten für das Experiment angegeben." alt="" /></td>	
 		</tr>
 		<tr>
 			<td class="ad_edit_headline">Telefonnummer des VLs</td>
-			<td class="ad_edit_headline"><input name="vl_tele" id="vl_tele" type="text" size="45" maxlength="200" value="<?= $data['vl_tele'] ?>" /></td>
+			<td class="ad_edit_headline"><input name="vl_tele" id="vl_tele" type="text" size="45" maxlength="200" value="<?php echo  $data['vl_tele']; ?>" /></td>
 		</tr>
 		<tr>
 			<td class="ad_edit_headline">Emailadresse des VLs</td>
-			<td class="ad_edit_headline"><input name="vl_email" id="vl_email" type="text" size="45" maxlength="200" value="<?= $data['vl_email'] ?>" /></td>
+			<td class="ad_edit_headline"><input name="vl_email" id="vl_email" type="text" size="45" maxlength="200" value="<?php echo  $data['vl_email']; ?>" /></td>
 		</tr>
 	</table>
 		
@@ -112,17 +112,17 @@ $( document ).ready(function() {
 		</tr>
 		<tr>
 			<td class="ad_edit_headline">Name des Experiments</td>
-			<td class="ad_edit_headline"><input name="exp_name" id="exp_name" type="text" size="45" maxlength="200" value="<?= $data['exp_name'] ?>" /></td>
+			<td class="ad_edit_headline"><input name="exp_name" id="exp_name" type="text" size="45" maxlength="200" value="<?php echo  $data['exp_name']; ?>" /></td>
 			<td class="ad_edit_headline"><img src="images/info.gif" width="17" height="17" title="Dieser Name wird im Menü links angezeigt."></td>
 		</tr>
 		<tr>
 			<td class="ad_edit_headline">Zusätzliche&nbsp;Informationen&nbsp;/<br />Beschreibung</td>
-			<td class="ad_edit_headline"><textarea name="exp_zusatz" rows="5" cols="40"><?= strip_tags(nl2br($data['exp_zusatz'])) ?></textarea></td>
+			<td class="ad_edit_headline"><textarea name="exp_zusatz" rows="5" cols="40"><?php echo  strip_tags(nl2br($data['exp_zusatz'])); ?></textarea></td>
 			<td class="ad_edit_headline"><img src="images/info.gif" width="17" height="17" title="Vorab-Informationen über das Experiment"></td>	
 		</tr>
 		<tr>
 			<td class="ad_edit_headline">Ort des Experiments</td>
-			<td class="ad_edit_headline"><textarea name="exp_ort" id="exp_ort" rows="5" cols="40"><?= strip_tags(nl2br($data['exp_ort'])) ?></textarea></td>
+			<td class="ad_edit_headline"><textarea name="exp_ort" id="exp_ort" rows="5" cols="40"><?php echo  strip_tags(nl2br($data['exp_ort'])); ?></textarea></td>
 			<td class="ad_edit_headline"><img src="images/info.gif" width="17" height="17" title="Adresse, Wegbeschreibung, etc."></td>	
 		</tr> 
 		<tr>
@@ -142,7 +142,7 @@ $( document ).ready(function() {
 				</div>
 			</td>
 			<td class="ad_edit_headline">
-				<textarea name="exp_mail" id="exp_mail" rows="12" cols="40"><?= strip_tags(nl2br($data['exp_mail'])) ?></textarea>
+				<textarea name="exp_mail" id="exp_mail" rows="12" cols="40"><?php echo  strip_tags(nl2br($data['exp_mail'])); ?></textarea>
 				<br />
 				<input type="button" onclick="javascript:show_preview('exp_mail', 'preview_change');" value="Vorschau" />
 				<br />
@@ -152,12 +152,12 @@ $( document ).ready(function() {
 		</tr>  
 		<tr>
 			<td class="ad_edit_headline">
-				<input name="exp_vps" type="checkbox" value="1" <? if ( $data['exp_vps'] == 1 ) {?>checked /><? } else { ?> /><? } ?> VP-Stunden&nbsp;&nbsp;
-				<input name="exp_vpsnum" type="text" size="5" maxlength="5" value="<?= $data['exp_vpsnum'] ?>" />
+				<input name="exp_vps" type="checkbox" value="1" <?php if ( $data['exp_vps'] == 1 ) {?>checked /><?php } else { ?> /><?php } ?> VP-Stunden&nbsp;&nbsp;
+				<input name="exp_vpsnum" type="text" size="5" maxlength="5" value="<?php echo  $data['exp_vpsnum']; ?>" />
 			</td>
 			<td class="ad_edit_headline">
-				<input name="exp_geld" type="checkbox" value="1" <? if ( $data['exp_geld'] == 1 ) {?>checked /><? } else { ?>/><? } ?> Geld&nbsp;&nbsp;
-				<input name="exp_geldnum" type="text" size="5" maxlength="5" value="<?= $data['exp_geldnum'] ?>" />
+				<input name="exp_geld" type="checkbox" value="1" <?php if ( $data['exp_geld'] == 1 ) {?>checked /><?php } else { ?>/><?php } ?> Geld&nbsp;&nbsp;
+				<input name="exp_geldnum" type="text" size="5" maxlength="5" value="<?php echo  $data['exp_geldnum']; ?>" />
 			</td>
 			<td class="ad_edit_headline">
 				<img src="images/info.gif" width="17" height="17" title="Bitte Kommata verwenden, keine Punkte" alt="" />
@@ -285,73 +285,73 @@ $( document ).ready(function() {
 		</tr>
 		<tr>					
 			<td class="ad_edit_headline">
-				<input type="checkbox" name="vpn_geschlecht" id="vpn_geschlecht" value="1" <? if ( $data['vpn_geschlecht'] == 0 ) {?>/><? } else { ?>checked /><? } ?>
+				<input type="checkbox" name="vpn_geschlecht" id="vpn_geschlecht" value="1" <?php if ( $data['vpn_geschlecht'] == 0 ) {?>/><?php } else { ?>checked /><?php } ?>
 			</td>
 			<td class="ad_edit_headline"><label for="vpn_geschlecht">Geschlecht</label></td>	
 		</tr>  
 		<tr>					
 			<td class="ad_edit_headline">
-				<input type="checkbox" name="vpn_gebdat" id="vpn_gebdat" value="1" onclick="javascript: if ( this.checked==true ) { document.getElementById('vpn_gebdat_o').style.visibility='visible'; } else if( this.checked==false ) { document.getElementById('vpn_gebdat_o').style.visibility='hidden'; };" <? if ( $data['vpn_gebdat'] == 0 ) {?>/><? } else { ?>checked /><? } ?>
+				<input type="checkbox" name="vpn_gebdat" id="vpn_gebdat" value="1" onclick="javascript: if ( this.checked==true ) { document.getElementById('vpn_gebdat_o').style.visibility='visible'; } else if( this.checked==false ) { document.getElementById('vpn_gebdat_o').style.visibility='hidden'; };" <?php if ( $data['vpn_gebdat'] == 0 ) {?>/><?php } else { ?>checked /><?php } ?>
 			</td>
 			<td class="ad_edit_headline"><label for="vpn_gebdat">Geburtsdatum</label>&nbsp;&nbsp;&nbsp;
-				<select id="vpn_gebdat_o" name="vpn_gebdat_o" <? if ( $data['vpn_gebdat'] == 0 ) {?>style="visibility:hidden; "<? } else { ?>style="visibility:visible; "<? } ?>>
-					<option value="0" <? if ( $data['vpn_gebdat'] == 1 ) { ?>selected<? } ?>>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</option>
-					<option value="1" <? if ( $data['vpn_gebdat'] == 2 ) { ?>selected<? } ?>>*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</option>
+				<select id="vpn_gebdat_o" name="vpn_gebdat_o" <?php if ( $data['vpn_gebdat'] == 0 ) {?>style="visibility:hidden; "<?php } else { ?>style="visibility:visible; "<?php } ?>>
+					<option value="0" <?php if ( $data['vpn_gebdat'] == 1 ) { ?>selected<?php } ?>>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</option>
+					<option value="1" <?php if ( $data['vpn_gebdat'] == 2 ) { ?>selected<?php } ?>>*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</option>
 				</select>
 			</td>	
 		</tr>   
 		<tr>					
 			<td class="ad_edit_headline">
-				<input type="checkbox" name="vpn_fach" id="vpn_fach" value="1" onclick="javascript: if ( this.checked==true ) { document.getElementById('vpn_fach_o').style.visibility='visible'; } else if( this.checked==false ) { document.getElementById('vpn_fach_o').style.visibility='hidden'; };" <? if ( $data['vpn_fach'] == 0 ) {?>/><? } else { ?>checked /><? } ?>
+				<input type="checkbox" name="vpn_fach" id="vpn_fach" value="1" onclick="javascript: if ( this.checked==true ) { document.getElementById('vpn_fach_o').style.visibility='visible'; } else if( this.checked==false ) { document.getElementById('vpn_fach_o').style.visibility='hidden'; };" <?php if ( $data['vpn_fach'] == 0 ) {?>/><?php } else { ?>checked /><?php } ?>
 			</td>
 			<td class="ad_edit_headline"><label for="vpn_fach">Studienfach</label>&nbsp;&nbsp;&nbsp;
-				<select id="vpn_fach_o" name="vpn_fach_o" <? if ( $data['vpn_fach'] == 0 ) {?>style="visibility:hidden; "<? } else { ?>style="visibility:visible; "<? } ?>>
-					<option value="0" <? if ( $data['vpn_fach'] == 1 ) { ?>selected<? } ?>>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</option>
-					<option value="1" <? if ( $data['vpn_fach'] == 2 ) { ?>selected<? } ?>>*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</option>
+				<select id="vpn_fach_o" name="vpn_fach_o" <?php if ( $data['vpn_fach'] == 0 ) {?>style="visibility:hidden; "<?php } else { ?>style="visibility:visible; "<?php } ?>>
+					<option value="0" <?php if ( $data['vpn_fach'] == 1 ) { ?>selected<?php } ?>>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</option>
+					<option value="1" <?php if ( $data['vpn_fach'] == 2 ) { ?>selected<?php } ?>>*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</option>
 				</select>
 			</td>	
 		</tr>	
 		<tr>					
 			<td class="ad_edit_headline">
-				<input type="checkbox" name="vpn_semester" id="vpn_semester" value="1" onclick="javascript: if ( this.checked==true ) { document.getElementById('vpn_semester_o').style.visibility='visible'; } else if( this.checked==false ) { document.getElementById('vpn_semester_o').style.visibility='hidden'; };" <? if ( $data['vpn_semester'] == 0 ) {?>/><? } else { ?>checked /><? } ?>
+				<input type="checkbox" name="vpn_semester" id="vpn_semester" value="1" onclick="javascript: if ( this.checked==true ) { document.getElementById('vpn_semester_o').style.visibility='visible'; } else if( this.checked==false ) { document.getElementById('vpn_semester_o').style.visibility='hidden'; };" <?php if ( $data['vpn_semester'] == 0 ) {?>/><?php } else { ?>checked /><?php } ?>
 			</td>
 			<td class="ad_edit_headline"><label for="vpn_semester">Semesterzahl</label>&nbsp;&nbsp;&nbsp;
-				<select id="vpn_semester_o" name="vpn_semester_o" <? if ( $data['vpn_semester'] == 0 ) {?>style="visibility:hidden; "<? } else { ?>style="visibility:visible; "<? } ?>>
-					<option value="0" <? if ( $data['vpn_semester'] == 1 ) { ?>selected<? } ?>>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</option>
-					<option value="1" <? if ( $data['vpn_semester'] == 2 ) { ?>selected<? } ?>>*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</option>
+				<select id="vpn_semester_o" name="vpn_semester_o" <?php if ( $data['vpn_semester'] == 0 ) {?>style="visibility:hidden; "<?php } else { ?>style="visibility:visible; "<?php } ?>>
+					<option value="0" <?php if ( $data['vpn_semester'] == 1 ) { ?>selected<?php } ?>>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</option>
+					<option value="1" <?php if ( $data['vpn_semester'] == 2 ) { ?>selected<?php } ?>>*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</option>
 				</select>
 			</td>	
 		</tr> 
 		<tr>					
 			<td class="ad_edit_headline">
-				<input type="checkbox" name="vpn_adresse" id="vpn_adresse" value="1" onclick="javascript: if ( this.checked==true ) { document.getElementById('vpn_adresse_o').style.visibility='visible'; } else if( this.checked==false ) { document.getElementById('vpn_adresse_o').style.visibility='hidden'; };" <? if ( $data['vpn_adresse'] == 0 ) {?>/><? } else { ?>checked /><? } ?>
+				<input type="checkbox" name="vpn_adresse" id="vpn_adresse" value="1" onclick="javascript: if ( this.checked==true ) { document.getElementById('vpn_adresse_o').style.visibility='visible'; } else if( this.checked==false ) { document.getElementById('vpn_adresse_o').style.visibility='hidden'; };" <?php if ( $data['vpn_adresse'] == 0 ) {?>/><?php } else { ?>checked /><?php } ?>
 			</td>
 			<td class="ad_edit_headline"><label for="vpn_adresse">Anschrift</label>&nbsp;&nbsp;&nbsp;
-				<select id="vpn_adresse_o" name="vpn_adresse_o" <? if ( $data['vpn_adresse'] == 0 ) {?>style="visibility:hidden; "<? } else { ?>style="visibility:visible; "<? } ?>>
-					<option value="0" <? if ( $data['vpn_adresse'] == 1 ) { ?>selected<? } ?>>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</option>
-					<option value="1" <? if ( $data['vpn_adresse'] == 2 ) { ?>selected<? } ?>>*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</option>
+				<select id="vpn_adresse_o" name="vpn_adresse_o" <?php if ( $data['vpn_adresse'] == 0 ) {?>style="visibility:hidden; "<?php } else { ?>style="visibility:visible; "<?php } ?>>
+					<option value="0" <?php if ( $data['vpn_adresse'] == 1 ) { ?>selected<?php } ?>>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</option>
+					<option value="1" <?php if ( $data['vpn_adresse'] == 2 ) { ?>selected<?php } ?>>*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</option>
 				</select>
 			</td>	
 		</tr>	
 		<tr>					
 			<td class="ad_edit_headline">
-				<input type="checkbox" name="vpn_tele1" id="vpn_tele1" value="1" onclick="javascript: if ( this.checked==true ) { document.getElementById('vpn_tele1_o').style.visibility='visible'; } else if( this.checked==false ) { document.getElementById('vpn_tele1_o').style.visibility='hidden'; };" <? if ( $data['vpn_tele1'] == 0 ) {?>/><? } else { ?>checked /><? } ?>
+				<input type="checkbox" name="vpn_tele1" id="vpn_tele1" value="1" onclick="javascript: if ( this.checked==true ) { document.getElementById('vpn_tele1_o').style.visibility='visible'; } else if( this.checked==false ) { document.getElementById('vpn_tele1_o').style.visibility='hidden'; };" <?php if ( $data['vpn_tele1'] == 0 ) {?>/><?php } else { ?>checked /><?php } ?>
 			</td>
 			<td class="ad_edit_headline"><label for="vpn_tele1">Festnetznummer</label>&nbsp;&nbsp;&nbsp;
-				<select id="vpn_tele1_o" name="vpn_tele1_o" <? if ( $data['vpn_tele1'] == 0 ) {?>style="visibility:hidden; "<? } else { ?>style="visibility:visible; "<? } ?>>
-					<option value="0" <? if ( $data['vpn_tele1'] == 1 ) { ?>selected<? } ?>>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</option>
-					<option value="1" <? if ( $data['vpn_tele1'] == 2 ) { ?>selected<? } ?>>*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</option>
+				<select id="vpn_tele1_o" name="vpn_tele1_o" <?php if ( $data['vpn_tele1'] == 0 ) {?>style="visibility:hidden; "<?php } else { ?>style="visibility:visible; "<?php } ?>>
+					<option value="0" <?php if ( $data['vpn_tele1'] == 1 ) { ?>selected<?php } ?>>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</option>
+					<option value="1" <?php if ( $data['vpn_tele1'] == 2 ) { ?>selected<?php } ?>>*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</option>
 				</select>
 			</td>	
 		</tr>  
 		<tr>					
 			<td class="ad_edit_headline">
-				<input type="checkbox" name="vpn_tele2" id="vpn_tele2" value="1" onclick="javascript: if ( this.checked==true ) { document.getElementById('vpn_tele2_o').style.visibility='visible'; } else if( this.checked==false ) { document.getElementById('vpn_tele2_o').style.visibility='hidden'; };" <? if ( $data['vpn_tele2'] == 0 ) {?>/><? } else { ?>checked /><? } ?>
+				<input type="checkbox" name="vpn_tele2" id="vpn_tele2" value="1" onclick="javascript: if ( this.checked==true ) { document.getElementById('vpn_tele2_o').style.visibility='visible'; } else if( this.checked==false ) { document.getElementById('vpn_tele2_o').style.visibility='hidden'; };" <?php if ( $data['vpn_tele2'] == 0 ) {?>/><?php } else { ?>checked /><?php } ?>
 			</td>
 			<td class="ad_edit_headline"><label for="vpn_tele2">Mobilnummer</label>&nbsp;&nbsp;&nbsp;
-				<select id="vpn_tele2_o" name="vpn_tele2_o" <? if ( $data['vpn_tele2'] == 0 ) {?>style="visibility:hidden; "<? } else { ?>style="visibility:visible; "<? } ?>>
-					<option value="0" <? if ( $data['vpn_tele2'] == 1 ) { ?>selected<? } ?>>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</option>
-					<option value="1" <? if ( $data['vpn_tele2'] == 2 ) { ?>selected<? } ?>>*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</option>
+				<select id="vpn_tele2_o" name="vpn_tele2_o" <?php if ( $data['vpn_tele2'] == 0 ) {?>style="visibility:hidden; "<?php } else { ?>style="visibility:visible; "<?php } ?>>
+					<option value="0" <?php if ( $data['vpn_tele2'] == 1 ) { ?>selected<?php } ?>>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</option>
+					<option value="1" <?php if ( $data['vpn_tele2'] == 2 ) { ?>selected<?php } ?>>*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</option>
 				</select>
 			</td>	
 		</tr>  
@@ -362,15 +362,15 @@ $( document ).ready(function() {
 			<td class="ad_edit_headline"><label for="vpn_email">Email-Adresse *</label></td>	
 		</tr>  
 		<tr>					
-			<td class="ad_edit_headline"><input type="checkbox" name="vpn_ifreward" id="vpn_ifreward" value="1" <? if ( $data['vpn_ifreward'] == 1 ) {?>checked /><? } else { ?>/><? } ?></td>
+			<td class="ad_edit_headline"><input type="checkbox" name="vpn_ifreward" id="vpn_ifreward" value="1" <?php if ( $data['vpn_ifreward'] == 1 ) {?>checked /><?php } else { ?>/><?php } ?></td>
 			<td class="ad_edit_headline"><label for="vpn_ifreward">Entscheidung: Geld oder VP-Stunden</label></td>	
 		</tr>  
 		<tr>					
-			<td class="ad_edit_headline"><input type="checkbox" name="vpn_ifbereits" id="vpn_ifbereits" value="1" <? if ( $data['vpn_ifbereits'] == 1 ) {?>checked /><? } else { ?>/><? } ?></td>
+			<td class="ad_edit_headline"><input type="checkbox" name="vpn_ifbereits" id="vpn_ifbereits" value="1" <?php if ( $data['vpn_ifbereits'] == 1 ) {?>checked /><?php } else { ?>/><?php } ?></td>
 			<td class="ad_edit_headline"><label for="vpn_ifbereits">Frage: Hat die VP bereits an Experimenten dieses VLs teilgenommen?</label></td>	
 		</tr>   
 		<tr>					
-			<td class="ad_edit_headline"><input type="checkbox" name="vpn_ifbenach" id="vpn_ifbenach" value="1" <? if ( $data['vpn_ifbenach'] == 1 ) {?>checked /><? } else { ?>/><? } ?></td>
+			<td class="ad_edit_headline"><input type="checkbox" name="vpn_ifbenach" id="vpn_ifbenach" value="1" <?php if ( $data['vpn_ifbenach'] == 1 ) {?>checked /><?php } else { ?>/><?php } ?></td>
 			<td class="ad_edit_headline"><label for="vpn_ifbenach">Frage: Möchte die VP über weitere Experimente benachrichtigt werden?</label></td>	
 		</tr>	 
 		
