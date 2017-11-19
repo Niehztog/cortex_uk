@@ -8,7 +8,7 @@
     &nbsp;&nbsp;
     <a href="mailto:jradt@uni-koeln.de?subject=Supportanfrage%20zu%20Cortex">Support-Email</a>
     <br/>
-    CORTEX&nbsp;&nbsp;&bull;&nbsp;&nbsp;&copy;&nbsp;2009&nbsp;&ndash;&nbsp;2014&nbsp;&bull;&nbsp;&nbsp;<a href="mailto:malte.elson@uni-muenster.de">Malte&nbsp;Elson</a>&nbsp;&amp;&nbsp;<a href="mailto:nils.gotzhein@googlemail.com">Nils&nbsp;Gotzhein</a>
+    CORTEX&nbsp;&nbsp;&bull;&nbsp;&nbsp;&copy;&nbsp;2009&nbsp;&ndash;&nbsp;2017&nbsp;&bull;&nbsp;&nbsp;<a href="mailto:malte.elson@uni-muenster.de">Malte&nbsp;Elson</a>&nbsp;&amp;&nbsp;<a href="mailto:nils.gotzhein@googlemail.com">Nils&nbsp;Gotzhein</a>
 </div>
 
 </div>

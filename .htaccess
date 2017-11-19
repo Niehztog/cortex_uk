@@ -1,6 +1,6 @@
 AuthType Basic
 AuthName "CORTEX Administration"
-AuthUserFile /xampp/htdocs/cortex/.htpasswd01
+AuthUserFile /xampp/htdocs/cortex2/.htpasswd01
 
 <Files "ad_exp_create.php">
 require valid-user

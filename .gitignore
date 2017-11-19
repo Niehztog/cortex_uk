@@ -1,0 +1,4 @@
+include/config.php
+node_modules/
+.idea
+.htpasswd01

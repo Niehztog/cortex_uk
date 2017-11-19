@@ -108,7 +108,7 @@ function addSession( pNode ) {
 	}).appendTo(li);
 
 	li.insertAfter(pNode);
-	$(".timepicker").timePicker({step:30, startTime:"08:00", endTime:"19:00"});
+	$(".timepicker").timepicker({step:30, startTime:"08:00", endTime:"19:00"});
 
 	$('#sessions').val(SessionCount);
 

@@ -160,15 +160,11 @@ if(false === $resultVp) {
                     , "aTargets": [ 7 ]
                 }
 			]
-		}).columnFilter({
-			aoColumns: [
-				null,
-				{ type: "text" },
-				{ type: "text" },
-				{ type: "select" },
-				{ type: "select" }
-			]
-		});
+		}).yadcf([
+            {column_number : 1, filter_type: "text"},
+            {column_number : 2, filter_type: "text"},
+            {column_number : 3, filter_type: "select"},
+            {column_number : 4, filter_type: "select"}]);
 
 		$('#checkall').click(function(e) {
 			var chk = $(this).prop('checked');

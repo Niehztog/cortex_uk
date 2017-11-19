@@ -13,9 +13,9 @@ initSession(true);
 <link rel="stylesheet" href="css/menu.css" />
 <link rel="stylesheet" href="css/main.css" />
 
-<link rel="stylesheet" href="externals/fullcalendar/fullcalendar.css" />
+<link rel="stylesheet" href="node_modules/fullcalendar/dist/fullcalendar.css" />
 <link rel="stylesheet" href="css/fullcalendar.custom.css" />
-<link rel="stylesheet" href="externals/fullcalendar/fullcalendar.print.css" media='print' />
+<link rel="stylesheet" href="node_modules/fullcalendar/dist/fullcalendar.print.css" media='print' />
 
 <?php //jquery ui wird benötigt für die anmeldeseite (datepicker zur auswahl geburtsdatum)?>
 <link rel="stylesheet" href="css/smoothness/jquery-ui-1.10.4.custom.min.css" />
@@ -24,36 +24,36 @@ initSession(true);
 if('admin.php'===basename($_SERVER['PHP_SELF'])) {
 	?>
 	<link rel="stylesheet" href="css/form_add.css" />
-	<link rel="stylesheet" href="externals/jquery-timepicker/timePicker.css" />
+	<link rel="stylesheet" href="node_modules/jquery-timepicker/jquery.timepicker.css" />
 	<?php
 }
 
 if('index.php' !== basename($_SERVER['PHP_SELF'])) {
 	?>
 	<style type="text/css" media="screen">
-		/*@import "externals/datatables/media/css/jquery.dataTables.css";*/
-		@import "externals/datatables/media/css/jquery.dataTables_themeroller.css";
+		@import "node_modules/datatables/media/css/jquery.dataTables.min.css";
+        @import "node_modules/yadcf-npm/jquery.dataTables.yadcf.css";
 	</style>
 	<?php
 }
 ?>
 
-<script type="text/javascript" src="externals/jquery/jquery.min.js"></script>
-<script type="text/javascript" src="externals/jquery-ui/ui/minified/jquery-ui.custom.min.js"></script>
-<script type="text/javascript" src="externals/jquery-ui/ui/minified/i18n/jquery-ui-i18n.min.js"></script>
-<script type="text/javascript" src="externals/jquery-insertatcaret/jquery.insertatcaret.min.js"></script>
-<script type="text/javascript" src="externals/fullcalendar/fullcalendar.min.js"></script>
+<script type="text/javascript" src="node_modules/jquery/dist/jquery.min.js"></script>
+<script type="text/javascript" src="node_modules/jquery-ui-dist/jquery-ui.js"></script>
+<script type="text/javascript" src="node_modules/insert-at-caret/jquery.insert-at-caret.min.js"></script>
+<script type="text/javascript" src="node_modules/moment/min/moment.min.js"></script>
+<script type="text/javascript" src="node_modules/fullcalendar/dist/fullcalendar.min.js"></script>
 <script type="text/javascript" src="js/main.js"></script>
 <?php
 if('index.php' !== basename($_SERVER['PHP_SELF'])) {
 	?>
 	<script type="text/javascript" src="js/backend.js"></script>
 	<script type="text/javascript">jQuery.migrateMute = true;</script>
-	<script type="text/javascript" src="externals/jquery-migrate/jquery-migrate.min.js"></script>
-	<script type="text/javascript" src="externals/jquery-timepicker/jquery.timePicker.min.js"></script>
-	<script type="text/javascript" src="externals/jquery-querystring/jquery.QueryString.js"></script>
-	<script type="text/javascript" charset="utf-8" src="externals/datatables/media/js/jquery.dataTables.js"></script>
-	<script type="text/javascript" src="externals/datatables-columnfilter/media/js/jquery.dataTables.columnFilter.js"></script>
+	<script type="text/javascript" src="node_modules/jquery-migrate/dist/jquery-migrate.min.js"></script>
+	<script type="text/javascript" src="node_modules/jquery-timepicker/jquery.timepicker.js"></script>
+	<script type="text/javascript" src="node_modules/jquery-querystring/output/jquery.querystring.min.js"></script>
+	<script type="text/javascript" charset="utf-8" src="node_modules/datatables/media/js/jquery.dataTables.min.js"></script>
+	<script type="text/javascript" src="node_modules/yadcf-npm/jquery.dataTables.yadcf.js"></script>
 	<?php
 }
 ?>

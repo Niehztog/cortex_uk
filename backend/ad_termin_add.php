@@ -13,7 +13,7 @@ $( document ).ready(function() {
 	});    // It allows html content to tooltip.
 	$('input[type="button"], input[type="submit"]').button();
 	initDatepicker();
-	$(".timepicker").timePicker({step:30, startTime:"08:00", endTime:"19:00"});
+	$(".timepicker").timepicker({step:30, startTime:"08:00", endTime:"19:00"});
 });
 </script>
 </head>

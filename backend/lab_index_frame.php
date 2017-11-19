@@ -16,7 +16,7 @@ function insertJavaScript(TimeSlotPermanentCollection $calendarData = null) {
 	?>
 		<script type="text/javascript">
 			$( document ).ready(function() {
-				$(".timepicker").timePicker({step:30, startTime:"08:00", endTime:"19:00"});
+				$(".timepicker").timepicker({step:30, startTime:"08:00", endTime:"19:00"});
 				$(".spinner").spinner({
 					spin: function( event, ui ) {
 						if ( ui.value < 1 ) {

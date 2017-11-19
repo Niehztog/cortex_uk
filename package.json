@@ -1,0 +1,20 @@
+{
+  "name": "cortex_uk",
+  "version": "1.0.0",
+  "description": "COmputer-aided Registration Tool for EXperiments",
+  "main": "index.js",
+  "repository": "git@github.com:Niehztog/cortex_uk.git",
+  "author": "Nils Gotzhein",
+  "license": "GPL-2.0",
+  "dependencies": {
+    "datatables": "^1.10.13",
+    "fullcalendar": "^2.3.1",
+    "insert-at-caret": "^1.1.4",
+    "jquery": "1.11.0",
+    "jquery-migrate": "1.2.1",
+    "jquery-querystring": "^1.2.1",
+    "jquery-timepicker": "^1.3.3",
+    "jquery-ui-dist": "^1.12.1",
+    "yadcf-npm": "^0.8.9"
+  }
+}
