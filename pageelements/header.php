@@ -43,6 +43,7 @@ if('index.php' !== basename($_SERVER['PHP_SELF'])) {
 <script type="text/javascript" src="node_modules/insert-at-caret/jquery.insert-at-caret.min.js"></script>
 <script type="text/javascript" src="node_modules/moment/min/moment.min.js"></script>
 <script type="text/javascript" src="node_modules/fullcalendar/dist/fullcalendar.min.js"></script>
+<script type="text/javascript" src="node_modules/fullcalendar/dist/lang/de.js"></script>
 <script type="text/javascript" src="js/main.js"></script>
 <?php
 if('index.php' !== basename($_SERVER['PHP_SELF'])) {
