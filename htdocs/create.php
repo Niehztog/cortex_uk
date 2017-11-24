@@ -7,7 +7,6 @@ error_reporting(-1);
 <head>
 <title>CORTEX Creator</title>
 <link rel="stylesheet" href="css/menu.css">
-<link rel="stylesheet" href="css/calender.css">
 </head>
 <body>
 <div style="text-align:center">
