@@ -112,7 +112,7 @@ function initCalendar(eventData, purpose) {
 
 	var calendar = $('#calendar').fullCalendar($.extend(
 		{
-			theme: true,
+            themeSystem: 'jquery-ui',
 			header: {
 				left: 'prev,next, today',
 				center: 'title',
@@ -127,7 +127,7 @@ function initCalendar(eventData, purpose) {
             timezone: false,
 			eventTextColor: '#000000',
 			defaultDate: today.toISOString(),
-			lang: 'de',
+			locale: 'de',
             height: 'auto'
 		}
 		, interactionOptions

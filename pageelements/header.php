@@ -18,7 +18,10 @@ initSession(true);
 <link rel="stylesheet" href="node_modules/fullcalendar/dist/fullcalendar.print.css" media='print' />
 
 <?php //jquery ui wird benötigt für die anmeldeseite (datepicker zur auswahl geburtsdatum)?>
-<link rel="stylesheet" href="css/smoothness/jquery-ui-1.10.4.custom.min.css" />
+    <link rel="stylesheet" href="node_modules/jquery-ui-dist/jquery-ui.css" />
+    <link rel="stylesheet" href="node_modules/jquery-ui-dist/jquery-ui.structure.css" />
+    <!--link rel="stylesheet" href="node_modules/jquery-ui-dist/jquery-ui.theme.css" /-->
+    <link rel="stylesheet" href="css/smoothness/jquery-ui.theme.min.css" />
 
 <?php
 if('admin.php'===basename($_SERVER['PHP_SELF'])) {
@@ -43,7 +46,7 @@ if('index.php' !== basename($_SERVER['PHP_SELF'])) {
 <script type="text/javascript" src="node_modules/insert-at-caret/jquery.insert-at-caret.min.js"></script>
 <script type="text/javascript" src="node_modules/moment/min/moment.min.js"></script>
 <script type="text/javascript" src="node_modules/fullcalendar/dist/fullcalendar.min.js"></script>
-<script type="text/javascript" src="node_modules/fullcalendar/dist/lang/de.js"></script>
+<script type="text/javascript" src="node_modules/fullcalendar/dist/locale/de.js"></script>
 <script type="text/javascript" src="js/main.js"></script>
 <?php
 if('index.php' !== basename($_SERVER['PHP_SELF'])) {
