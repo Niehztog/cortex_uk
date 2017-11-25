@@ -1,0 +1,29 @@
+version: "3.3"
+services:
+  nginx:
+      build:
+          context: ./nginx
+      ports:
+          - "80:80"
+      volumes:
+          - ./src:/var/www/html
+  fpm:
+      build:
+          context: ./fpm
+      volumes:
+          - ./src:/var/www/html
+      expose:
+          - "9000"
+      environment:
+          - "DB_HOST=db"
+          - "DB_DATABASE=cortex"
+          - "XDEBUG_CONFIG=remote_host=10.0.75.1"
+  database:
+      image: bitnami/mariadb:latest
+      environment:
+          - MARIADB_ROOT_PASSWORD=test
+          - MARIADB_USER=cortex
+          - MARIADB_PASSWORD=admin
+          - MARIADB_DATABASE=cortex
+      volumes:
+          - ./database:/bitnami
