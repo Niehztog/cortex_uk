@@ -1,0 +1,12 @@
+@CHARSET "ISO-8859-1";
+
+/*das bestimmt die hintergrundfarbe der termin-boxen*/
+div#calendar .fc-event {
+	background-color: #D2DBF8;
+}
+
+/*das ist die beschriftung der terminboxen (zeit und label)*/
+div#calendar div.fc-event-title,
+div#calendar div.fc-event-time {
+	font-size: 12px;
+}
