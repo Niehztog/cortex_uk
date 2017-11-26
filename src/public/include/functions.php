@@ -106,6 +106,11 @@ function validateExpData() {
 		storeMessageInSession(sprintf(MESSAGE_BOX_ERROR, 'Wenn automatische Terminvergabe gewählt wurde muss die Sitzungsdauer angegeben werden.'));
 		$result = false;
 	}
+
+    if('automatisch' === $_POST['terminvergabemodus'] && empty($_POST['lab_id'])) {
+        storeMessageInSession(sprintf(MESSAGE_BOX_ERROR, 'Wenn automatische Terminvergabe gewählt wurde muss mindestens ein Raum ausgewählt werden.'));
+        $result = false;
+    }
 	
 	if(!empty($_POST['exp_start']) && !empty($_POST['exp_end'])) {
 		$start = DateTime::createFromFormat('d.m.Y', $_POST['exp_start']);
