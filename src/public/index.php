@@ -83,6 +83,7 @@ elseif(($_GET['menu'] == 'experiment') && (isset($_GET['expid'])) && (!isset($_P
 		trigger_error($e, E_USER_WARNING);
 		echo '<!--' . $e . '-->';
 		storeMessageInSession(sprintf(MESSAGE_BOX_ERROR, sprintf('Interner Fehler bei der Anmeldung. Bitte wenden Sie sich per Email an den Versuchsleiter. (%1$d)', __LINE__)));
+        $calendarData = '';
 	}
 	
 	require_once 'pageelements/header.php';

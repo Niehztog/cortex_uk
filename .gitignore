@@ -2,3 +2,4 @@ src/public/include/config.php
 node_modules/
 .idea
 .htpasswd01
+database/mariadb
