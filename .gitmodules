@@ -1,27 +1,27 @@
-[submodule "externals/jquery"]
-	path = externals/jquery
+[submodule "src/public/externals/jquery"]
+	path = src/public/externals/jquery
 	url = git@github.com:horninc/jquery-js-as-submodule.git
-[submodule "externals/jquery-migrate"]
-	path = externals/jquery-migrate
+[submodule "src/public/externals/jquery-migrate"]
+	path = src/public/externals/jquery-migrate
 	url = git@github.com:appleboy/jquery-migrate.git
-[submodule "externals/jquery-ui"]
-	path = externals/jquery-ui
+[submodule "src/public/externals/jquery-ui"]
+	path = src/public/externals/jquery-ui
 	url = git@github.com:components/jqueryui.git
-[submodule "externals/datatables"]
-	path = externals/datatables
+[submodule "src/public/externals/datatables"]
+	path = src/public/externals/datatables
 	url = git@github.com:DataTables/DataTables.git
-[submodule "externals/jquery-timepicker"]
-	path = externals/jquery-timepicker
+[submodule "src/public/externals/jquery-timepicker"]
+	path = src/public/externals/jquery-timepicker
 	url = git@github.com:perifer/timePicker.git
-[submodule "externals/jquery-insertatcaret"]
-	path = externals/jquery-insertatcaret
+[submodule "src/public/externals/jquery-insertatcaret"]
+	path = src/public/externals/jquery-insertatcaret
 	url = git@github.com:nkm/jQuery-insertAtCaret.git
-[submodule "externals/datatables-columnfilter"]
-	path = externals/datatables-columnfilter
+[submodule "src/public/externals/datatables-columnfilter"]
+	path = src/public/externals/datatables-columnfilter
 	url = git@github.com:tduchateau/jquery-datatables-column-filter.git
-[submodule "externals/jquery-querystring"]
-	path = externals/jquery-querystring
+[submodule "src/public/externals/jquery-querystring"]
+	path = src/public/externals/jquery-querystring
 	url = git@github.com:schwartzrw/jquery-querystring.git
-[submodule "externals/fullcalendar"]
-	path = externals/fullcalendar
-	url = git@github.com:arshaw/fullcalendar-component.git
+[submodule "src/public/externals/fullcalendar"]
+	path = src/public/externals/fullcalendar
+	url = git@github.com:chengyin/fullcalendar-component.git

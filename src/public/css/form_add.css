@@ -1,0 +1,70 @@
+@CHARSET "UTF-8";
+
+.optionGroup {
+	white-space:normal;
+}
+
+fieldset {
+	margin-top: 20px;
+	border: none;
+}
+
+fieldset legend {
+	color: #4A71D6;
+	font-family: Arial,Helvecita;
+	font-size: 14px;
+	font-weight: bold;
+	line-height: 18px;
+	margin-bottom: -6px;
+	margin-top: 0;
+	text-align: left;
+}
+
+fieldset ul,
+fieldset li,
+div.tabs ui,
+div.tabs li{
+	border:0;
+	margin:0;
+	padding:0;
+	list-style:none;
+}
+fieldset li,
+div.tabs li,
+div.optionGroup>ul>li{
+	clear:both;
+	list-style:none;
+	padding-top:10px;
+}
+
+div#tabs,
+div.optionGroup > div {
+	margin-top: 10px;
+}
+
+fieldset label,
+div.optionGroup label {
+	width:170px;
+	float:left;
+}
+
+div.optionGroup label.nofloat {
+	float:none;
+}
+
+div.optionGroup span.optionLabel {
+	width:90px;
+	float:left;
+}
+
+label.halbbreit {
+	width:24px;
+}
+
+input.rechtsplatz {
+	margin-right:4px;
+}
+
+div.time-picker {
+	z-index: 101!important;
+}
