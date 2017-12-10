@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 // DB connection/login info
 define('DB_HOST',		'database');	// HOST name/adress of the MySQL Database; can be
 										// different from the host name where the PHP

@@ -225,7 +225,7 @@ if(isset($_GET['action']) && $_GET['action'] == 'create') {
 	});
 </script>
 
-<form action="admin.php" method="post" enctype="multipart/form-data" name="create" id="create">
+<form action="admin.php?action=create" method="post" enctype="multipart/form-data" name="create" id="create">
 	<input id="sessions" name="sessions" type="hidden" value="" />
 	<input id="days" name="days" type="hidden" value="" />
 <h1>Experiment hinzufügen</h1>
