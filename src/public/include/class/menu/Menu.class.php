@@ -164,6 +164,13 @@ class Menu {
 		);
 		$subItem->incLevel();
 		$subMenu[] = $subItem;
+
+        $subItem = $this->getMenuItemInstance(
+            'Einstellungen',
+            "admin.php?menu=settings"
+        );
+        $subItem->incLevel();
+        $subMenu[] = $subItem;
 	
 		return $subMenu;
 	

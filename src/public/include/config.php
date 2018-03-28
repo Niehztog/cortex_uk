@@ -16,6 +16,7 @@ define( 'TABELLE_EXPERIMENTE'		, 'c_experiment');	// manually in your Database
 define( 'TABELLE_SITZUNGEN'		    , 'c_session'	);	//
 define( 'TABELLE_LABORE'			, 'c_lab'		);	//
 define( 'TABELLE_EXP_TO_LAB'		, 'c_exp2lab'	);	//
+define( 'TABELLE_BLOCKED_EMAIL'		, 'c_blocked_email'	);	//
 
 define('REMOTE_USER_LIMNITED_ACCESS','expra'); //username from htpasswd with access restrictions
 

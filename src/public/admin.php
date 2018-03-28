@@ -10,6 +10,14 @@ if(isset($_GET['menu']) && 'lab' === $_GET['menu']) {
 	//Labore verwalten
 	require_once 'backend/lab_index_frame.php';
 }
+elseif(isset($_GET['menu']) && 'settings' === $_GET['menu']) {
+    if(!$auth->mayAccessSettings()) {
+        header('HTTP/1.1 403 Forbidden');
+        exit;
+    }
+    //Labore verwalten
+    require_once 'backend/ad_settings.php';
+}
 elseif(isset($_GET['expid'])) {
     if(!$auth->mayAccessExpControl()) {
         header('HTTP/1.1 403 Forbidden');

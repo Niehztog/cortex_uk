@@ -25,5 +25,7 @@ services:
           - MARIADB_USER=cortex
           - MARIADB_PASSWORD=admin
           - MARIADB_DATABASE=cortex
+      ports:
+          - "3306:3306"
       volumes:
           - ./database:/bitnami

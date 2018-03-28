@@ -49,6 +49,13 @@ class AccessControl {
     /**
      * @return bool
      */
+    public function mayAccessSettings() {
+        return $this->userAuth->isEditor() || $this->userAuth->isAdmin();
+    }
+
+    /**
+     * @return bool
+     */
     public function mayEditExpLab() {
         return $this->userAuth->isAdmin();
     }

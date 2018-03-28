@@ -129,6 +129,16 @@ if ( isset($_POST['createme']) )
 			  PRIMARY KEY (`id`),
 			  UNIQUE KEY `exp_id_lab_id` (`exp_id`,`lab_id`)
 			) ENGINE=InnoDB DEFAULT CHARSET=latin1;",
+
+        TABELLE_BLOCKED_EMAIL =>
+            "CREATE TABLE ".TABELLE_BLOCKED_EMAIL." (
+              `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+              `email` VARCHAR(45) NULL,
+              `created` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+              PRIMARY KEY (`id`),
+              UNIQUE INDEX `id_UNIQUE` (`id` ASC),
+              UNIQUE KEY `email` (`email`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=latin1;",
 			
 	);
 	
