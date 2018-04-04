@@ -38,18 +38,24 @@ function insertJavaScript(TimeSlotPermanentCollection $calendarData = null) {
 					//event.preventDefault();
 					//seen = []
 					calendarData = $('#calendar').fullCalendar('clientEvents');
+
 					var index;
 					for (index = 0; index < calendarData.length; ++index) {
+
 						if(calendarData[index].editable == false) {
 							//delete calendarData[index];
 							calendarData.splice(index, 1);
 							index--;
 						}
-						else {
+
+						<?php
+						//wird mit der neuen version von fullcalendar nichtmehr gebraucht, da .start und .end jetzt moment-objekte sind
+						?>
+						/*else {
 							var curdate = calendarData[index];
 							curdate.start.setHours(curdate.start.getHours() - curdate.start.getTimezoneOffset() / 60);
 							curdate.end.setHours(curdate.end.getHours() - curdate.end.getTimezoneOffset() / 60);
-						}
+						}*/
 					}
 					calendarDataJson = JSON.stringify(calendarData, function(key, val) {
 						if(key=='source'||key[0]=='_') return undefined;
