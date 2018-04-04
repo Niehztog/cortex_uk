@@ -62,4 +62,5 @@ while($data = $result->fetch_assoc()) {
 	$return[] = $data;
 }
 
+header('Content-type: application/json');
 echo json_encode($return);

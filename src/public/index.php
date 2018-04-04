@@ -5,6 +5,7 @@ require_once __DIR__ . '/include/class/DatabaseFactory.class.php';
 require_once __DIR__ . '/include/class/calendar/CalendarDataProvider.class.php';
 require_once __DIR__ . '/include/class/controller/SessionController.class.php';
 require_once __DIR__ . '/include/class/ExperimentDataProvider.class.php';
+require_once __DIR__ . '/include/class/settings/EmailBlocking.class.php';
 $dbf = new DatabaseFactory();
 $mysqli = $dbf->get();
 
@@ -367,7 +368,7 @@ elseif (isset($_POST['chosendate'])) {
 	?>	  
 	<tr>					
 		<td class="eintragen"><b>Email-Adresse</b> * </td>
-		<td class="eintragen"><input name="email" type="text" size="45" maxlength="200" /></td>
+		<td class="eintragen"><input name="email" type="email" size="45" maxlength="200" /></td>
 		<td class="eintragen"></td>
 		<td class="eintragen"></td>	
 	</tr>  
@@ -508,8 +509,13 @@ elseif(isset($_POST['add']) && !isset($_POST['admin'])) {
             }
         }
 
-        if (!strstr($_POST['email'], "@") || !strstr($_POST['email'], ".")) {
+        if (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
             throw new RuntimeException(sprintf('Die angegebene Mailadresse %1$s ist fehlerhaft.', isset($_POST['email']) ? $_POST['email'] : ''));
+        }
+
+        $blockClass = new EmailBlocking();
+        if ($blockClass->isBlocked($_POST['email'])) {
+            throw new RuntimeException(sprintf('Die Anmeldung für dieses Experiment ist leider zur Zeit nicht möglich. Bitte setzen sie sich mit dem Versuchsleiter in Verbindung.'));
         }
 
         /* CHECK: PLÄTZE FREI */

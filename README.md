@@ -18,7 +18,7 @@ Installation
 ------------
 1. create a local clone of the whole repository using the following command (assumes you have git installed):
   * `git clone git@github.com:Niehztog/cortex.git`
-2. in order to checkout the code of all external ressources aswell, invoke the following command:
+2. in order to checkout the code of all external ressources aswell, invoke the following command in the project's directory:
   * `git submodule update --init --recursive`
 3. copy the files in the subfolder `src/public` to your webserver
 4. edit the file `src/public/include/config.php`
@@ -37,5 +37,7 @@ There are configuration files for Docker included in this project. The Docker po
 Steps for starting up Docker:
 * edit the file `docker-compose.yml`, insert your local Docker network IP next to `XDEBUG_CONFIG` and configure MariaDB password and username.
 * delete the directory `database\mariadb` (it contains an example database and will be recreated with the username and password you specified in the `docker-compose.yml` file earlier once you start Docker for the first time)
+* make sure the user Docker Deamon is running with has write access to the `database` subdirectory (`chmod 777 database)`
 * type `docker-compose up` in the project's directory to start up Docker
+* open `http://localhost/create.php` (only for the first time) to init the database setup
 * open `http://localhost/index.php` in your webbrowser

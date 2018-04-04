@@ -87,7 +87,6 @@ if(isset($_GET['action']) && 'create' === $_GET['action'] && !isset($_POST['crea
         exit;
     }
 	require_once 'pageelements/header.php';
-	//displayMessagesFromSession();
 	insertJavaScript();
 	?>
 	
@@ -117,9 +116,7 @@ if(isset($_GET['action']) && 'create' === $_GET['action'] && !isset($_POST['crea
 	</div>
 	
 	<br />
-	
-	<!-- >i><font size="-2">(Felder markiert mit einem * müssen ausgefüllt werden)</font></i-->
-	
+
 	<input type="submit" name="createlab" value="Labor hinzufügen"/>
 
 	</form>

@@ -111,6 +111,7 @@ elseif (!isset($_GET['betreff'])) {
 			'email'	=> $data['email']
 		);
 	}
+    header('Content-type: application/json');
 	echo json_encode($result);
 }
 
