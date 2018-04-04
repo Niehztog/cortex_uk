@@ -123,12 +123,13 @@ if(isset($_GET['action']) && 'create' === $_GET['action'] && !isset($_POST['crea
 	
 	
 	<?php 	require_once 'pageelements/footer.php';
+	exit;
 }
 elseif( isset($_POST['createlab']) ) {
     if(!$auth->mayEditLabInfo()) {
         exit;
     }
-	$calendarData = json_decode(urldecode($_POST['calendar']));
+	$calendarData = isset($_POST['calendar']) ? json_decode(urldecode($_POST['calendar'])) : null;
 
 	//daten validieren
 	if( true === validateInputData() && null !== $calendarData) {
@@ -179,10 +180,10 @@ elseif( isset($_POST['createlab']) ) {
 				, isset($_GET['menu']) ? '&menu=' . $_GET['menu'] : ''
 			)
 		);
-
+        exit;
 	}
 	elseif(null === $calendarData) {
-		storeMessageInSession(sprintf(MESSAGE_BOX_ERROR, 'Interner Fehler beim Dekodieren der Kalendardaten.'));
+		storeMessageInSession(sprintf(MESSAGE_BOX_ERROR, 'Neues Labor konnte nicht angelegt werden: Interner Fehler beim Dekodieren der Kalendardaten.'));
 	}
 	else {
 		//eingegebene daten validieren nicht, daher url parameter in lokales array übertragen
@@ -193,7 +194,7 @@ elseif( isset($_POST['createlab']) ) {
 }
 elseif(isset($_POST['changelab'])) {
 
-	$calendarData = json_decode(urldecode($_POST['calendar']));
+	$calendarData = isset($_POST['calendar']) ? json_decode(urldecode($_POST['calendar'])) : null;
 
 	//daten validieren
 	if( (!$auth->mayEditLabInfo() || true === validateInputData()) && null !== $calendarData) {
@@ -281,10 +282,10 @@ elseif(isset($_POST['changelab'])) {
 				, isset($_GET['menu']) ? '&menu=' . $_GET['menu'] : ''
 			)
 		);
-
+		exit;
 	}
 	elseif(null === $calendarData) {
-		storeMessageInSession(sprintf(MESSAGE_BOX_ERROR, 'Interner Fehler beim Dekodieren der Kalendardaten.'));
+		storeMessageInSession(sprintf(MESSAGE_BOX_ERROR, 'Änderungen am Labor konnten nicht gespeichert werden: Interner Fehler beim Dekodieren der Kalendardaten.'));
 	}
 	else {
 		//eingegebene daten validieren nicht, daher url parameter in lokales array übertragen
@@ -339,8 +340,10 @@ elseif(isset($_POST['dellab']) && isset($_GET['id'])) {
 			, isset($_GET['menu']) ? '?menu=' . $_GET['menu'] : ''
 		)
 	);
+	exit;
 }
-elseif(!empty($_GET['id'])) {
+
+if(!empty($_GET['id'])) {
 	//vorhandenes Labor zum verändern anzeigen
 
 	$abfrage = sprintf('
