@@ -7,6 +7,7 @@ services:
           - "80:80"
       volumes:
           - ./src:/var/www/html
+          - ./node_modules:/var/www/html/public/node_modules
   fpm:
       build:
           context: ./fpm
