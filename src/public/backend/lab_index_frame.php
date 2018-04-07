@@ -33,7 +33,14 @@ function insertJavaScript(TimeSlotPermanentCollection $calendarData = null) {
 				?>];
 				
 				initCalendar(calendarData, 'manage');
-				$( "#tabs" ).tabs();
+				$( "#tabs" ).tabs({
+                    activate: function(event, ui) {
+                        if(ui.newTab.index() === 1) {
+                            $('#calendar').fullCalendar('rerenderEvents');
+                        }
+                    }
+                });
+
 				$("form[id=create],form[id=change]").on('submit', function( event ) {
 					//event.preventDefault();
 					//seen = []
