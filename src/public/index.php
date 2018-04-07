@@ -513,8 +513,15 @@ elseif(isset($_POST['add']) && !isset($_POST['admin'])) {
             throw new RuntimeException(sprintf('Die angegebene Mailadresse %1$s ist fehlerhaft.', isset($_POST['email']) ? $_POST['email'] : ''));
         }
 
-        $blockClass = new EmailBlocking();
-        if ($blockClass->isBlocked($_POST['email'])) {
+        try {
+            $blockClass = new EmailBlocking();
+            $isBlocked = $blockClass->isBlocked($_POST['email']);
+        }
+        catch(Exception $e) {
+            trigger_error($e, E_USER_WARNING);
+            $isBlocked = false;
+        }
+        if ($isBlocked) {
             throw new RuntimeException(sprintf('Die Anmeldung für dieses Experiment ist leider zur Zeit nicht möglich. Bitte setzen sie sich mit dem Versuchsleiter in Verbindung.'));
         }
 
