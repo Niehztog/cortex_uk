@@ -45,10 +45,16 @@ jquery@1.12.4:
   version "3.2.1"
   resolved "https://registry.yarnpkg.com/jquery/-/jquery-3.2.1.tgz#5c4d9de652af6cd0a770154a631bba12b015c787"
 
+jquery@>=1.7.0:
+  version "3.3.1"
+  resolved "https://registry.yarnpkg.com/jquery/-/jquery-3.3.1.tgz#958ce29e81c9790f31be7792df5d4d95fc57fbca"
+
 moment@^2.20.1:
   version "2.22.0"
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.22.0.tgz#7921ade01017dd45186e7fee5f424f0b8663a730"
 
-yadcf-npm@^0.8.9:
-  version "0.8.9"
-  resolved "https://registry.yarnpkg.com/yadcf-npm/-/yadcf-npm-0.8.9.tgz#875a4c68b4ca06810b0ed853b3aba46dc207d885"
+yadcf@^0.9.2:
+  version "0.9.2"
+  resolved "https://registry.yarnpkg.com/yadcf/-/yadcf-0.9.2.tgz#4a628b70b0c1b53a26776b624913d3adfa1c93fb"
+  dependencies:
+    jquery ">=1.7.0"

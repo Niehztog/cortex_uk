@@ -35,7 +35,8 @@ if('index.php' !== basename($_SERVER['PHP_SELF'])) {
 	?>
 	<style type="text/css" media="screen">
 		@import "node_modules/datatables/media/css/jquery.dataTables.min.css";
-        @import "node_modules/yadcf-npm/jquery.dataTables.yadcf.css";
+        @import "node_modules/yadcf/jquery.dataTables.yadcf.css";
+        @import "css/datatables.css";
 	</style>
 	<?php
 }
@@ -57,7 +58,7 @@ if('index.php' !== basename($_SERVER['PHP_SELF'])) {
 	<script type="text/javascript" src="node_modules/jquery-timepicker/jquery.timepicker.js"></script>
 	<script type="text/javascript" src="node_modules/jquery-querystring/output/jquery.querystring.min.js"></script>
 	<script type="text/javascript" charset="utf-8" src="node_modules/datatables/media/js/jquery.dataTables.min.js"></script>
-	<script type="text/javascript" src="node_modules/yadcf-npm/jquery.dataTables.yadcf.js"></script>
+	<script type="text/javascript" src="node_modules/yadcf/jquery.dataTables.yadcf.js"></script>
 	<?php
 }
 ?>
