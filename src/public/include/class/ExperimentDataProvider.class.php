@@ -12,6 +12,21 @@ class ExperimentDataProvider extends DatabaseClient {
 	private $expId;
 
     /**
+     * @var array
+     */
+	private static $personalDataFields = array(
+        'vpn_name' => ['Vorname', 'Nachname'],
+        'vpn_geschlecht' => ['Geschlecht'],
+        'vpn_gebdat' => ['Geburtsdatum'],
+        'vpn_fach' => ['Studienfach'],
+        'vpn_semester' => ['Semesterzahl'],
+        'vpn_adresse' => ['Anschrift'],
+        'vpn_tele1' => ['Festnetznummer'],
+        'vpn_tele2' => ['Mobilnummer'],
+        'vpn_email' => ['Email-Adresse']
+    );
+
+    /**
      * ExperimentDataProvider constructor.
      * @param $expId
      */
@@ -60,14 +75,28 @@ class ExperimentDataProvider extends DatabaseClient {
 		$mysqli = $this->getDatabase();
 	
 		$sql = sprintf( '
-			SELECT		visible,
-						IF(exp_start > "0000-00-00", exp_start, "") AS exp_start,
-						IF(exp_end > "0000-00-00", exp_end, "") AS exp_end,
+			SELECT		exp.visible,
+						IF(exp.exp_start > "0000-00-00", exp.exp_start, "") AS exp_start,
+						IF(exp.exp_end > "0000-00-00", exp.exp_end, "") AS exp_end,
 						exp.max_vp,
 						exp.terminvergabemodus,
 						exp.session_duration,
 						exp.max_simultaneous_sessions,
-						GROUP_CONCAT(DISTINCT e2l.lab_id) AS assigned_labs
+						GROUP_CONCAT(DISTINCT e2l.lab_id) AS assigned_labs,
+						exp.exp_name,
+                        exp.terminvergabemodus,
+                        exp.vpn_name,
+                        exp.vpn_geschlecht,
+                        exp.vpn_gebdat,
+                        exp.vpn_fach,
+                        exp.vpn_semester,
+                        exp.vpn_adresse,
+                        exp.vpn_tele1,
+                        exp.vpn_tele2,
+                        exp.vpn_email,
+                        exp.vpn_ifreward,
+                        exp.vpn_ifbereits,
+                        exp.vpn_ifbenach
 			FROM		%1$s AS exp
 			LEFT JOIN	%2$s AS e2l
 				ON		exp.id = e2l.exp_id
@@ -220,5 +249,12 @@ class ExperimentDataProvider extends DatabaseClient {
 		$row = $result->fetch_assoc();
 		return $row['id'];
 	}
+
+    /**
+     * @return array
+     */
+	public function getPersonalDataFields() {
+	    return self::$personalDataFields;
+    }
 	
 }

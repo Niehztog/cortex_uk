@@ -43,7 +43,7 @@ if(!isset($_GET['menu'])) {
 /* TERMINÜBERSICHT EXPERIMENT */  
 /******************************/
 
-elseif(($_GET['menu'] == 'experiment') && (isset($_GET['expid'])) && (!isset($_POST['chosendate']))&& (!isset($_POST['add']))) {
+elseif($_GET['menu'] == 'experiment' && isset($_GET['expid']) && !isset($_POST['chosendate']) && !isset($_POST['add'])) {
 	try {
 		$edp = ExperimentDataProvider::getInstanceByEncryptedId($_GET['expid']);
 		$expId = $edp->getExpId();
@@ -187,23 +187,70 @@ elseif(($_GET['menu'] == 'experiment') && (isset($_GET['expid'])) && (!isset($_P
 /* ANMELDEFORMULAR FÜR EINEN TERMIN ANZEIGEN */
 /*********************************************/	
   
-elseif (isset($_POST['chosendate'])) {
+elseif (isset($_POST['chosendate']) && !isset($_POST['accept_agb'])) {
+
+    $edp = ExperimentDataProvider::getInstanceByEncryptedId($_GET['expid']);
+    $data = $edp->getExpData();
+    $personalData = array();
+    foreach($edp->getPersonalDataFields() as $fieldName => $label) {
+        if($data[$fieldName] > 0) {
+            foreach ($label as $text) {
+                $personalData[] = $text;
+            }
+        }
+    }
+
+    require_once 'pageelements/header.php';
+    ?>
+    <div>
+        <p><b>Einwilligungserklärung Datenschutz</b></p>
+        <br/>
+        <p>Für die Anmeldung zu unseren Experimenten erfolgt die Erhebung und Vearbeitung folgender personenbezogener
+            Daten:</p>
+        <br/>
+        <p><?php echo implode(' / ', $personalData);?></p>
+        <br/>
+        <p>Diese Daten werden gespeichert und können nur von berechtigten Personen eingesehen werden.
+            Wir versichern hiermiet, dass die von uns durchgeführte EDV auf der Grundlage geltender Gesetze erfolgt.
+            Eine automatische Löschung erfolgt nach der Beendigung des Experiments, insofern entsprechende Daten nicht
+            weiter benötigt werden.</p>
+        <br/>
+        <p><i>Nutzerrechte</i></p>
+        <br/>
+        <p>Es besteht die Möglichkeit diese Einwilligung jederzeit ohne Angabe einer Begründung zu widerrufen.
+            Weiterhin können erhobene Daten bei Bedarf korrigiert, gelöscht oder deren Erhebung eingeschränkt werden.
+            Auf Anfrage können Sie der dem Impressium zu entnehmenden Adresse eine detaillierte Auskunft über den Umfang
+            der von uns vorgenommen Datenerhebung verlangen.
+            Auch kann eine Daterübertragung angefordert werden, sollte dies erwünscht sein.</p>
+        <br/>
+        <p><i>Folgen der Nicht-Einwilligung</i></p>
+        <br/>
+        <p>Es besteht die Möglichkeit der Einwilligungserklärung nicht zuzustimmen. Da wir jedoch auf die Erhebung und
+            Verarbeitung der Daten angewiesen sind würde eine Nichteinwilligung ein Ausschluss als Versuchsperson zur
+            Folge haben.</p>
+        <br/>
+        <form action="<?php echo $_SERVER['PHP_SELF'] . '?' . http_build_query($_GET); ?>" method="post"
+              enctype="multipart/form-data" name="accept_agb">
+            <input type="hidden" name="chosendate" value="<?php echo $_POST['chosendate']; ?>"/>
+            <input type="hidden" name="id" value="<?php echo $_POST['id']; ?>"/>
+            <button name="accept_agb" type="submit" value="yes">Zustimmen</button>&nbsp;&nbsp;
+            <button name="accept_agb" type="submit" value="no">Ablehnen</button>
+        </form>
+    </div>
+    <?php
+
+}
+elseif (isset($_POST['chosendate']) && isset($_POST['accept_agb']) && $_POST['accept_agb'] === 'no') {
+    header('Location: ' . $_SERVER['PHP_SELF'] . '?' . http_build_query($_GET));
+}
+elseif (isset($_POST['chosendate']) && isset($_POST['accept_agb']) && $_POST['accept_agb'] === 'yes') {
 
 	$edp = ExperimentDataProvider::getInstanceByEncryptedId($_GET['expid']);
 	$expId = $edp->getExpId();
 
-	$abfrage = sprintf( '
-		SELECT	*
-		FROM	%1$s
-		WHERE	id = %2$d
-			AND	visible = "1"'
-		, TABELLE_EXPERIMENTE
-		, $expId
-	);
-	$erg5 = $mysqli->query($abfrage);
-	$data = $erg5->fetch_assoc(); 
-	
-	require_once 'pageelements/header.php';
+	$data = $edp->getExpData();
+
+    require_once 'pageelements/header.php';
 	?>	
 		
 	<table> 
@@ -426,7 +473,8 @@ elseif (isset($_POST['chosendate'])) {
 	</tr>
 	</table>
 	
-	<?php }
+	<?php
+}
 
 
 /************************************/
