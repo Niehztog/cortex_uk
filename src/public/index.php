@@ -211,7 +211,9 @@ elseif (isset($_POST['chosendate']) && !isset($_POST['accept_agb'])) {
         <p><?php echo implode(' / ', $personalData);?></p>
         <br/>
         <p>Diese Daten werden gespeichert und können nur von berechtigten Personen eingesehen werden.
-            Wir versichern hiermiet, dass die von uns durchgeführte EDV auf der Grundlage geltender Gesetze erfolgt.
+            Wir versichern hiermit, dass die von uns durchgeführte EDV auf der Grundlage geltender Gesetze erfolgt.
+            Keine hier gespeicherten Daten werden zu irgendeinem Zeitpunkt mit den Experimentaldaten in Verbindung gebracht.
+	        Die hier gespeicherten Daten sind dementsprechend unabhängig und werden nur zur Terminkoordination genutzt.
             Eine automatische Löschung erfolgt nach der Beendigung des Experiments, insofern entsprechende Daten nicht
             weiter benötigt werden.</p>
         <br/>
