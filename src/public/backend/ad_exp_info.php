@@ -49,7 +49,7 @@ if(isset($_POST['delexpq'])) {
 if(isset($_POST['editexp'])) {
 
 	prepareIncomingVariables();
-	$success = validateExpData();
+	$success = validateExpData($auth->mayEditExpLab());
 	
 	if($success) {
 		$update = sprintf( '

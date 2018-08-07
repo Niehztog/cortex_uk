@@ -98,7 +98,13 @@ function prepareIncomingVariables() {
 	if( !isset($_POST['vpn_email'])||$_POST['vpn_email'] == 0 ) { $GLOBALS['vpn_email'] = 0; };
 }
 
-function validateExpData() {
+/**
+ * Überprüfen von durch den Benutzer veränderten Experiment Rahmeninfos
+ *
+ * @param bool $validateLabs
+ * @return bool
+ */
+function validateExpData($validateLabs = true) {
 	$result = true;
 	if(		isset($_POST['terminvergabemodus']) && 'automatisch' === $_POST['terminvergabemodus']
 		&&	empty($_POST['session_duration'])
@@ -107,7 +113,7 @@ function validateExpData() {
 		$result = false;
 	}
 
-    if('automatisch' === $_POST['terminvergabemodus'] && empty($_POST['lab_id'])) {
+    if('automatisch' === $_POST['terminvergabemodus'] && empty($_POST['lab_id']) && $validateLabs) {
         storeMessageInSession(sprintf(MESSAGE_BOX_ERROR, 'Wenn automatische Terminvergabe gewählt wurde muss mindestens ein Raum ausgewählt werden.'));
         $result = false;
     }
