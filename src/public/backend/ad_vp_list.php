@@ -208,8 +208,11 @@ if(false === $resultVp) {
 		});
 		$('button#delvp').on('click', function(e){
 			e.preventDefault();
-			var inputNodes = $('input[type=checkbox]:checked', oTable.fnGetNodes());
-			var count = inputNodes.length;
+            var selectedVpIds = new Array();
+			$('input[type=checkbox]:checked', oTable.fnGetNodes()).each(function() {
+                selectedVpIds.push($(this).val());
+            });
+			var count = selectedVpIds.length;
 			if(count == 0) {
 				alert('Es sind keine Personen ausgewählt.');
 				return;
@@ -217,11 +220,27 @@ if(false === $resultVp) {
 			if(!confirm(count + ' Versuchspersonen wirklich löschen?')) {
 				return;
 			}
-			var newForm = $('<form>', { 'method': 'post', 'action': 'vpview.php'});
-			$('<input>', {'name': 'action', 'value': 'delete'}).appendTo(newForm);
-			inputNodes.appendTo(newForm);
-			newForm.appendTo('body');
-			newForm.submit();
+
+            $.ajax({
+                type: "POST",
+                url: "service/vp.php",
+                data: {
+                    'action': 'delete',
+                    'vpid': selectedVpIds
+                },
+                dataType: "json",
+                success: function( data ) {
+                    if(data === true) {
+                        $('input[type=checkbox]:checked', oTable.fnGetNodes()).each(function() {
+                            row = $(this).closest('tr');
+                            oTable.fnDeleteRow(row);
+                        });
+                    }
+                    else {
+                        alert(data);
+                    }
+                }
+            });
 		});
 		$("button#sendmail").on('click', function(e) {
 			e.preventDefault();

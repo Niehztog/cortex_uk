@@ -36,9 +36,13 @@ class EmailBlocking {
      * Prüfen ob gegebene Email Adresse blockiert ist
      *
      * @return array
+     * @throws \RuntimeException
      */
     public function isBlocked($email) {
         $stmt = $this->mysqli->prepare('SELECT 1 FROM ' . TABELLE_BLOCKED_EMAIL . ' WHERE email = ?');
+        if(false === $stmt) {
+            throw new RuntimeException($this->mysqli->error);
+        }
         $stmt->bind_param('s', $email);
         if(!$stmt->execute() || !($res = $stmt->get_result())) {
             throw new RuntimeException($this->mysqli->error);

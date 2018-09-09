@@ -50,6 +50,39 @@ $gebDatum = formatMysqlDate($data['gebdat']);
 $( document ).ready(function() {
 	$('input[type="button"], input[type="submit"]').button();
 	initDatepicker();
+
+    $('#addcancel').on('click', function(e){
+        e.preventDefault();
+        window.parent.$('[id^=editvp_]').dialog('close');
+    });
+
+    $('#delvp2').on('click', function(e){
+        e.preventDefault();
+        console.log('tst');
+        var vpId = <?php echo $data['id']; ?>;
+        if(!confirm('Versuchsperson wirklich endgültig löschen?')) {
+            return;
+        }
+
+        $.ajax({
+            type: "POST",
+            url: "service/vp.php",
+            data: {
+                'action': 'delete',
+                'vpid': [vpId]
+            },
+            dataType: "json",
+            success: function( data ) {
+                if(data === true) {
+                    window.parent.$('[id^=editvp_]').dialog('close');
+                    location.reload();
+                }
+                else {
+                    alert(data);
+                }
+            }
+        });
+    });
 });
 </script>
 </head>
@@ -122,8 +155,8 @@ $( document ).ready(function() {
 	<td colspan="2">
 		<input name="vpid" type="hidden" value="<?php echo  $data['id']; ?>">
 		<input type="submit" name="editvpbut" value="Ändern" />&nbsp;&nbsp;&nbsp;
-		<input type="submit" name="delvp" value="Löschen" />&nbsp;&nbsp;&nbsp;
-		<input type="button" value="Abbrechen" name="addcancel" onclick="javascript: window.parent.$('[id^=editvp_]').dialog('close');">
+		<input type="button" name="delvp2" id="delvp2" value="Löschen" />&nbsp;&nbsp;&nbsp;
+		<input type="button" name="addcancel" id="addcancel" value="Abbrechen" />
 	</td>
 </tr> 
 </table>

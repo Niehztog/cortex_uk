@@ -12,11 +12,6 @@ class UserAuth {
     private $remoteUser;
 
     /**
-     * @var array
-     */
-    private static $adminSites = array( 'admin.php', 'vpview.php' );
-
-    /**
      * @var string
      */
     const REMOTE_USER_LIMNITED_ACCESS = REMOTE_USER_LIMNITED_ACCESS;
@@ -71,7 +66,7 @@ class UserAuth {
      */
     public function getAccessLevel() {
         $user = $this->getRemoteUser();
-        if(!empty($user) /*&& in_array(basename($_SERVER['PHP_SELF']), self::$adminSites)*/) {
+        if(!empty($user)) {
             if(self::REMOTE_USER_LIMNITED_ACCESS === $user) {
                 return self::ACCESS_LEVEL_EDITOR;
             }

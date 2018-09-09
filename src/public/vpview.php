@@ -9,23 +9,6 @@ if(!$auth->mayAccessVpControl()) {
 $dbf = new DatabaseFactory();
 $mysqli = $dbf->get();
 
-/* WENN VP GELÖSCHT WURDE(N) */
-/*---------------------------*/
-if(isset($_POST['vpid']) && (isset($_POST['delvp'])||(isset($_POST['action']) && 'delete' === $_POST['action']))) {
-	$delArray = castToIntArray($_POST['vpid']);
-
-	$delete = sprintf( '
-		DELETE FROM %1$s WHERE id IN (%2$s)'
-		, TABELLE_VERSUCHSPERSONEN
-		, implode(',', $delArray)
-	);
-
-	$ergebnis = $mysqli->query($delete) OR die($mysqli->error);
-}
-
-
-
-
 /* WENN VP EINRAG GEÄNDERT WURDE */
 /*-------------------------------*/
 if(isset($_POST['editvpbut'])) {
@@ -79,7 +62,7 @@ if(isset($_POST['termin']) && isset($_POST['del_ch_vpid'])) {
 require_once 'pageelements/header.php';
 
 if(isset($_GET['expid'])) {
-	$abfrage = "SELECT * FROM ".TABELLE_EXPERIMENTE." WHERE id=$_GET[expid] LIMIT 1";
+	$abfrage = "SELECT * FROM ".TABELLE_EXPERIMENTE." WHERE id=".$_GET['expid']." LIMIT 1";
 	$erg = $mysqli->query($abfrage) or die($mysqli->error);
 	$data = $erg->fetch_assoc();
 	
