@@ -92,17 +92,6 @@ a {
 	white-space:normal;
 }
 
-/*#links {
-	position:relative;
-	float:left;
-	padding:0px; 
-	margin-left:0px;
-	margin-top:0px;
-	margin-bottom:0px;
-	margin-right:0px;
-	line-height:18px;
-}*/
-
 #unten {
 	position:relative;
 	padding:0px; 
@@ -220,6 +209,20 @@ div#mitte h3 {
 
 div#mitte h1, div#mitte h2, div#mitte h3, div#mitte h4, div#mitte h5, div#mitte h6 {
   clear: both;
+}
+
+div#login-box {
+	position: relative;
+	top: -22px;
+	text-align: right;
+	padding-right: 10px;
+	color: #41799E;
+	font-size: 12px;
+}
+
+div#login-box a#logout-link {
+	font-size: 10px;
+	font-style: italic;
 }
 
  -->

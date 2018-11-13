@@ -62,8 +62,13 @@ if('index.php' !== basename($_SERVER['PHP_SELF'])) {
 $( document ).ready(function() {
 	$("[title]").each(function(){
 	  $(this).tooltip({ content: $(this).attr("title")});
-	});    // It allows html content to tooltip.
+	});
 	$('input[type="button"], input[type="submit"], button').button();
+
+	$("a#logout-link").click(function (event) {
+        event.preventDefault();
+        logout('<?php echo $_SERVER['REMOTE_USER'];?>');
+    })
 });
 </script>
 
@@ -81,6 +86,17 @@ $( document ).ready(function() {
 			<br/><a href="#">COmputer-aided Registration Tool for EXperiments</a>
 		</h2>
 	</div>
+
+    <div id="login-box">
+        <?php
+        if(isset($_SERVER['REMOTE_USER'])) {
+            echo 'Angemeldet als: ' . $_SERVER['REMOTE_USER'] . ' <a id="logout-link" href="">[abmelden]</a>';
+        }
+        else {
+            echo '&nbsp;';
+        }
+        ?>
+    </div>
 
     <nav role="navigation" id="menu-container">
         <?php

@@ -170,7 +170,14 @@ function initCalendar(eventData, purpose) {
 		, interactionOptions
 	));
 
-
 }
 
-
+function logout(username) {
+	$.ajax({
+		url: 'index.php',
+		username: username,
+		password: 'reset',
+	});
+	document.execCommand("ClearAuthenticationCache");
+    window.location = "index.php";
+}
