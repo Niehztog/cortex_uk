@@ -400,6 +400,8 @@ if(isset($_GET['action']) && $_GET['action'] == 'create') {
     ?>
 </div>
 
+<br /><br />
+
 <div class="optionGroup">
 	<h3>Angaben der Versuchspersonen</h3>
 
@@ -476,7 +478,7 @@ if(isset($_GET['action']) && $_GET['action'] == 'create') {
 		</li>
 		<li>
 			<input name="vpn_ifbereits" id="vpn_ifbereits" type="checkbox" value="1"<?php if(!empty($_POST['vpn_ifbereits'])) {echo ' checked="checked"';} ?> />
-			<label for="vpn_ifbereits" class="nofloat">Frage: Hat die VP bereits an Experimenten diesesVLs teilgenommen?</label>
+			<label for="vpn_ifbereits" class="nofloat">Frage: Hat die VP bereits an Experimenten dieses VLs teilgenommen?</label>
 		</li>
 		<li>
 			<input name="vpn_ifbenach" id="vpn_ifbenach" type="checkbox" value="1"<?php if(!empty($_POST['vpn_ifbenach'])) {echo ' checked="checked"';} ?> />
