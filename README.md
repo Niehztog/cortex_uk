@@ -7,9 +7,9 @@ COmputer-aided Registration Tool for EXperiments
 
 This is a webapplication written in PHP for organizing scientific experiments which require human participants. Cortex's main purpose is to offer an overview of running experiments, open timeslots for participation and to provide a signup mechanism for participants.
 
-Prerequisites
+Technical prerequisites
 -------------
-You'll need...
+For installing and running CORTEX on your own webserver you'll need:
 *  [Git](https://git-scm.com/) for checking out the submodules (like jquery) in their proper version
 * A webserver running either Apache2 or Nginx, PHP >= 5.6, MySQL or MariaDB
 * _Optional:_ [Docker](https://www.docker.com/) for setting up a development environment using docker
