@@ -252,7 +252,7 @@ if(false === $resultVp) {
 			var $dialogSendMsg = $('<div class="send_msg"></div>')
 				.load('backend/send_msg.php?'+inputNodes.serialize())
 				.dialog({
-					title: 'Nachricht senden',
+					title: 'E-Mail senden',
 					autoOpen: false,
 					width: 668,
 					height: 490,

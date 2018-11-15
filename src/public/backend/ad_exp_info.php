@@ -359,7 +359,7 @@ $( document ).ready(function() {
 		var $dialogSendMsg = $('<div id="send_msg_'+termin_id+'"></div>')
 			.load('backend/send_msg.php?expid=<?php echo $_GET['expid'];?>&terminid='+termin_id)
 			.dialog({
-				title: 'Nachricht senden',
+				title: 'E-Mail senden',
 				autoOpen: false,
 				width: 668,
 				height: 490,
@@ -705,7 +705,7 @@ $( document ).ready(function() {
 				</td>
 				<td class="termin">
 					<form action="<?php echo $_SERVER['PHP_SELF'] . '?' . http_build_query($_GET);?>" method="post" enctype="multipart/form-data">
-						<input type="button" name="btn_send_msg_<?php echo $termin['id'];?>" value="Nachricht">	
+						<input type="button" name="btn_send_msg_<?php echo $termin['id'];?>" value="E-Mail">
 						<input type="hidden" name="id" value="<?php echo $termin['id']; ?>" />
 						<input type="hidden" name="expid" value="<?php echo $_GET['expid'];?>" />
 						<input type="hidden" name="admin" value="1" />  
