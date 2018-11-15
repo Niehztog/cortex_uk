@@ -149,7 +149,7 @@ $( document ).ready(function() {
 			<textarea name="nachricht" id="nachrichtTermin" cols="50" rows="10"></textarea><br><br>
 			<input type="button" name="vpmsgbut" value="Senden" />
 			<input type="button" onclick="javascript:showEmailPreview('nachrichtTermin', $('#termin').val(), 'terminmailpreview');" value="Vorschau" />
-			<input type="button" name="delexpn" onclick="javascript: window.parent.$('div[id^=send_msg_], div.send_msg').dialog('close');" value="Abbrechen"  style="width:80px;" />
+			<input type="button" name="delexpn" onclick="javascript: window.parent.$('div[id^=send_msg_], div.send_msg').dialog('close');" value="Abbrechen"  style="width:106px;" />
 
 			<span id="terminmailpreview" style="width:486px; font-size:11px; overflow:auto; font-weight: bold; color:#FF0000;"></span>
 		</td>

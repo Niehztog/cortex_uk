@@ -67,7 +67,7 @@ $( document ).ready(function() {
 
 	$("a#logout-link").click(function (event) {
         event.preventDefault();
-        logout('<?php echo $_SERVER['REMOTE_USER'];?>');
+        logout('<?php echo (isset($_SERVER['REMOTE_USER']) ? $_SERVER['REMOTE_USER'] : '');?>');
     })
 });
 </script>
