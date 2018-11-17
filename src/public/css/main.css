@@ -121,6 +121,7 @@ td.termin {
 }
 
 td:nth-child(4).termin,
+td:nth-child(6).termin,
 td:nth-child(7).termin {
 	white-space: nowrap;
 }
