@@ -19,7 +19,17 @@ class SessionController {
      * @return mixed
      */
 	public function create($expId = null, $tag = null, $start = null, $end = null, $maxTeilnehmer = null, $labId = null) {
-		
+
+	    if(null !== $start && null !== $end) {
+	        try {
+                $this->validateSessionTime($start, $end);
+            }
+            catch(\InvalidArgumentException $e) {
+                trigger_error($e, E_USER_WARNING);
+                return;
+            }
+        }
+
 		$dbf = new DatabaseFactory();
 		$mysqli = $dbf->get();
 		
@@ -66,7 +76,17 @@ class SessionController {
 		if($expId === null && $tag === null && $start === null && $end === null && $maxTeilnehmer === null && $labId === null) {
 			return;
 		}
-		
+
+        if(null !== $start && null !== $end) {
+            try {
+                $this->validateSessionTime($start, $end);
+            }
+            catch(\InvalidArgumentException $e) {
+                trigger_error($e, E_USER_WARNING);
+                return;
+            }
+        }
+
 		$dbf = new DatabaseFactory();
 		$mysqli = $dbf->get();
 		
@@ -112,9 +132,7 @@ class SessionController {
 
 		$dbf = new DatabaseFactory();
 		$mysqli = $dbf->get();
-		
-		$expId = $this->getExpIdBySitzungsId($sitzungsId);
-	
+
 		$delete = sprintf( '
 			DELETE FROM %1$s WHERE id = %2$d'
 			, TABELLE_SITZUNGEN
@@ -142,30 +160,22 @@ class SessionController {
 	}
 
     /**
-     * @param $sitzungsId
-     * @return int
+     * Vermeiden dass inkonsistente Daten in die Termintabelle geschrieben werden
+     *
+     * @param $start
+     * @param $end
      */
-	private function getExpIdBySitzungsId($sitzungsId) {
-		
-		$dbf = new DatabaseFactory();
-		$mysqli = $dbf->get();
-		
-		$sql = sprintf( '
-			SELECT exp FROM %1$s WHERE id = %2$d'
-			, TABELLE_SITZUNGEN
-			, $sitzungsId
-		);
-		$result = $mysqli->query($sql);
-		if(false === $result) {
-			trigger_error($mysqli->error, E_USER_WARNING);
-			throw new RuntimeException(sprintf('Fehler beim lesen der Daten von Sitzungen %1$d.', $sitzungsId));
-		}
-		$data = $result->fetch_assoc();
-		if(null === $data) {
-			trigger_error($mysqli->error, E_USER_WARNING);
-			throw new RuntimeException(sprintf('Sitzung mit id %1$d existiert nicht.', $sitzungsId));
-		}
-		return (int)$data['exp'];
-	}
+	private function validateSessionTime($start, $end) {
+        $dataTimeStart = \DateTime::createFromFormat('H:i:s', $start);
+        $dataTimeEnd = \DateTime::createFromFormat('H:i:s', $end);
+        if($dataTimeStart >= $dataTimeEnd) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    'Zeitslot kann nicht geschrieben werden, da Endzeitpunkt (%1$s) größer oder gleich dem Startzeitpunkt (%2$s) ist.'
+                    , $dataTimeEnd->format('Y-m-d\TH:i:s'), $dataTimeStart->format('Y-m-d\TH:i:s')
+                )
+            );
+        }
+    }
 
 }
