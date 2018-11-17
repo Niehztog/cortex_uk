@@ -117,12 +117,16 @@ a {
 td.termin {
 	border-bottom:1px #6c91f8 solid;
 	line-height:25px;
-	padding-right:10px;
+	padding-right:20px;
 }
 
 td:nth-child(4).termin,
 td:nth-child(7).termin {
 	white-space: nowrap;
+}
+
+td:nth-child(7).termin {
+	padding-right:0px;
 }
 
 td.eintragen {

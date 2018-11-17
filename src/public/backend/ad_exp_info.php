@@ -688,6 +688,7 @@ $( document ).ready(function() {
 		
 					
 					$gebdat = null;
+					$firstIteration = true;
 					while ($termin3 = $erg3->fetch_assoc()) {
 						if(!empty($gebdat)) {
 							echo '<br/>';
@@ -695,10 +696,11 @@ $( document ).ready(function() {
 						$gebdat = formatMysqlDate($termin3['gebdat']);  
 						?><span title="<b><u><?php echo $termin3['vorname'] . ' ' . $termin3['nachname']; ?></u></b><br /><?php if ( $data['vpn_geschlecht'] > 0 ) { ?><b>Geschlecht: </b><?php echo $termin3['geschlecht'] . "<br />"; }; ?><?php if ( $data['vpn_gebdat'] > 0 ) { ?><b>Geburtsdatum: </b><?php echo $gebdat  . "<br />"; }; ?><?php if ( $data['vpn_tele1'] > 0 ) { ?><b>Telefon 1: </b><?php echo $termin3['telefon1'] . "<br />"; }; ?><?php if ( $data['vpn_tele2'] > 0 ) { ?><b>Telefon 2: </b><?php echo $termin3['telefon2'] . "<br />"; }; ?><?php if ( $data['vpn_email'] > 0 ) { ?><b>Email: </b><?php echo $termin3['email']; }; ?>">
 						<?php
-						echo substr($termin3['vorname'],0,1) . '. ' . $termin3['nachname']; 
+						echo (!$firstIteration ? '<br />' : '') . substr($termin3['vorname'],0,1) . '. ' . $termin3['nachname'];
 						?>
 						</span>
 						<?php
+                        $firstIteration = false;
 					}
 
 					?>&nbsp;
