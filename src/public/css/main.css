@@ -117,7 +117,12 @@ a {
 td.termin {
 	border-bottom:1px #6c91f8 solid;
 	line-height:25px;
-	padding-right:20px;
+	padding-right:10px;
+}
+
+td:nth-child(4).termin,
+td:nth-child(7).termin {
+	white-space: nowrap;
 }
 
 td.eintragen {
@@ -223,5 +228,21 @@ div#login-box a#logout-link {
 	font-size: 10px;
 	font-style: italic;
 }
+
+td.termin > form > input.btn_send_msg {
+	width:60px;
+	padding:5px;
+}
+
+td.termin > form > input.edit_termin {
+	width:70px;
+	padding:5px;
+}
+
+td.termin > form > input.del {
+	width:70px;
+	padding:5px;
+}
+
 
  -->

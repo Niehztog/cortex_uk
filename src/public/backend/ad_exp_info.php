@@ -705,12 +705,12 @@ $( document ).ready(function() {
 				</td>
 				<td class="termin">
 					<form action="<?php echo $_SERVER['PHP_SELF'] . '?' . http_build_query($_GET);?>" method="post" enctype="multipart/form-data">
-						<input type="button" name="btn_send_msg_<?php echo $termin['id'];?>" value="E-Mail">
+						<input type="button" name="btn_send_msg_<?php echo $termin['id'];?>" value="E-Mail" class="btn_send_msg" />
 						<input type="hidden" name="id" value="<?php echo $termin['id']; ?>" />
 						<input type="hidden" name="expid" value="<?php echo $_GET['expid'];?>" />
 						<input type="hidden" name="admin" value="1" />  
-						<input type="button" name="edit_termin_<?php echo $termin['id']; ?>" value="Ändern" />
-						<input type="submit" name="del" value="Löschen" onclick="return confirm('Termin wirklich löschen?');" />
+						<input type="button" name="edit_termin_<?php echo $termin['id']; ?>" value="Ändern" class="edit_termin" />
+						<input type="submit" name="del" value="Löschen" onclick="return confirm('Termin wirklich löschen?');" class="del" />
 					</form>
 				</td>
 			</tr>
