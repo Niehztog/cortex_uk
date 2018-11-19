@@ -598,18 +598,21 @@ $( document ).ready(function() {
 	<div id="tabs-3" class="tabs">
 		<div id="calendar"></div>
 		
-		Anzahl Sitzungen:&nbsp;<?php echo $data['exp_sessions'];?><br/>
+		Anzahl Sitzungen:&nbsp;<?php echo $data['exp_sessions'];?><br/><br/>
 		
 		<table class="optionGroup">
-			<tr>
-				<td class="termin"><b>Datum</b></td>
-				<td class="termin"><b>Beginn</b></td>
-				<td class="termin"><b>Ende</b></td>
-				<td class="termin"><b>Ort</b></td>
-				<td class="termin"><b>VP</b></td>
-				<td class="termin"><b>Teilnehmer</b></td>
-				<td class="termin">&nbsp;</td>
-			</tr>
+            <thead>
+                <tr>
+                    <td class="termin"><b>Datum</b></td>
+                    <td class="termin"><b>Beginn</b></td>
+                    <td class="termin"><b>Ende</b></td>
+                    <td class="termin"><b>Ort</b></td>
+                    <td class="termin"><b>VP</b></td>
+                    <td class="termin"><b>Teilnehmer</b></td>
+                    <td class="termin">&nbsp;</td>
+                </tr>
+            </thead>
+            <tbody>
 			<?php
 			
 			$abfrage = sprintf( '
@@ -629,14 +632,26 @@ $( document ).ready(function() {
 				, $_GET['expid']
 			);
 			$erg = $mysqli->query($abfrage);
+			$anmeldungenInsgesamt = 0;
 			while ($termin = $erg->fetch_assoc()) {
 				$terminDatum = formatMysqlDate($termin['tag']);
 				$beginn = substr($termin['session_s'], 0, 5);
 				$ende = substr($termin['session_e'], 0, 5);
 				$maxtn = $termin['maxtn'];
 				
-				$abfrage3 = sprintf(
-					'SELECT gebdat, vorname, nachname, geschlecht, telefon1, telefon2, email, vorname, nachname FROM %1$s WHERE `exp` = %2$d AND termin = %3$d'
+				$abfrage3 = sprintf('
+                    SELECT  gebdat,
+                            vorname,
+                            nachname,
+                            geschlecht,
+                            telefon1,
+                            telefon2,
+                            email,
+                            vorname,
+                            nachname
+                    FROM    %1$s
+                    WHERE   exp = %2$d
+                      AND   termin = %3$d'
 					, TABELLE_VERSUCHSPERSONEN
 					, $_GET['expid']
 					, $termin['id']
@@ -672,14 +687,11 @@ $( document ).ready(function() {
 				</td>
 				<td class="termin">
 					<?php
-						$edp = new ExperimentDataProvider((int)$_GET['expid']);
 						$vpcur = $erg3->num_rows;
-						$vpmax = $edp->getSignUpCountMax();
-						
+                        $anmeldungenInsgesamt += $vpcur;
 						echo $vpcur;
-						
-						if($vpmax > 0) {
-							echo '/' . $vpmax;
+						if($maxtn > 0) {
+							echo '/' . $maxtn;
 						}
 					?>	
 				</td>
@@ -718,6 +730,26 @@ $( document ).ready(function() {
 			</tr>
 			<?php 			}
 			?>
+            </tbody>
+            <tfoot>
+            <?php
+            $edp = new ExperimentDataProvider((int)$_GET['expid']);
+            $vpmax = $edp->getSignUpCountMax();
+            if($vpmax > 0) {
+                ?>
+                <tr>
+                    <td class="termin"/>
+                    <td class="termin"/>
+                    <td class="termin"/>
+                    <td class="termin"/>
+                    <td class="termin" style="font-size: xx-small;"><?php echo $anmeldungenInsgesamt . '/' . $vpmax;?></td>
+                    <td class="termin"/>
+                    <td class="termin"/>
+                </tr>
+                <?php
+            }
+            ?>
+            </tfoot>
 		</table>
 		<?php
 		if('manuell'===$data['terminvergabemodus']) {

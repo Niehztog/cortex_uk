@@ -166,8 +166,8 @@ class SessionController {
      * @param $end
      */
 	private function validateSessionTime($start, $end) {
-        $dataTimeStart = \DateTime::createFromFormat('H:i:s', $start);
-        $dataTimeEnd = \DateTime::createFromFormat('H:i:s', $end);
+        $dataTimeStart = \DateTime::createFromFormat('H:i', $start);
+        $dataTimeEnd = \DateTime::createFromFormat('H:i', $end);
         if($dataTimeStart >= $dataTimeEnd) {
             throw new \InvalidArgumentException(
                 sprintf(
