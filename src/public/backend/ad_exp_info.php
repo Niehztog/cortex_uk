@@ -187,45 +187,6 @@ if(isset($_POST['changevis'])) {
 	exit;
 }
 
-
-/* WENN TERMIN GELÖSCHT WURDE */
-/* -------------------------- */
-if(isset($_POST['del']) && isset($_GET['expid']) && 'admin.php' === basename($_SERVER['PHP_SELF'])) {
-	$sc = new SessionController();
-	$sc->delete($_POST['id']);
-}
-
-
-
-/* WENN TERMIN VERÄNDERT WURDE */
-/* --------------------------- */
-elseif(isset($_POST['editsess']) && 'admin.php' === basename($_SERVER['PHP_SELF']) && isset($_GET['expid'])) {
-	$sc = new SessionController();
-	$sc->update(
-		$_POST['change_id'],
-		$_GET['expid'],
-		$_POST['change_termin'],
-		$_POST['change_session_s'],
-		$_POST['change_session_e'],
-		$_POST['change_maxtn']
-	);
-}
-
-
-/* WENN SITZUNG HINZUGEFÜGT WURDE  */
-/* (dann wird sie hier eingetragen)*/
-/* ------------------------------- */
-elseif (isset($_POST['addsess']) && 'admin.php' === basename($_SERVER['PHP_SELF']) && isset($_GET['expid'])) {
-	$sc = new SessionController();
-	$sc->create(
-		$_GET['expid'],
-		$_POST['hinzu_termin'],
-		$_POST['hinzu_session_s'],
-		$_POST['hinzu_session_e'],
-		$_POST['hinzu_maxtn']
-	);
-}
-
 /* ANZEIGE EXPERIMENT */
 /* ------------------ */
 $abfrage= sprintf( '
@@ -327,48 +288,6 @@ $( document ).ready(function() {
 			});
 		$dialogExpExit.dialog('open');
 	});
-	$("input[name=add]").on('click', function() {
-		var $dialogTerminAdd = $('<div id="add"></div>')
-			.load('backend/ad_termin_add.php?expid=<?php echo $_GET['expid'];?>')
-			.dialog({
-				title: 'Termin hinzufügen',
-				autoOpen: false,
-				width: 412,
-				height: 270,
-				modal: true,
-				close: function (e, ui) { $(this).remove(); }
-			});
-		$dialogTerminAdd.dialog('open');
-	});
-	$("input[name^=edit_termin_]").on('click', function() {
-		var termin_id = $(this).attr("name").substring(12);
-		var $dialogTerminEdit = $('<div class="d_termin_change_'+termin_id+'"></div>')
-			.load('backend/ad_termin_change.php?terminid='+termin_id)
-			.dialog({
-				title: 'Termin ändern',
-				autoOpen: false,
-				width: 412,
-				height: 300,
-				modal: true,
-				close: function (e, ui) { $(this).remove(); }
-			});
-		$dialogTerminEdit.dialog('open');
-	});
-	$("input[name^=btn_send_msg_]").on('click', function() {
-		var termin_id = $(this).attr("name").substring(13);
-		var $dialogSendMsg = $('<div id="send_msg_'+termin_id+'"></div>')
-			.load('backend/send_msg.php?expid=<?php echo $_GET['expid'];?>&terminid='+termin_id)
-			.dialog({
-				title: 'E-Mail senden',
-				autoOpen: false,
-				width: 668,
-				height: 490,
-				modal: true,
-				close: function (e, ui) { $(this).remove(); }
-			});
-		$dialogSendMsg.dialog('open');
-	});
-
 });
 </script>
 
@@ -402,6 +321,7 @@ $( document ).ready(function() {
 		<li><a href="#tabs-1">Informationen</a></li>
 		<li><a href="#tabs-2">Versuchspersonen</a></li>
 		<li><a href="#tabs-3">Termine</a></li>
+        <li><a href="#tabs-4">Kalender</a></li>
 	</ul>
 	<div id="tabs-1" class="tabs">
 		<table>
@@ -596,169 +516,15 @@ $( document ).ready(function() {
 	</div>
 	
 	<div id="tabs-3" class="tabs">
-		<div id="calendar"></div>
-		
-		Anzahl Sitzungen:&nbsp;<?php echo $data['exp_sessions'];?><br/><br/>
-		
-		<table class="optionGroup">
-            <thead>
-                <tr>
-                    <td class="termin"><b>Datum</b></td>
-                    <td class="termin"><b>Beginn</b></td>
-                    <td class="termin"><b>Ende</b></td>
-                    <td class="termin"><b>Ort</b></td>
-                    <td class="termin"><b>VP</b></td>
-                    <td class="termin"><b>Teilnehmer</b></td>
-                    <td class="termin">&nbsp;</td>
-                </tr>
-            </thead>
-            <tbody>
-			<?php
-			
-			$abfrage = sprintf( '
-				SELECT		ses.id,
-							ses.tag,
-							ses.session_s,
-							ses.session_e,
-							ses.maxtn,
-							lab.label AS ort
-				FROM		%1$s AS ses
-				LEFT JOIN	%2$s AS lab
-					ON		ses.lab_id = lab.id
-				WHERE		ses.exp = %3$d
-				ORDER BY	ses.tag ASC, ses.session_s ASC'
-				, TABELLE_SITZUNGEN
-				, TABELLE_LABORE
-				, $_GET['expid']
-			);
-			$erg = $mysqli->query($abfrage);
-			$anmeldungenInsgesamt = 0;
-			while ($termin = $erg->fetch_assoc()) {
-				$terminDatum = formatMysqlDate($termin['tag']);
-				$beginn = substr($termin['session_s'], 0, 5);
-				$ende = substr($termin['session_e'], 0, 5);
-				$maxtn = $termin['maxtn'];
-				
-				$abfrage3 = sprintf('
-                    SELECT  gebdat,
-                            vorname,
-                            nachname,
-                            geschlecht,
-                            telefon1,
-                            telefon2,
-                            email,
-                            vorname,
-                            nachname
-                    FROM    %1$s
-                    WHERE   exp = %2$d
-                      AND   termin = %3$d'
-					, TABELLE_VERSUCHSPERSONEN
-					, $_GET['expid']
-					, $termin['id']
-				);
-				$erg3 = $mysqli->query($abfrage3);
-                if('automatisch'===$data['terminvergabemodus'] && 0 === $erg3->num_rows) {
-                    continue;
-                }
-				?>
-				<tr>
-				<td class="termin">
-					<input type="hidden" id="termin<?php echo $termin['id'];?>" value="<?php echo $terminDatum;?>"  />
-					<input type="hidden" id="beginn<?php echo $termin['id'];?>" value="<?php echo $beginn;?>"  />
-					<input type="hidden" id="ende<?php echo $termin['id'];?>" value="<?php echo $ende;?>"  />
-					<input type="hidden" id="maxtn<?php echo $termin['id'];?>" value="<?php echo $maxtn;?>"  />
-					<?php echo $terminDatum;?>
-				</td>
-				<td class="termin">
-					<?php echo $beginn;?>
-				</td>
-				<td class="termin">
-					<?php echo $ende;?>
-				</td>
-				<td class="termin">
-					<?php
-                    if(empty($termin['ort'])) {
-                        echo '<span style="font-style:italic;color:#d3d3d3">[manueller&nbsp;Termin]</span>';
-                    }
-                    else {
-                        echo $termin['ort'];
-                    }
-                    ?>
-				</td>
-				<td class="termin">
-					<?php
-						$vpcur = $erg3->num_rows;
-                        $anmeldungenInsgesamt += $vpcur;
-						echo $vpcur;
-						if($maxtn > 0) {
-							echo '/' . $maxtn;
-						}
-					?>	
-				</td>
-				<td class="termin">
-					<?php
-		
-					
-					$gebdat = null;
-					$firstIteration = true;
-					while ($termin3 = $erg3->fetch_assoc()) {
-						if(!empty($gebdat)) {
-							echo '<br/>';
-						}
-						$gebdat = formatMysqlDate($termin3['gebdat']);  
-						?><span title="<b><u><?php echo $termin3['vorname'] . ' ' . $termin3['nachname']; ?></u></b><br /><?php if ( $data['vpn_geschlecht'] > 0 ) { ?><b>Geschlecht: </b><?php echo $termin3['geschlecht'] . "<br />"; }; ?><?php if ( $data['vpn_gebdat'] > 0 ) { ?><b>Geburtsdatum: </b><?php echo $gebdat  . "<br />"; }; ?><?php if ( $data['vpn_tele1'] > 0 ) { ?><b>Telefon 1: </b><?php echo $termin3['telefon1'] . "<br />"; }; ?><?php if ( $data['vpn_tele2'] > 0 ) { ?><b>Telefon 2: </b><?php echo $termin3['telefon2'] . "<br />"; }; ?><?php if ( $data['vpn_email'] > 0 ) { ?><b>Email: </b><?php echo $termin3['email']; }; ?>">
-						<?php
-						echo (!$firstIteration ? '<br />' : '') . substr($termin3['vorname'],0,1) . '. ' . $termin3['nachname'];
-						?>
-						</span>
-						<?php
-                        $firstIteration = false;
-					}
-
-					?>&nbsp;
-				</td>
-				<td class="termin">
-					<form action="<?php echo $_SERVER['PHP_SELF'] . '?' . http_build_query($_GET);?>" method="post" enctype="multipart/form-data">
-						<input type="button" name="btn_send_msg_<?php echo $termin['id'];?>" value="E-Mail" class="btn_send_msg" />
-						<input type="hidden" name="id" value="<?php echo $termin['id']; ?>" />
-						<input type="hidden" name="expid" value="<?php echo $_GET['expid'];?>" />
-						<input type="hidden" name="admin" value="1" />  
-						<input type="button" name="edit_termin_<?php echo $termin['id']; ?>" value="Ändern" class="edit_termin" />
-						<input type="submit" name="del" value="Löschen" onclick="return confirm('Termin wirklich löschen?');" class="del" />
-					</form>
-				</td>
-			</tr>
-			<?php 			}
-			?>
-            </tbody>
-            <tfoot>
-            <?php
-            $edp = new ExperimentDataProvider((int)$_GET['expid']);
-            $vpmax = $edp->getSignUpCountMax();
-            if($vpmax > 0) {
-                ?>
-                <tr>
-                    <td class="termin"/>
-                    <td class="termin"/>
-                    <td class="termin"/>
-                    <td class="termin"/>
-                    <td class="termin" style="font-size: xx-small;"><?php echo $anmeldungenInsgesamt . '/' . $vpmax;?></td>
-                    <td class="termin"/>
-                    <td class="termin"/>
-                </tr>
-                <?php
-            }
-            ?>
-            </tfoot>
-		</table>
-		<?php
-		if('manuell'===$data['terminvergabemodus']) {
-			?>
-			<br />
-			<input name="add" type="button" value="Termin hinzufügen" />
-			<?php
-		}?>
+        <?php
+        require_once 'backend/ad_session_list.php';
+        ?>
 	</div>
+    <div id="tabs-4" class="tabs">
+        <div id="calendar"></div>
+
+        Anzahl Sitzungen:&nbsp;<?php echo $data['exp_sessions'];?><br/><br/>
+    </div>
 </div>
 <?php
 

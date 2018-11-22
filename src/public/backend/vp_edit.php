@@ -58,7 +58,6 @@ $( document ).ready(function() {
 
     $('#delvp2').on('click', function(e){
         e.preventDefault();
-        console.log('tst');
         var vpId = <?php echo $data['id']; ?>;
         if(!confirm('Versuchsperson wirklich endgültig löschen?')) {
             return;

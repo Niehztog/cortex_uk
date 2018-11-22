@@ -31,7 +31,7 @@ if('admin.php'===basename($_SERVER['PHP_SELF'])) {
 if('index.php' !== basename($_SERVER['PHP_SELF'])) {
 	?>
 	<style type="text/css" media="screen">
-		/*@import "externals/datatables/media/css/jquery.dataTables.css";*/
+		@import "externals/datatables/media/css/jquery.dataTables.css";
 		@import "externals/datatables/media/css/jquery.dataTables_themeroller.css";
 	</style>
 	<?php

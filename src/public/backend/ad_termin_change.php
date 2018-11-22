@@ -54,14 +54,49 @@ if($terminManuell) {
 		$("[title]").each(function(){
 			$(this).tooltip({ content: $(this).attr("title")});
 		});	// It allows html content to tooltip.
-		$('input[type="button"], input[type="submit"]').button();
+		$('input[type="button"]').button();
 		initDatepicker();
 		$(".timepicker").timePicker({step:30, startTime:"08:00", endTime:"19:00"});
+
+        $('#editcancel').on('click', function(e){
+            e.preventDefault();
+            window.parent.$('[class^=d_termin_change_]').dialog('close');
+        });
+
+        $('#editsess').on('click', function(e){
+            e.preventDefault();
+
+            var expid = $(this).data("expid");
+            var sessionId = $(this).data("id");
+
+            $.ajax({
+                type: "POST",
+                url: "service/session.php",
+                data: {
+                    'action': 'change',
+                    'change_id': sessionId,
+                    'expid': expid,
+                    'change_termin': $("input[name=change_termin]").val(),
+                    'change_session_s': $("input[name=change_session_s]").val(),
+                    'change_session_e': $("input[name=change_session_e]").val(),
+                    'change_maxtn': $("input[name=change_maxtn]").val()
+                },
+                dataType: "json",
+                success: function( data ) {
+                    if(data === 'success') {
+                        window.parent.$('[class^=d_termin_change_]').dialog('close');
+                        $('#session_list').DataTable().ajax.reload();
+                    }
+                    else {
+                        alert(data);
+                    }
+                }
+            });
+        });
 	});
 	</script>
 	</head>
 	<body>
-	<form action="admin.php?<?php echo http_build_query(array('expid' => $termin['exp']));?>" method="post" enctype="multipart/form-data" name="create">	
 	<table style="margin-left:15px; margin-top:10px;">
 	<tr>
 		<td colspan="2" width="200px" class="ad_edit_headline"><b>Datum</b></td>
@@ -110,18 +145,14 @@ if($terminManuell) {
 		<td colspan="5">
 		 <div style="text-align:center">
 		 <br />
-		<input type="hidden" name="change_id" value="<?php echo $termin['id'];?>" />
-		<input type="hidden" name="expid" value="<?php echo $_GET['expid'];?>" />
-		<input type="hidden" name="admin" value="1" />	
-		<input type="submit" name="editsess" value="Ändern" />&nbsp;&nbsp;
-		<input type="button" name="addcancel" value="Abbrechen" onclick="javascript: window.parent.$('[class^=d_termin_change_]').dialog('close');" />
+		<input type="button" name="editsess" id="editsess" value="Ändern" data-id="<?php echo $termin['id'];?>" data-expid="<?php echo $_GET['expid'];?>" />&nbsp;&nbsp;
+		<input type="button" name="editcancel" id="editcancel" value="Abbrechen" />
 		</div>
 		</td>  
 	</tr> 
 	
 	</table>
-	</form>
-	
+
 	</body>
 	</html>
 	<?php

@@ -47,6 +47,10 @@ require valid-user
 require valid-user
 </Files>
 
+<Files "session.php">
+require valid-user
+</Files>
+
 <Files "admin.php">
 require valid-user
 </Files>

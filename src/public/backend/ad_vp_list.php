@@ -264,9 +264,7 @@ if(false === $resultVp) {
 	});
 </script>
 
-<?php $qString = http_build_query($_GET);?>
-
-<table id="vp_list" style="width:<?php echo (isset($_GET['expid']) && 'admin.php' === basename($_SERVER['PHP_SELF'])) ? 852 : 900;?>px;table-layout:auto;">
+<table id="vp_list" class="display" style="width:<?php echo (isset($_GET['expid']) && 'admin.php' === basename($_SERVER['PHP_SELF'])) ? 852 : 900;?>px;table-layout:auto;">
 	<thead>
 	</thead>
 	<tbody>

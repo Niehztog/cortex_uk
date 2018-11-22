@@ -130,6 +130,12 @@ td:nth-child(7).termin {
 	padding-right:0px;
 }
 
+td.termin > a > span.ui-icon,
+#session_list > tbody > tr > td > a > span.ui-icon {
+	float:left;
+	margin:2px;
+}
+
 td.eintragen {
 	line-height:25px;
 }
@@ -249,5 +255,10 @@ td.termin > form > input.del {
 	padding:5px;
 }
 
+table#vp_list.dataTable thead .sorting,
+table#vp_list.dataTable thead .sorting_asc,
+table#vp_list.dataTable thead .sorting_desc {
+	background: none;
+}
 
  -->
