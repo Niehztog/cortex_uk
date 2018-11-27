@@ -392,7 +392,7 @@ $( document ).ready(function() {
 			</tr>
 			<tr>
 				<td><i>Sitzungsdauer</i></td>
-				<td colspan="2"><?php echo  $data['session_duration']; ?> Minuten</td>
+				<td colspan="2" id="session_duration"><?php echo  $data['session_duration']; ?> Minuten</td>
 			</tr>
 			<tr>
 				<td><i>Modus</i></td>

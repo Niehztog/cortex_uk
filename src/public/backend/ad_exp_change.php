@@ -164,7 +164,7 @@ $( document ).ready(function() {
 			</td>
 		</tr>  
 	</table>
-
+    <br />
 	<div class="optionGroup">
         <h3>Terminvergabe</h3>
 		<ul>
@@ -233,20 +233,11 @@ $( document ).ready(function() {
                                                                                                      echo date('d.m.Y', $data['exp_end']);
                                                                                                  } ?>" size="11"
                                                                                                  maxlength="10"/></li>
-                    <?php
-                    }
-                    else {
-                        echo '<ul>';
-                    }
-                    ?>
                     <li><label for="max_vp">Maximale Anzahl VP<img src="images/info.gif" width="17" height="17" title="Terminvergabe endet automatisch, wenn diese Anzahl an VP angemeldet ist" alt="" /></label><input type="text" name="max_vp" id="max_vp" value="<?php echo $data['max_vp'];?>" size="11" maxlength="10" class="spinner"/></li>
 					<li>
 						<label for="max_simultaneous_sessions">Max. Zahl gleichzeitiger Sitzungen</label>
 						<input name="max_simultaneous_sessions" id="max_simultaneous_sessions" type="text" value="<?php echo $data['max_simultaneous_sessions'];?>" size="5" maxlength="5" class="spinner" />
 					</li>
-                    <?php
-                        if($auth->mayEditExpTimeFrame() || $auth->mayEditExpLab()) {
-                    ?>
 				</ul>
 			</div>
 			<div id="subtabs-2" class="tabs">

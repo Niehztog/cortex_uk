@@ -322,7 +322,7 @@ if(isset($_GET['action']) && $_GET['action'] == 'create') {
 	<ul>
 		<li>
 			<label for="show_in_list">In Liste anzeigen&nbsp;<img src="images/info.gif" width="17" height="17" title="Diese Option entscheidet, ob das Experiment im öffentlichen Teil von Cortex angezeigt wird. Wird es nicht angezeigt, kann es dennoch über einen speziellen Link angesteuert werden." alt="" /></label>
-			<input type="checkbox" name="show_in_list" id="show_in_list" value="1"<?php if(!is_null($_POST['show_in_list'])) {echo ' checked="checked"';} ?> />
+			<input type="checkbox" name="show_in_list" id="show_in_list" value="1"<?php if(isset($_POST['show_in_list']) && !is_null($_POST['show_in_list'])) {echo ' checked="checked"';} ?> />
 		</li>
 		<li>
 			<label for="session_duration">Sitzungsdauer&nbsp;<img src="images/info.gif" width="17" height="17" title="Die durchschnittliche Sitzungsdauer dieses Experiments in Minuten" alt="" /></label>
@@ -357,12 +357,6 @@ if(isset($_GET['action']) && $_GET['action'] == 'create') {
 					</select></li>
 				<li><label for="exp_start">Beginn des Expepriments<img src="images/info.gif" width="17" height="17" title="Frühester Termin, der vergeben wird" alt="" /></label><input type="text" name="exp_start" id="exp_start" class="datepicker" size="11" maxlength="10"/></li>
 				<li><label for="exp_end">Ende des Experiments<img src="images/info.gif" width="17" height="17" title="Spätester Termin, der vergeben wird" alt="" /></label><input type="text" name="exp_end" id="exp_end" class="datepicker" size="11" maxlength="10" value="<?php if(isset($_POST['exp_end'])) {echo $_POST['exp_end'];} ?>" /></li>
-                <?php
-                }
-                else {
-                    echo '<ul>';
-                }
-                ?>
 				<li><label for="max_vp">Maximale Anzahl VP<img src="images/info.gif" width="17" height="17" title="Terminvergabe endet automatisch, wenn diese Anzahl an VP angemeldet ist" alt="" /></label><input type="text" name="max_vp" id="max_vp" size="11" maxlength="10" class="spinner" value="<?php if(isset($_POST['max_vp'])) {echo $_POST['max_vp'];} ?>" /></li>
 				<li>
 					<label for="max_simultaneous_sessions">Max. Zahl gleichzeitiger Sitzungen</label>
@@ -370,9 +364,6 @@ if(isset($_GET['action']) && $_GET['action'] == 'create') {
 				</li>
 			</ul>
             <div style="clear:both;"></div>
-        <?php
-            if($auth->mayEditExpTimeFrame() || $auth->mayEditExpLab()) {
-        ?>
 		</div>
 		<div id="tabs-2" class="tabs">
 			<ul>
@@ -393,9 +384,6 @@ if(isset($_GET['action']) && $_GET['action'] == 'create') {
 	</div>
 
     <?php
-    }
-    else {
-        echo '<br/>';
     }
     ?>
 </div>

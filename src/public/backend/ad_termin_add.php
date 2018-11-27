@@ -20,6 +20,18 @@ $( document ).ready(function() {
         window.parent.$('[id=add]').dialog('close');
     });
 
+    $('input[name=hinzu_session_s]').on('change', function() {
+        var addMinutes = $('#session_duration').text();
+        addMinutes = addMinutes.substring(0, addMinutes.indexOf(' '));
+        if(addMinutes.length > 0) {
+            var start = $(this).val().split(":");
+            var startDate = new Date(0, 0, 0, start[0], start[1], 0);
+            var endDate = new Date(startDate.getTime() + addMinutes*60000);
+            var newValueEnd = ('0' + endDate.getHours()).slice(-2)+':'+('0' + endDate.getMinutes()).slice(-2);
+            $('input[name=hinzu_session_e]').val(newValueEnd);
+        }
+    });
+
     $('#addsess').on('click', function(e){
         e.preventDefault();
 
