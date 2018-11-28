@@ -107,7 +107,8 @@ if(!isset($_GET['expid'])) {
                     "sTitle":"Teilnehmer"
                     , "aTargets": [ 6 ]
                     , "bSortable": true
-                    , "mRender": function ( teilnehmer, type, full ) {
+                    , "mRender": function ( namesOnly, type, full ) {
+                        var teilnehmer = full[7];
                         var output = '';
                         $.each( teilnehmer, function( key, value ){
                             if(key > 0) {
@@ -132,11 +133,11 @@ if(!isset($_GET['expid'])) {
                     , "aTargets": [ 7 ]
                     , "sWidth": "75px"
                     , "bSortable": true
-                    , "mRender": function ( email, type, full ) {
+                    , "mRender": function ( teilnehmer, type, full ) {
                         return '' +
-                            '<a href="" class="link_send_mail" title="E-Mail an Teilnehmer senden" data-id="'+full[0]+'"><span class="ui-icon ui-icon-mail-closed"></span></a>\n'+
-                            '<a href="" class="link_session_change" title="Termin ändern" data-id="'+full[0]+'"><span class="ui-icon ui-icon-wrench"></span></a>\n'+
-                            '<a href="" class="link_session_delete" title="Termin löschen" data-id="'+full[0]+'"><span class="ui-icon ui-icon-trash"></span></a>';
+                            '<a href="" class="link_session_delete" title="Termin löschen" data-id="'+full[0]+'"><span class="ui-icon ui-icon-trash"></span></a>' +
+                            '<a href="" class="link_session_change" title="Termin ändern" data-id="'+full[0]+'"><span class="ui-icon ui-icon-wrench"></span></a>\n' +
+                            (teilnehmer.length > 0 ? '<a href="" class="link_send_mail" title="E-Mail an Teilnehmer senden" data-id="'+full[0]+'"><span class="ui-icon ui-icon-mail-closed"></span></a>' : '') + '\n';
                     }
                 }
             ],

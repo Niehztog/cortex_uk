@@ -169,32 +169,43 @@ abstract class AbstractTimeSlot {
 	/**
 	 *
 	 */
-	public function getBackgrtoundColor() {
+	public function getBackgroundColor() {
 		return $this->backgroundColor;
 	}
-	
+
 	/**
 	 * Erzeugt den Titel um den Slot als Kallender Event darzustellen
 	 */
 	abstract protected function generateTitle();
 
-	
 	/**
 	 * Gibt den TimeSlot in einem fullcalendar (javascript)
 	 * kompatiblen Format aus
 	 */
-	public function __toString() {
-		return sprintf(
-			'{id:\'%1$s\',title:\'%2$s\',start:\'%3$s\',end:\'%4$s\',allDay:false%5$s%6$s}'
-			, /* 1 */	$this->getId()
-			, /* 2 */	$this->generateTitle()
-			, /* 3 */	$this->getStart()->format('Y-m-d\TH:i:s')
-			, /* 4 */	$this->getEnd()->format('Y-m-d\TH:i:s')
-			, /* 5 */	null === $this->getEditable() ? '' : (true === $this->getEditable() ? ',editable:true' : ',editable:false')
-			, /* 6 */	null === $this->getBackgrtoundColor() ? '' : ',backgroundColor:\'' . $this->getBackgrtoundColor() . '\''
-		);
-	}
-	
+	public function __toString()
+    {
+        return $this->asJson();
+    }
 
+    private function asJson()
+    {
+        $res = array(
+            'id' => $this->getId(),
+            'title' => $this->generateTitle(),
+            'start' => $this->getStart()->format('Y-m-d\TH:i:s'),
+            'end' => $this->getEnd()->format('Y-m-d\TH:i:s'),
+            'allDay' => false
+        );
+
+        if(null !== $this->getEditable()) {
+            $res['editable'] = (bool)$this->getEditable();
+        }
+
+        if(null !== $this->getBackgroundColor()) {
+            $res['backgroundColor'] = $this->getBackgroundColor();
+        }
+
+        return json_encode($res);
+    }
 	
 }
