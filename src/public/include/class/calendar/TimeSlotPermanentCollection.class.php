@@ -160,13 +160,13 @@ class TimeSlotPermanentCollection extends AbstractTimeSlotCollection {
     /**
      * @param $sqlWhere
      * @param bool $readApplicationCount
-     * @param array|null $eventAttribues
+     * @param array|null $eventAttributes
      * @param bool $freeSlotsOnly
      */
 	private function readSessionsFromDatabase(
 	    $sqlWhere,
         $readApplicationCount = false,
-        array $eventAttribues = null,
+        array $eventAttributes = null,
         $freeSlotsOnly = false
     ) {
 		$mysqli = $this->getDatabase();
@@ -176,7 +176,8 @@ class TimeSlotPermanentCollection extends AbstractTimeSlotCollection {
 					CONCAT(tag,"T",session_s) as start,
 					CONCAT(tag,"T",session_e) as end,
 					exp,
-					maxtn
+					maxtn,
+			        lab_id
 			FROM	%1$s
 			WHERE	%2$s'
 				, TABELLE_SITZUNGEN
@@ -209,7 +210,7 @@ class TimeSlotPermanentCollection extends AbstractTimeSlotCollection {
 			if($readApplicationCount || $freeSlotsOnly) {
 				$amount = $this->getApplicationCountForSession($id);
 				
-				if(($freeSlotsOnly === false && 0 === $amount)
+				if(($freeSlotsOnly === false && !empty($termin['lab_id']) && 0 === $amount)
                     || ($freeSlotsOnly && $amount >= (int)$termin['maxtn'])) {
 					continue;
 				}
@@ -228,8 +229,8 @@ class TimeSlotPermanentCollection extends AbstractTimeSlotCollection {
 				$item->setExpId((int)$termin['exp']);
 			}
 			
-			if(is_array($eventAttribues)) {
-				foreach($eventAttribues as $setter => $value) {
+			if(is_array($eventAttributes)) {
+				foreach($eventAttributes as $setter => $value) {
 					if(is_callable(array($item, $setter))) {
 						$item->$setter($value);
 					}

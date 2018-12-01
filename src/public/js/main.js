@@ -1,5 +1,11 @@
-function initCalendar(eventData, purpose) {
-	
+function initCalendar(data, purpose) {
+	if(Array.isArray(data)) {
+		var eventParameter = data;
+	}
+    else if(Number.isInteger(data)) {
+        var eventParameter = '../service/session.php?action=calendar&id=' + data + '&purpose=' + purpose;
+	}
+
 	var backgroundColorDefault = '#D2DBF8';
 	var backgroundColorHover = '#6C91F8';
 	var backgroundColorSelected = '#FFB2B2';
@@ -85,7 +91,6 @@ function initCalendar(eventData, purpose) {
 					return false;
 				}
 			}
-			
 		}
 	}
 	else if('signup' == purpose) {
@@ -94,23 +99,20 @@ function initCalendar(eventData, purpose) {
 				if(event.backgroundColor != backgroundColorSelected) {
 					$(this).css('background-color', backgroundColorHover);
 				}
-
 			},
 			eventMouseout: function(event, jsEvent, view) {
 				if(event.backgroundColor != backgroundColorSelected) {
 					$(this).css('background-color', backgroundColorDefault);
 				}
-
 			},
-				
+
 			eventClick: function(event) {
-				
 				var datum = $.fullCalendar.formatDate( event.start, 'dddd\', den\' d.M.yyyy', {dayNames: ['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag']} );
 				var uhrzeit_von = $.fullCalendar.formatDate( event.start, 'H(:mm)' );
 				var uhrzeit_bis = $.fullCalendar.formatDate( event.end, 'H(:mm)' );
-				
+
 				var decision = confirm('Für die Teilnahme am ' + datum + ' von ' + uhrzeit_von + ' bis ' + uhrzeit_bis + ' Uhr anmelden?');
-				
+
 				if(decision) {
 					$('<form action="'+window.location+'" method="POST">' +
 						'<input type="hidden" name="chosendate" value="1">' +
@@ -119,22 +121,52 @@ function initCalendar(eventData, purpose) {
 						.appendTo($(document.body))
 						.submit();
 				}
-				
-				/*eventList = $('#calendar').fullCalendar('clientEvents');
-				var index;
-				for (index = 0; index < calendarData.length; ++index) {
-					eventList[index].title = '';
-					eventList[index].backgroundColor = '';
-					$('#calendar').fullCalendar('updateEvent', eventList[index]);
-				}
-				
-				event.backgroundColor = backgroundColorSelected;
-				event.title = '>gewählt<'
-				$('#calendar').fullCalendar('updateEvent', event);*/
 			}
-			
 		}
 	}
+    else if('viewexp' == purpose) {
+        interactionOptions = {
+            eventMouseover: function(event, jsEvent, view) {
+                if(event.backgroundColor != backgroundColorSelected) {
+                    $(this).css('background-color', backgroundColorHover);
+                }
+            },
+            eventMouseout: function(event, jsEvent, view) {
+                if(event.backgroundColor != backgroundColorSelected) {
+                    $(this).css('background-color', backgroundColorDefault);
+                }
+            },
+
+            eventRender: function(event, element) {
+                if(event.title != '') {
+                    var datum = $.fullCalendar.formatDate( event.start, 'dddd\', den\' d.M.yyyy', {dayNames: ['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag']} );
+                    var uhrzeit_von = $.fullCalendar.formatDate( event.start, 'H:mm' );
+                    var uhrzeit_bis = $.fullCalendar.formatDate( event.end, 'H:mm' );
+                    details = datum + ' ' + uhrzeit_von + ' - ' + uhrzeit_bis+' Uhr<br/>'+event.title;
+                    element.tooltip({ items: '*', content: details, track: false});
+                }
+
+                var label = event.title.substring(0, event.title.indexOf(' '));
+                if(!$("input[id=show_empty_chk]").is(':checked') && label == 0) {
+                    return false;
+                }
+            },
+
+            eventAfterAllRender: function (view) {
+                // Count events
+                var allEvents = $('#calendar').fullCalendar('clientEvents', function(event) {
+                    if(!$("input[id=show_empty_chk]").is(':checked')) {
+                        var label = event.title.substring(0, event.title.indexOf(' '));
+                        return label != 0;
+					}
+                    return true;
+                });
+                var quantity = allEvents.length;
+
+                $("#quantity").html(quantity);
+            },
+        }
+    }
 
 	//check if today is weekend, if yes start calendar for next week
 	var today = new Date();
@@ -159,7 +191,7 @@ function initCalendar(eventData, purpose) {
 			defaultView: 'agendaWeek',
 			//hiddenDays: [0, 6],
 			weekends: false,
-			events: eventData,
+			events: eventParameter,
 			ignoreTimezone: true,
 			eventTextColor: '#000000',
 			year: today.getFullYear(),

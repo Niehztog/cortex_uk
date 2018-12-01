@@ -71,7 +71,7 @@ class CalendarDataProvider extends DatabaseClient {
 			'exp = %1$d'
 			, $expId
 		);
-		
+
 		return new TimeSlotPermanentCollection($sqlWhere, true);
 	}
 	
@@ -96,20 +96,10 @@ class CalendarDataProvider extends DatabaseClient {
      * @return TimeSlotPermanentCollection|TimeSlotTemporaryCollection
      */
 	public function getAvailableSessionsFor($expId) {
-		
-		$mysqli = $this->getDatabase();
-		
-		//zuerst gucken ob das Exp automatische oder manuelle Terminvergabe hat
-		$sql = sprintf('SELECT terminvergabemodus FROM %1$s WHERE id = %2$d', TABELLE_EXPERIMENTE, $expId);
-		$result = $mysqli->query($sql);
-		if(false === $result) {
-			trigger_error($mysqli->error, E_USER_WARNING);
-			throw new RuntimeException(sprintf('Fehler beim Lesen der Daten von Experiment id %1$d', $expId));
-		}
-		
-		$row = $result->fetch_assoc();
-		
-		if('automatisch' === $row['terminvergabemodus']) {
+
+        //zuerst gucken ob das Exp automatische oder manuelle Terminvergabe hat
+        $schedulingMode = $this->getSchedulingMode($expId);
+        if('automatisch' === $schedulingMode) {
 			return $this->calculateAvailableSessionsFor($expId);
 		}
 		return $this->getPreConfiguredSessionsFor($expId);
@@ -130,7 +120,7 @@ class CalendarDataProvider extends DatabaseClient {
 		if(!($expData['session_duration'] > 0)) {
 			throw new RuntimeException('Experimentdauer darf an dieser Stelle nicht 0 sein.');
 		}
-		$slotDuration = new DateInterval('PT' . $expData['session_duration'] . 'M');
+		$slotDuration = new \DateInterval('PT' . $expData['session_duration'] . 'M');
 		
 		if((int)$expData['max_simultaneous_sessions'] > 0) {
 			$expSessionAllocation = new TimeSlotPermanentCollection(
@@ -269,5 +259,24 @@ class CalendarDataProvider extends DatabaseClient {
 		
 		return $data;
 	}
-	
+
+    /**
+     * @param $expId
+     * @return mixed
+     */
+    private function getSchedulingMode($expId)
+    {
+        $mysqli = $this->getDatabase();
+
+        $sql = sprintf('SELECT terminvergabemodus FROM %1$s WHERE id = %2$d', TABELLE_EXPERIMENTE, $expId);
+        $result = $mysqli->query($sql);
+        if (false === $result) {
+            trigger_error($mysqli->error, E_USER_WARNING);
+            throw new RuntimeException(sprintf('Fehler beim Lesen der Daten von Experiment id %1$d', $expId));
+        }
+
+        $row = $result->fetch_assoc();
+        return $row['terminvergabemodus'];
+    }
+
 }

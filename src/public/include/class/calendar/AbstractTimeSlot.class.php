@@ -178,16 +178,10 @@ abstract class AbstractTimeSlot {
 	 */
 	abstract protected function generateTitle();
 
-	/**
-	 * Gibt den TimeSlot in einem fullcalendar (javascript)
-	 * kompatiblen Format aus
-	 */
-	public function __toString()
-    {
-        return $this->asJson();
-    }
-
-    private function asJson()
+    /**
+     * @return array
+     */
+    public function asArray()
     {
         $res = array(
             'id' => $this->getId(),
@@ -205,7 +199,7 @@ abstract class AbstractTimeSlot {
             $res['backgroundColor'] = $this->getBackgroundColor();
         }
 
-        return json_encode($res);
+        return $res;
     }
 	
 }

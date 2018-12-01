@@ -7,12 +7,13 @@ require_once __DIR__ . '/../include/functions.php';
 require_once __DIR__ . '/../include/class/DatabaseFactory.class.php';
 require_once __DIR__ . '/../include/class/calendar/CalendarDataProvider.class.php';
 require_once __DIR__ . '/../include/class/controller/SessionController.class.php';
+require_once __DIR__ . '/../include/class/service/SessionService.class.php';
 require_once __DIR__ . '/../include/class/user/AccessControl.class.php';
 $dbf = new DatabaseFactory();
 $mysqli = $dbf->get();
 $auth = new AccessControl();
 
-function insertJavaScript(TimeSlotPermanentCollection $calendarData = null) {
+function insertJavaScript() {
 	?>
 		<script type="text/javascript">
 			$( document ).ready(function() {
@@ -26,17 +27,18 @@ function insertJavaScript(TimeSlotPermanentCollection $calendarData = null) {
 					}
 				});
 
-				calendarData = [<?php
-					if(null !== $calendarData) {
-						echo $calendarData;
-					}
-				?>];
-				
-				initCalendar(calendarData, 'manage');
+				var labId = <?php echo isset($_GET['id']) ? (int) $_GET['id'] : 'null';?>;
+
+				<?php
+                $sessionService = new \SessionService();
+                $calendarData = $sessionService->getDataForCalendar((int)$_GET['id'], \SessionService::PURPOSE_MANAGE);
+                ?>
+
+                calendarData = <?php echo json_encode($calendarData);?>;
+                initCalendar(calendarData, 'manage');
 				$( "#tabs" ).tabs();
 				$("form[id=create],form[id=change]").on('submit', function( event ) {
 					//event.preventDefault();
-					//seen = []
 					calendarData = $('#calendar').fullCalendar('clientEvents');
 					var index;
 					for (index = 0; index < calendarData.length; ++index) {
@@ -360,25 +362,6 @@ elseif(!empty($_GET['id'])) {
 	if( !is_array($daten)) {
 		die('Konnte Daten zu Labor nicht finden.');
 	}
-	
-	try {
-		$cdp = new CalendarDataProvider();
-		$calendarDaten = $cdp->getOpeningHoursFor($_GET['id']);
-		$calendarDaten->unite(
-			$cdp->getAllocationData(
-				$_GET['id'],
-				null,
-				array(
-					'setEditable' => false,
-					'setBackgroundColor' => '#F3F781'
-				)
-			)
-		);
-	}
-	catch(Exception $e) {
-		trigger_error($e, E_USER_WARNING);
-		die('Konnte Daten zu Labor nicht laden.');
-	}
 }
 else {
 	require_once 'pageelements/header.php';
@@ -391,8 +374,8 @@ if( isset( $daten ) ) {
 	$versucheAktion = isset($_GET['id']) ? 'ändern' : 'hinzufügen';
 	$action = isset($_GET['id']) ? 'change' : 'create';
 	require_once 'pageelements/header.php';
-	//displayMessagesFromSession();
-	insertJavaScript(!empty($calendarDaten)?$calendarDaten:null);
+
+	insertJavaScript();
 	
 	?>
 	<script type="text/javascript">
@@ -400,7 +383,6 @@ if( isset( $daten ) ) {
 			$("input[id=show_allocation_chk]").on('change', function() {
 				$('#calendar').fullCalendar('rerenderEvents');
 			});
-			
 		});
 	</script>
 	
@@ -482,9 +464,7 @@ if( isset( $daten ) ) {
 	</div>
 
 	<br />
-	
-	<!-- i><font size="-2">(Felder markiert mit einem * müssen ausgefüllt werden)</font></i-->
-	
+
 	<br /><br />
 	
 	<input name="<?php echo $action;?>lab" type="submit" value="Labor <?php echo $versucheAktion;?>"/>

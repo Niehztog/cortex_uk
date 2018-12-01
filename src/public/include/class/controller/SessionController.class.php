@@ -70,6 +70,7 @@ class SessionController
      * @param null $end
      * @param null $maxTeilnehmer
      * @param null $labId
+     * @return bool|mysqli_result|void
      */
     public function update($sitzungsId, $expId = null, $tag = null, $start = null, $end = null, $maxTeilnehmer = null, $labId = null)
     {
@@ -119,12 +120,14 @@ class SessionController
             trigger_error($mysqli->error, E_USER_WARNING);
             throw new RuntimeException(sprintf('Fehler beim Ändern der Sitzung mit id %1$d', $sitzungsId));
         }
+        return $result;
     }
 
     /**
      * WENN TERMIN GELÖSCHT WURDE
      *
      * @param $sitzungsId
+     * @return bool|mysqli_result
      */
     public function delete($sitzungsId)
     {
@@ -157,6 +160,8 @@ class SessionController
             trigger_error($mysqli->error, E_USER_WARNING);
             throw new RuntimeException(sprintf('Fehler beim Aktualisieren der Daten von Versuchspersonen mit termin id %1$d', $$sitzungsId));
         }
+
+        return $result;
     }
 
     /**

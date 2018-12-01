@@ -248,36 +248,29 @@ require_once 'pageelements/header.php';
 ?>
 <script type="text/javascript">
 $( document ).ready(function() {
-	calendarData = [<?php
-		try {
-			$cdp = new CalendarDataProvider();
-			$calendarData = $cdp->getBookedSessionsFor((int)$_GET['expid']);
-		}
-		catch(Exception $e) {
-			trigger_error($e, E_USER_WARNING);
-			storeMessageInSession(sprintf(MESSAGE_BOX_ERROR, 'Fehler beim Lesen der Belegdaten.'));
-		}
-		if(!empty($calendarData)) {
-			$first = true;
-			foreach($calendarData as $termin) {
-				if($first) {
-					$first = false;
-				}
-				else {
-					echo ',';
-				}
-				echo (string) $termin;
-			}
-		}
-	?>];
+    var expId = <?php echo (int)$_GET['expid'];?>;
 
-	initCalendar(calendarData, 'viewexp');
-	
-	$( "#tabs" ).tabs();
+	initCalendar(expId, 'viewexp');
+
+	var activeTab = window.location.hash.replace('#', '');
+    if(!activeTab) {
+        var activeTab = 0;
+    }
+
+	$( "#tabs" ).tabs({
+        active: activeTab,
+        activate: function(event, ui) {
+            if(ui.newTab.index() === 3) {
+                $('#calendar').fullCalendar('rerenderEvents');
+            }
+
+            window.location.hash = ui.newTab.index();
+        },
+    });
 
 	$("input[name=expedit]").on('click', function() {
 		var $dialogExpExit = $('<div id="changeexp"></div>')
-			.load('backend/ad_exp_change.php?expid=<?php echo $_GET['expid'];?>')
+			.load('backend/ad_exp_change.php?expid=<?php echo (int)$_GET['expid'];?>')
 			.dialog({
 				title: 'Experiment Ändern',
 				autoOpen: false,
@@ -288,6 +281,10 @@ $( document ).ready(function() {
 			});
 		$dialogExpExit.dialog('open');
 	});
+
+    $("input[id=show_empty_chk]").on('change', function() {
+        $('#calendar').fullCalendar('rerenderEvents');
+    });
 });
 </script>
 
@@ -522,8 +519,13 @@ $( document ).ready(function() {
 	</div>
     <div id="tabs-4" class="tabs">
         <div id="calendar"></div>
-
-        Anzahl Sitzungen:&nbsp;<?php echo $data['exp_sessions'];?><br/><br/>
+        <?php if('manuell' === $data['terminvergabemodus']) {?>
+        <span>
+            <input type="checkbox" id="show_empty_chk" checked="checked" />
+            <label for="show_empty_chk" style="width:auto;float:none;">Leere Termine anzeigen</label>
+        </span>
+        <br/><br/><?php }?>
+        Anzahl Sitzungen:&nbsp;<span id="quantity"><?php echo $data['exp_sessions'];?></span><br/>
     </div>
 </div>
 <?php

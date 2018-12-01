@@ -4,6 +4,7 @@ require_once __DIR__ . '/include/config.php';
 require_once __DIR__ . '/include/class/DatabaseFactory.class.php';
 require_once __DIR__ . '/include/class/calendar/CalendarDataProvider.class.php';
 require_once __DIR__ . '/include/class/controller/SessionController.class.php';
+require_once __DIR__ . '/include/class/service/SessionService.class.php';
 require_once __DIR__ . '/include/class/ExperimentDataProvider.class.php';
 require_once __DIR__ . '/include/class/settings/EmailBlocking.class.php';
 $dbf = new DatabaseFactory();
@@ -74,26 +75,19 @@ elseif($_GET['menu'] == 'experiment' && isset($_GET['expid']) && !isset($_POST['
 	if(0 === $erg4->num_rows) {
 		die('Experiment nicht gefunden');
 	}
-	$data2 = $erg4->fetch_assoc();  
-	
-	try {
-		$cdp = new CalendarDataProvider();
-		$calendarData = $cdp->getAvailableSessionsFor($expId);
-	}
-	catch(Exception $e) {
-		trigger_error($e, E_USER_WARNING);
-		echo '<!--' . $e . '-->';
-		storeMessageInSession(sprintf(MESSAGE_BOX_ERROR, sprintf('Interner Fehler bei der Anmeldung. Bitte wenden Sie sich per Email an den Versuchsleiter. (%1$d)', __LINE__)));
-        $calendarData = '';
-	}
-	
+	$data2 = $erg4->fetch_assoc();
+    $sessionService = new \SessionService();
+    $calendarData = $sessionService->getDataForCalendar($expId, \SessionService::PURPOSE_SIGNUP);
+
 	require_once 'pageelements/header.php';
 	?>
 	
 	<script type="text/javascript">
 		$( document ).ready(function() {
-			calendarData = [<?php echo $calendarData;?>];
-			initCalendar(calendarData, 'signup');
+
+            calendarData = <?php echo json_encode($calendarData);?>;
+            initCalendar(calendarData, 'signup');
+
 			$( "button#cal_prev" ).button({
 				icons: {
 					primary: "ui-icon-triangle-1-w"

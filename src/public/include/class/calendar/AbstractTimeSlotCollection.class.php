@@ -19,23 +19,14 @@ abstract class AbstractTimeSlotCollection extends DatabaseClient implements Iter
 	}
 
     /**
-     * @return string
+     * @return array
      */
-	public function __toString() {
-		$output = '';
-		if(!empty($this->timeSlotList)) {
-			$first = true;
-			foreach($this->timeSlotList as $timeSlot) {
-				if($first) {
-					$first = false;
-				}
-				else {
-					$output .= ',';
-				}
-				$output .= (string)$timeSlot;
-			}
-		}
-		return $output;
-	}
-	
+	public function asArray() {
+	    $result = array();
+        foreach ($this as $termin) {
+            $result[] = $termin->asArray();
+        }
+        return $result;
+    }
+
 }

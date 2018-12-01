@@ -88,7 +88,7 @@ class TimeSlotPermanent extends AbstractTimeSlot {
 		$amount = $this->getAmount();
         $capacity = $this->getCapacity();
 		return $capacity === null
-            ? sprintf('%1$d Anmeldung%2$s', $amount, $amount > 1 ? 'en' : '')
+            ? sprintf('%1$d Anmeldung%2$s', $amount, $amount !== 1 ? 'en' : '')
             : sprintf('%1$d %2$s frei', $capacity - $amount, $capacity - $amount > 1 ? 'Plätze' : 'Platz');
 	}
 	
