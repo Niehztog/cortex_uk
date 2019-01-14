@@ -54,6 +54,7 @@ if(!isset($_GET['expid'])) {
                 {
                     "sTitle":"<input type=\"checkbox\" name=\"checkall_session\" id=\"checkall_session\">"
                     , "aTargets": [ 0 ]
+                    , "sWidth": "20px"
                     , "bSortable": false
                     , "mRender": function ( vpid, type, full ) {
                         return '<input type="checkbox" name="vpid[]" value="'+vpid+'">';
@@ -62,7 +63,7 @@ if(!isset($_GET['expid'])) {
                 ,{
                     "sTitle":"Datum"
                     , "aTargets": [ 1 ]
-                    , "sWidth": "110px"
+                    , "sWidth": "90px"
                     , "bSortable": true
                     , "mRender": function ( datum, type, full ) {
                         return datum;
@@ -71,7 +72,7 @@ if(!isset($_GET['expid'])) {
                 ,{
                     "sTitle":"Beginn"
                     , "aTargets": [ 2 ]
-                    , "sWidth": "70px"
+                    , "sWidth": "60px"
                     , "bSortable": true
                     , "mRender": function ( beginn, type, full ) {
                         return beginn;
@@ -80,7 +81,7 @@ if(!isset($_GET['expid'])) {
                 ,{
                     "sTitle":"Ende"
                     , "aTargets":[ 3 ]
-                    , "sWidth": "70px"
+                    , "sWidth": "60px"
                     , "bSortable": true
                     , "iDataSort": 7
                     , "mRender": function ( ende, type, full ) {
@@ -90,6 +91,7 @@ if(!isset($_GET['expid'])) {
                 ,{
                     "sTitle":"Ort"
                     , "aTargets": [ 4 ]
+                    //, "sWidth": "120px"
                     , "bSortable": true
                     , "mRender": function ( ort, type, full ) {
                         return !ort ? '<span style="font-style:italic;color:#d3d3d3">[manueller&nbsp;Termin]</span>' : ort;
@@ -98,6 +100,7 @@ if(!isset($_GET['expid'])) {
                 ,{
                     "sTitle":"VP"
                     , "aTargets": [ 5 ]
+                    , "sWidth": "40px"
                     , "bSortable": true
                     , "mRender": function ( vp, type, full ) {
                         return vp;
@@ -106,6 +109,7 @@ if(!isset($_GET['expid'])) {
                 ,{
                     "sTitle":"Teilnehmer"
                     , "aTargets": [ 6 ]
+                    , "sWidth": "130px"
                     , "bSortable": true
                     , "mRender": function ( namesOnly, type, full ) {
                         var teilnehmer = full[7];
@@ -300,7 +304,7 @@ if(!isset($_GET['expid'])) {
 </script>
 
 <br />
-<table id="session_list" style="width:852px;table-layout:auto;" class="display compact">
+<table id="session_list" style="width:852px;table-layout:fixed;" class="display compact">
     <thead>
     </thead>
     <tbody>

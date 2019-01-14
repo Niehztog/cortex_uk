@@ -261,4 +261,11 @@ table#vp_list.dataTable thead .sorting_desc {
 	background: none;
 }
 
+table#session_list td:nth-child(5),
+table#session_list th:nth-child(5),
+table#session_list td:nth-child(7),
+table#session_list th:nth-child(7) {
+	overflow:hidden;
+	white-space: nowrap;
+}
  -->
