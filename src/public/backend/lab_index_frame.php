@@ -27,11 +27,18 @@ function insertJavaScript() {
 					}
 				});
 
-				var labId = <?php echo isset($_GET['id']) ? (int) $_GET['id'] : 'null';?>;
-
 				<?php
-                $sessionService = new \SessionService();
-                $calendarData = $sessionService->getDataForCalendar((int)$_GET['id'], \SessionService::PURPOSE_MANAGE);
+                    $calendarData = null;
+                    if(!empty($_GET['id'])) {
+                        try {
+                            $sessionService = new \SessionService();
+                            $calendarData = $sessionService->getDataForCalendar((int)$_GET['id'], \SessionService::PURPOSE_MANAGE);
+                        }
+                        catch(\Exception $e) {
+                            trigger_error($e, E_USER_WARNING);
+                            echo '/* ' . $e->getMessage() . ' */';
+                        }
+                    }
                 ?>
 
                 calendarData = <?php echo json_encode($calendarData);?>;
