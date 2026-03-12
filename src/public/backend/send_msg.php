@@ -40,8 +40,8 @@ $erg = $mysqli->query($sqlVp);
 $vpArr = array();
 $vpIdArr = array();
 while($data = $erg->fetch_assoc()) {
-	$vpArr[] = substr($data['vorname'],0,1) . '. ' . $data['nachname'] . ' (' . $data['email'] . ')';
-	$vpIdArr[] = $data['id'];
+	$vpArr[] = h(substr($data['vorname'],0,1) . '. ' . $data['nachname'] . ' (' . $data['email'] . ')');
+	$vpIdArr[] = (int)$data['id'];
 }
 $vpList = implode(', ', $vpArr);
 
@@ -122,7 +122,7 @@ $( document ).ready(function() {
 	</tr>
 	<tr>
 		<td class="ad_edit_headline"><b>Absender:</b></td>
-		<td class="ad_edit_headline"><?php echo $dataExp['vl_email']; ?><input type="hidden" size="55" value="<?php echo $dataExp['vl_email']; ?>" /></td>
+		<td class="ad_edit_headline"><?php echo h($dataExp['vl_email']); ?><input type="hidden" size="55" value="<?php echo h($dataExp['vl_email']); ?>" /></td>
 	</tr>
 	<tr>
 		<td class="ad_edit_headline"><b>Betreff:</b></td>

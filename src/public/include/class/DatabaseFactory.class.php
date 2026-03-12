@@ -17,6 +17,7 @@ class DatabaseFactory {
 	public function get() {
 		
 		if( null === self::$mysqli ) {
+			mysqli_report(MYSQLI_REPORT_OFF);
 			self::$mysqli = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
 			
 			self::$mysqli->query(

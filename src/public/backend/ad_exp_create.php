@@ -14,6 +14,11 @@ $auth = new AccessControl();
 /* WENN EXPERIMENT ERSTELLT WURDE */
 /* ------------------------------ */
 if(isset($_POST['createexp'])) {
+
+	if(!validateCsrfToken()) {
+		header('Location: ' . $_SERVER['PHP_SELF'] . '?action=create');
+		exit;
+	}
 	
 	prepareIncomingVariables();
 	$success = validateExpData();
@@ -92,13 +97,7 @@ if(isset($_POST['createexp'])) {
                 }
             }
 
-            $location = sprintf(
-                'http://%1$s%2$s?expid=%3$d'
-                , $_SERVER['HTTP_HOST']
-                , $_SERVER['PHP_SELF']
-                , $expid
-            );
-            header('Location: ' . $location);
+            header('Location: ' . $_SERVER['PHP_SELF'] . '?expid=' . (int)$expid);
             exit;
         }
     }
@@ -226,6 +225,7 @@ if(isset($_GET['action']) && $_GET['action'] == 'create') {
 </script>
 
 <form action="admin.php?action=create" method="post" enctype="multipart/form-data" name="create" id="create">
+	<input type="hidden" name="csrf_token" value="<?php echo h(generateCsrfToken()); ?>" />
 	<input id="sessions" name="sessions" type="hidden" value="" />
 	<input id="days" name="days" type="hidden" value="" />
 <h1>Experiment hinzufügen</h1>
@@ -241,17 +241,17 @@ if(isset($_GET['action']) && $_GET['action'] == 'create') {
 	</tr>
 	<tr>
 		<td style="width:200px;" class="ad_edit_headline">Name des VLs</td>
-		<td class="ad_edit_headline"><input name="vl_name" id="vl_name" type="text" size="45" maxlength="200" value="<?php if(isset($_POST['vl_name'])) {echo $_POST['vl_name'];} ?>" /></td>
+		<td class="ad_edit_headline"><input name="vl_name" id="vl_name" type="text" size="45" maxlength="200" value="<?php if(isset($_POST['vl_name'])) {echo h($_POST['vl_name']);} ?>" /></td>
 		<td class="ad_edit_headline"><img src="images/info.gif" width="17" height="17" title="Diese Angaben werden veröffentlicht und als Kontaktdaten für das Experiment angegeben." alt="" /></td>
 	</tr>
 	<tr>
 		<td class="ad_edit_headline">Telefonnummer des VLs</td>
-		<td class="ad_edit_headline"><input name="vl_tele" id="vl_tele" type="text" size="45" maxlength="200" value="<?php if(isset($_POST['vl_tele'])) {echo $_POST['vl_tele'];} ?>" /></td>
+		<td class="ad_edit_headline"><input name="vl_tele" id="vl_tele" type="text" size="45" maxlength="200" value="<?php if(isset($_POST['vl_tele'])) {echo h($_POST['vl_tele']);} ?>" /></td>
 		<td class="ad_edit_headline"></td>
 	</tr>
 	<tr>
 		<td class="ad_edit_headline">Emailadresse des VLs</td>
-		<td class="ad_edit_headline"><input name="vl_email" id="vl_email" type="text" size="45" maxlength="200" value="<?php if(isset($_POST['vl_email'])) {echo $_POST['vl_email'];} ?>" /></td>
+		<td class="ad_edit_headline"><input name="vl_email" id="vl_email" type="text" size="45" maxlength="200" value="<?php if(isset($_POST['vl_email'])) {echo h($_POST['vl_email']);} ?>" /></td>
 		<td class="ad_edit_headline"></td>
 	</tr>
 </table>
@@ -262,18 +262,18 @@ if(isset($_GET['action']) && $_GET['action'] == 'create') {
   </tr>
   <tr>
 	<td style="width:200px;" class="ad_edit_headline">Name des Experiments</td>
-	<td class="ad_edit_headline"><input name="exp_name" id="exp_name" type="text" size="45" maxlength="200" value="<?php if(isset($_POST['exp_name'])) {echo $_POST['exp_name'];} ?>" /></td>
+	<td class="ad_edit_headline"><input name="exp_name" id="exp_name" type="text" size="45" maxlength="200" value="<?php if(isset($_POST['exp_name'])) {echo h($_POST['exp_name']);} ?>" /></td>
 	<td class="ad_edit_headline"><img src="images/info.gif" width="17" height="17" title="Dieser Name wird im Menü links angezeigt." alt="" /></td> 
 	<td class="ad_edit_headline"></td>
   </tr>
   <tr>
 	<td class="ad_edit_headline">Zusätzliche Informationen /<br />Beschreibung</td>
-	<td class="ad_edit_headline"><textarea name="exp_zusatz" rows="5" style="width:343px;"><?php if(isset($_POST['exp_zusatz'])) {echo $_POST['exp_zusatz'];} ?></textarea></td>
+	<td class="ad_edit_headline"><textarea name="exp_zusatz" rows="5" style="width:343px;"><?php if(isset($_POST['exp_zusatz'])) {echo h($_POST['exp_zusatz']);} ?></textarea></td>
 	<td class="ad_edit_headline"  colspan="2"><img src="images/info.gif" width="17" height="17" title="Vorab-Informationen über das Experiment" alt="" /></td>	
   </tr>
   <tr>
 	<td class="ad_edit_headline">Ort des Experiments</td>
-	<td class="ad_edit_headline"><textarea name="exp_ort" id="exp_ort" rows="5" style="width:343px;"><?php if(isset($_POST['exp_ort'])) {echo $_POST['exp_ort'];} ?></textarea></td>
+	<td class="ad_edit_headline"><textarea name="exp_ort" id="exp_ort" rows="5" style="width:343px;"><?php if(isset($_POST['exp_ort'])) {echo h($_POST['exp_ort']);} ?></textarea></td>
 	<td class="ad_edit_headline" colspan="2"><img src="images/info.gif" width="17" height="17" title="Adresse, Wegbeschreibung, etc." alt="" /></td>	
   </tr>  
   <tr>
@@ -297,7 +297,7 @@ if(isset($_GET['action']) && $_GET['action'] == 'create') {
 		</span>
 	</td>
 	
-	<td class="ad_edit_headline"><textarea name="exp_mail" id="exp_mail" rows="12" style="width:343px;"><?php if(isset($_POST['exp_mail'])) {echo $_POST['exp_mail'];} ?></textarea></td>
+	<td class="ad_edit_headline"><textarea name="exp_mail" id="exp_mail" rows="12" style="width:343px;"><?php if(isset($_POST['exp_mail'])) {echo h($_POST['exp_mail']);} ?></textarea></td>
 	<td class="ad_edit_headline"><img src="images/info.gif" width="17" height="17" title="Mail, die die Versuchspersonen nach ihrer<br />Anmeldung automatisiert erhalten." alt="" /><div width="200px"></div></td>
 	<td><input type="button" onclick="javascript:show_preview('exp_mail', 'expmailpreview');" value="Vorschau" /><br />
 	<div id="expmailpreview" style="width:170px; font-size:11px; "></div></td>
@@ -305,11 +305,11 @@ if(isset($_GET['action']) && $_GET['action'] == 'create') {
   <tr>					
 	<td width="200px" class="ad_edit_headline">
 	<input name="exp_vps" type="checkbox" value="1"<?php if(!empty($_POST['exp_vps'])) {echo ' checked="checked"';} ?> />&nbsp;<label for="exp_vpsnum">VP-Stunden &nbsp;&nbsp;</label>
-	<input name="exp_vpsnum" id="exp_vpsnum" type="text" size="5" maxlength="5" value="<?php if(isset($_POST['exp_vpsnum'])) {echo $_POST['exp_vpsnum'];} ?>" />
+	<input name="exp_vpsnum" id="exp_vpsnum" type="text" size="5" maxlength="5" value="<?php if(isset($_POST['exp_vpsnum'])) {echo h($_POST['exp_vpsnum']);} ?>" />
 	</td>
 	<td class="ad_edit_headline">
 	<input name="exp_geld" type="checkbox" value="1"<?php if(!empty($_POST['exp_geld'])) {echo ' checked="checked"';} ?> />&nbsp;<label for="exp_geldnum">Geld &nbsp; &nbsp;</label>
-	<input name="exp_geldnum" id="exp_geldnum" type="text" size="5" maxlength="5" value="<?php if(isset($_POST['exp_geldnum'])) {echo $_POST['exp_geldnum'];} ?>" />
+	<input name="exp_geldnum" id="exp_geldnum" type="text" size="5" maxlength="5" value="<?php if(isset($_POST['exp_geldnum'])) {echo h($_POST['exp_geldnum']);} ?>" />
 	</td>
 	<td class="ad_edit_headline"  colspan="2"><img src="images/info.gif" width="17" height="17" title="Bitte Kommata verwenden, keine Punkte" alt="" /></td>
   </tr>  

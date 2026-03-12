@@ -33,7 +33,7 @@ if(!isset($_GET['menu'])) {
 	foreach($laufendeExperimente as $data) {
 		$idObfuscated = md5($data['id'] . ID_OBFUSCATION_SALT);
 		?>	
-		<h2><a href="index.php?menu=experiment&amp;expid=<?php echo $idObfuscated;?>" style="color: #4A71D6;">&nbsp;&nbsp;<img src="images/arrow.gif" width="4" height="10" border="0" alt="" />&nbsp;<?php echo $data['exp_name']; ?></a></h2>
+		<h2><a href="index.php?menu=experiment&amp;expid=<?php echo h($idObfuscated);?>" style="color: #4A71D6;">&nbsp;&nbsp;<img src="images/arrow.gif" width="4" height="10" border="0" alt="" />&nbsp;<?php echo h($data['exp_name']); ?></a></h2>
 		<div id="mainframe_exp">&nbsp;&nbsp;&nbsp;<a href="index.php?menu=experiment&amp;expid=<?php echo $idObfuscated;?>"><?php echo htmlspecialchars(substr($data['exp_zusatz'],0,250)); ?> [...]</a></div>
 		<?php
 	}
@@ -112,14 +112,14 @@ elseif($_GET['menu'] == 'experiment' && isset($_GET['expid']) && !isset($_POST['
 	</script>
 	
 	
-	<h1><?php echo $data2['exp_name']; ?></h1>
+	<h1><?php echo h($data2['exp_name']); ?></h1>
 
 	<table class="optionGroup">	
 		<tr>
 			<td colspan="5" ><h2 style="margin-bottom:10px;">Informationen</h2></td>	
 		</tr>
 		<tr>
-			<td width="550px"><?php echo nl2br($data2['exp_zusatz']); ?><br /><br />
+			<td width="550px"><?php echo nl2br(h($data2['exp_zusatz'])); ?><br /><br />
 	<?php if ( $data2['exp_vps'] == 1  || $data2['exp_geld'] == 1 )
 		{
 	?>
@@ -127,17 +127,17 @@ elseif($_GET['menu'] == 'experiment' && isset($_GET['expid']) && !isset($_POST['
 	<?php 	if ( $data2['exp_vps'] == 1 && $data2['exp_geld'] == 1)
 		  {
 	?>	
-	<b><?php echo $data2['exp_vpsnum']; ?> VP-Stunden</b> oder <b><?php echo $data2['exp_geldnum']; ?> EURO</b>.
+	<b><?php echo h($data2['exp_vpsnum']); ?> VP-Stunden</b> oder <b><?php echo h($data2['exp_geldnum']); ?> EURO</b>.
 	<?php 		  }
 	else if ( $data2['exp_geld'] == 1 && $data2['exp_vps'] < 1)
 		  {
 	?>	
-	<b><?php echo $data2['exp_geldnum']; ?> EURO</b>.
+	<b><?php echo h($data2['exp_geldnum']); ?> EURO</b>.
 	<?php 		  }
 	else if ( $data2['exp_vps'] == 1 && $data2['exp_geld'] < 1)
 		  {
-	?>	
-	<b><?php echo $data2['exp_vpsnum']; ?> VP-Stunden</b>.
+	?>
+	<b><?php echo h($data2['exp_vpsnum']); ?> VP-Stunden</b>.
 	<?php 		  }
 		}
 	?>
@@ -152,7 +152,7 @@ elseif($_GET['menu'] == 'experiment' && isset($_GET['expid']) && !isset($_POST['
 		<tr>
 			<td width="550px">
 				Das Experiment findet an folgender Adresse statt:<br />
-				<b><?php echo nl2br($data2['exp_ort']); ?></b>
+				<b><?php echo nl2br(h($data2['exp_ort'])); ?></b>
 			</td>
 		</tr>
 	</table>
@@ -162,7 +162,7 @@ elseif($_GET['menu'] == 'experiment' && isset($_GET['expid']) && !isset($_POST['
 			<td colspan="5" ><h2 style="margin-bottom:10px;">Kontakt</h2></td>	
 		</tr>
 		<tr>
-			<td><div><?php echo $data2['vl_name']; ?>&nbsp;&nbsp;&bull;&nbsp;&nbsp;<a href="mailto:<?php echo $data2['vl_email']; ?>" id="mainframe_exp_link"><?php echo $data2['vl_email']; ?></a><?php if ($data2['vl_tele'] != "") { ?>&nbsp;&nbsp;&bull;&nbsp;&nbsp;<?php echo $data2['vl_tele']; ?><?php } ?><br /></div></td>
+			<td><div><?php echo h($data2['vl_name']); ?>&nbsp;&nbsp;&bull;&nbsp;&nbsp;<a href="mailto:<?php echo h($data2['vl_email']); ?>" id="mainframe_exp_link"><?php echo h($data2['vl_email']); ?></a><?php if ($data2['vl_tele'] != "") { ?>&nbsp;&nbsp;&bull;&nbsp;&nbsp;<?php echo h($data2['vl_tele']); ?><?php } ?><br /></div></td>
 		</tr>
 	</table>
 
@@ -251,11 +251,12 @@ elseif (isset($_POST['chosendate']) && isset($_POST['accept_agb']) && $_POST['ac
 		
 	<table> 
 	<tr>
-		<td><h1><?php echo $data['exp_name']; ?></h1></td>
+		<td><h1><?php echo h($data['exp_name']); ?></h1></td>
 	</tr>
 	<tr>
 		<td>
-	<form action="<?php echo $_SERVER['PHP_SELF'] . '?' . http_build_query($_GET);?>" method="post" enctype="multipart/form-data" name="create">
+	<form action="<?php echo h($_SERVER['PHP_SELF'] . '?' . http_build_query($_GET));?>" method="post" enctype="multipart/form-data" name="create">
+	<input type="hidden" name="csrf_token" value="<?php echo h(generateCsrfToken()); ?>" />
 	<table style="margin-left:15px;">
 	<tr>
 		<td colspan="4" class="ad_edit_headline"><h2>Anmeldung</h2></td>
@@ -457,7 +458,7 @@ elseif (isset($_POST['chosendate']) && isset($_POST['accept_agb']) && $_POST['ac
 	<tr>
 		<td></td>
 		<td colspan="2" class="eintragen">
-			<input name="expid" type="hidden" value="<?php echo $_GET['expid']; ?>" />
+			<input name="expid" type="hidden" value="<?php echo h($_GET['expid'] ?? ''); ?>" />
 			<input name="add" type="submit" value="Anmelden" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 			<input name="addcancel" type="submit" value="Abbrechen" onclick="javascript:history.back();" />		
 		</td>
@@ -478,6 +479,11 @@ elseif (isset($_POST['chosendate']) && isset($_POST['accept_agb']) && $_POST['ac
 /************************************/
 
 elseif(isset($_POST['add']) && !isset($_POST['admin'])) {
+
+    if(!validateCsrfToken()) {
+        header('Location: ' . $_SERVER['PHP_SELF'] . '?' . http_build_query($_GET));
+        exit;
+    }
 
     try {
         $edp = ExperimentDataProvider::getInstanceByEncryptedId($_GET['expid']);
@@ -654,7 +660,7 @@ elseif(isset($_POST['add']) && !isset($_POST['admin'])) {
             ?>
             <table>
             <tr>
-                <td><h1><?php echo $data['exp_name']; ?></h1></td>
+                <td><h1><?php echo h($data['exp_name']); ?></h1></td>
             </tr>
         <?php } ?>
         <tr>
@@ -732,7 +738,7 @@ elseif(isset($_POST['add']) && !isset($_POST['admin'])) {
             ?>
             <table>
             <tr>
-                <td><h1><?php echo $data['exp_name']; ?></h1></td>
+                <td><h1><?php echo h($data['exp_name']); ?></h1></td>
             </tr>
             <?php         }
         ?>

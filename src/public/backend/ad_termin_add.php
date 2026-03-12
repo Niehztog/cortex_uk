@@ -95,7 +95,7 @@ $( document ).ready(function() {
   <tr>
 	<td colspan="5" class="ad_edit_headline">
 		<div style="text-align:center">
-			<input name="addsess" id="addsess" type="button" value="Termin hinzufügen" data-id="<?php echo $_GET['expid'];?>" />&nbsp;&nbsp;
+			<input name="addsess" id="addsess" type="button" value="Termin hinzufügen" data-id="<?php echo (int)$_GET['expid'];?>" />&nbsp;&nbsp;
 			<input name="addcancel" id="addcancel" type="button" value="Abbrechen" />
 		</div>
 	</td>

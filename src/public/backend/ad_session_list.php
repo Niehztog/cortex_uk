@@ -14,8 +14,8 @@ $dbf = new DatabaseFactory();
 $mysqli = $dbf->get();
 $auth = new AccessControl();
 
-if(!isset($_GET['expid'])) {
-    die('Expid missing');
+if(!isset($_GET['expid']) || (int)$_GET['expid'] <= 0) {
+    http_response_code(400); exit;
 }
 
 ?>
@@ -49,7 +49,7 @@ if(!isset($_GET['expid'])) {
                 }
             },
             "aaSorting": [],
-            "sAjaxSource": 'service/session.php?action=list&expid=<?php echo $_GET['expid'];?>',
+            "sAjaxSource": 'service/session.php?action=list&expid=<?php echo (int)$_GET['expid'];?>',
             "aoColumnDefs":[
                 {
                     "sTitle":"<input type=\"checkbox\" name=\"checkall_session\" id=\"checkall_session\">"
@@ -220,7 +220,7 @@ if(!isset($_GET['expid'])) {
 
         $("input[name=add]").on('click', function() {
             var $dialogTerminAdd = $('<div id="add"></div>')
-                .load('backend/ad_termin_add.php?expid=<?php echo $_GET['expid'];?>')
+                .load('backend/ad_termin_add.php?expid=<?php echo (int)$_GET['expid'];?>')
                 .dialog({
                     title: 'Termin hinzufügen',
                     autoOpen: false,
@@ -243,7 +243,7 @@ if(!isset($_GET['expid'])) {
             var sessionId = $(this).data("id");
 
             var $dialogSendMsg = $('<div id="send_msg_'+sessionId+'"></div>')
-                .load('backend/send_msg.php?expid=<?php echo $_GET['expid'];?>&terminid='+sessionId)
+                .load('backend/send_msg.php?expid=<?php echo (int)$_GET['expid'];?>&terminid='+sessionId)
                 .dialog({
                     title: 'E-Mail senden',
                     autoOpen: false,
@@ -261,7 +261,7 @@ if(!isset($_GET['expid'])) {
             var sessionId = $(this).data("id");
 
             var $dialogTerminEdit = $('<div class="d_termin_change_'+sessionId+'"></div>')
-                .load('backend/ad_termin_change.php?expid=<?php echo $_GET['expid'];?>&terminid='+sessionId)
+                .load('backend/ad_termin_change.php?expid=<?php echo (int)$_GET['expid'];?>&terminid='+sessionId)
                 .dialog({
                     title: 'Termin ändern',
                     autoOpen: false,

@@ -14,8 +14,15 @@ $dbf = new DatabaseFactory();
 $mysqli = $dbf->get();
 $auth = new AccessControl();
 
-if(!isset($_GET['expid'])) {
-	die('Expid missing');
+if(!isset($_GET['expid']) || (int)$_GET['expid'] <= 0) {
+	http_response_code(400); exit;
+}
+
+if($_SERVER['REQUEST_METHOD'] === 'POST') {
+	if(!validateCsrfToken()) {
+		header('Location: ' . $_SERVER['PHP_SELF'] . '?' . http_build_query($_GET));
+		exit;
+	}
 }
 
 /* WENN EXPERIMENT GELÖSCHT WURDE */
@@ -30,15 +37,10 @@ if(isset($_POST['delexpq'])) {
 	$delete = sprintf('DELETE FROM %1$s WHERE exp_id = %2$d', TABELLE_EXP_TO_LAB, $_GET['expid']);
 	$ergebnis = $mysqli->query($delete) OR die($mysqli->error);
 
-	$update = "UPDATE ".TABELLE_EXPERIMENTE." SET visible = '2' WHERE id = '$_GET[expid]'";
+	$update = sprintf("UPDATE %s SET visible = '2' WHERE id = %d", TABELLE_EXPERIMENTE, (int)$_GET['expid']);
 	$ergebnis = $mysqli->query($update) OR die($mysqli->error);
 
-	$location = sprintf(
-		'http://%1$s%2$s'
-		, $_SERVER['HTTP_HOST']
-		, $_SERVER['PHP_SELF']
-	);
-	header('Location: ' . $location);
+	header('Location: ' . $_SERVER['PHP_SELF']);
 	exit;
 
 }
@@ -174,16 +176,10 @@ if(isset($_POST['editexp'])) {
 /* EXPERIMENT AKTIVIEREN/DEAKTIVIEREN */
 /* --------------------------- */
 if(isset($_POST['changevis'])) {
-	$update = "UPDATE ".TABELLE_EXPERIMENTE." SET visible = '$_POST[visible]' WHERE id = '$_GET[expid]'";
+	$update = sprintf("UPDATE %s SET visible = %d WHERE id = %d", TABELLE_EXPERIMENTE, (int)$_POST['visible'], (int)$_GET['expid']);
 	$ergebnis = $mysqli->query($update) OR die($mysqli->error);
 
-	$location = sprintf(
-		'http://%1$s%2$s?expid=%3$d'
-		, $_SERVER['HTTP_HOST']
-		, $_SERVER['PHP_SELF']
-		, $_GET['expid']
-	);
-	header('Location: ' . $location);
+	header('Location: ' . $_SERVER['PHP_SELF'] . '?expid=' . (int)$_GET['expid']);
 	exit;
 }
 
@@ -288,18 +284,19 @@ $( document ).ready(function() {
 });
 </script>
 
-<h1 style="float:left;"><?php echo  $data['exp_name']; ?></h1>
-<input id="vl_name" type="hidden" value="<?php echo $vl_name; ?>" />
-<input id="vl_tele" type="hidden" value="<?php echo $vl_tele; ?>" />
-<input id="vl_email" type="hidden" value="<?php echo $vl_email; ?>" />
-<input id="exp_name" type="hidden" value="<?php echo $exp_name; ?>" />
-<input id="exp_ort" type="hidden" value="<?php echo $exp_ort; ?>" />
-<form action="<?php echo $_SERVER['PHP_SELF'] . '?' . http_build_query($_GET);?>" method="post" enctype="multipart/form-data" style="float:left;">
+<h1 style="float:left;"><?php echo h($data['exp_name']); ?></h1>
+<input id="vl_name" type="hidden" value="<?php echo h($vl_name); ?>" />
+<input id="vl_tele" type="hidden" value="<?php echo h($vl_tele); ?>" />
+<input id="vl_email" type="hidden" value="<?php echo h($vl_email); ?>" />
+<input id="exp_name" type="hidden" value="<?php echo h($exp_name); ?>" />
+<input id="exp_ort" type="hidden" value="<?php echo h($exp_ort); ?>" />
+<form action="<?php echo h($_SERVER['PHP_SELF'] . '?' . http_build_query($_GET));?>" method="post" enctype="multipart/form-data" style="float:left;">
+	<input type="hidden" name="csrf_token" value="<?php echo h(generateCsrfToken()); ?>" />
 	<?php if ( $data['visible'] == 1 ) { ?>
-	<input type="hidden" name="visible" value="0" />  
+	<input type="hidden" name="visible" value="0" />
 	<input name="changevis" type="submit" value="Deaktivieren" style="margin-left:10px;" />
 	<?php } else { ?>
-	<input type="hidden" name="visible" value="1" />  
+	<input type="hidden" name="visible" value="1" />
 	<input name="changevis" type="submit" value="Aktivieren" style="margin-left:10px;" />
 	<?php } ?>
     <?php
@@ -327,15 +324,15 @@ $( document ).ready(function() {
 			</tr>
 			<tr>
 				<td><i>Name</i></td>
-				<td colspan="2"><?php echo  $data['vl_name']; ?></td>
-			</tr>  
+				<td colspan="2"><?php echo h($data['vl_name']); ?></td>
+			</tr>
 			<tr>
 				<td><i>Telefonnummer</i></td>
-				<td colspan="2"><?php echo  $data['vl_tele']; ?></td>
-			</tr> 
+				<td colspan="2"><?php echo h($data['vl_tele']); ?></td>
+			</tr>
 			<tr>
 				<td><i>Email-Adresse</i></td>
-				<td colspan="2"><?php echo  $data['vl_email']; ?></td>
+				<td colspan="2"><?php echo h($data['vl_email']); ?></td>
 			</tr>   
 			
 			<tr><td><br /></td></tr>  
@@ -345,19 +342,19 @@ $( document ).ready(function() {
 			</tr>
 			<tr>
 				<td><i>Name</i></td>
-				<td colspan="2"><?php echo  $data['exp_name']; ?></td>
-			</tr>  
+				<td colspan="2"><?php echo h($data['exp_name']); ?></td>
+			</tr>
 			<tr>
 				<td><i>Beschreibung</i></td>
-				<td colspan="2"><?php echo  substr(nl2br($data['exp_zusatz']),0,150); ?>...</td>
-			</tr>  
+				<td colspan="2"><?php echo substr(nl2br(h($data['exp_zusatz'])),0,150); ?>...</td>
+			</tr>
 			<tr>
 				<td><i>Ort</i></td>
-				<td colspan="2"><?php echo  nl2br($data['exp_ort']); ?></td>
-			</tr> 
+				<td colspan="2"><?php echo nl2br(h($data['exp_ort'])); ?></td>
+			</tr>
 			<tr>
 				<td><i>Bestätigungsmail</i></td>
-				<td colspan="2"><?php echo  substr(nl2br($data['exp_mail']),0,150); ?>...</td>
+				<td colspan="2"><?php echo substr(nl2br(h($data['exp_mail'])),0,150); ?>...</td>
 			</tr>  
 			<tr>
 				<td><i>VP-Stunden</i></td>

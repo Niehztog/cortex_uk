@@ -101,7 +101,12 @@ if(isset($_GET['betreff']) && isset($_GET['vpIdList'])) {
 /* TEILNEHMER EINES TERMINES AUFLISTEN */
 /* ----------------------------------- */
 elseif (!isset($_GET['betreff'])) {
-	$abfrage = "SELECT id, vorname, nachname, email FROM ".TABELLE_VERSUCHSPERSONEN." WHERE exp='$_GET[expid]' AND termin='$_GET[termin]'" ;
+	$abfrage = sprintf(
+		"SELECT id, vorname, nachname, email FROM %s WHERE exp=%d AND termin=%d",
+		TABELLE_VERSUCHSPERSONEN,
+		(int)$_GET['expid'],
+		(int)$_GET['termin']
+	);
 	$erg = $mysqli->query($abfrage);
 	$result = array();
 	while ($data = $erg->fetch_assoc()) {  

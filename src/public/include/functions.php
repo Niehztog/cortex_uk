@@ -38,14 +38,35 @@ function displayMessagesFromSession() {
 	}
 }
 
+function h($s) {
+	return htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8');
+}
+
 function initSession($onlyExisting = false) {
 	if($onlyExisting && !isset($_COOKIE['PHPSESSID']) && '' === session_id()) {
 		return false;
 	}
 	if('' === session_id()) {
+		session_set_cookie_params(0, '/', '', false, true);
 		session_start();
 	}
 	return true;
+}
+
+function generateCsrfToken() {
+	initSession();
+	if(empty($_SESSION['csrf_token'])) {
+		$_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+	}
+	return $_SESSION['csrf_token'];
+}
+
+function validateCsrfToken() {
+	initSession();
+	if(empty($_POST['csrf_token']) || empty($_SESSION['csrf_token'])) {
+		return false;
+	}
+	return hash_equals($_SESSION['csrf_token'], $_POST['csrf_token']);
 }
 
 /**
@@ -65,22 +86,22 @@ function strtotimeIgnoreTimeZone($timeStr) {
 }
 
 function prepareIncomingVariables() {
-	$GLOBALS['vpn_gebdat'] = isset($_POST['vpn_gebdat'])?$_POST['vpn_gebdat']:null;
-	$GLOBALS['vpn_fach'] = isset($_POST['vpn_fach'])?$_POST['vpn_fach']:null;
-	$GLOBALS['vpn_semester'] = isset($_POST['vpn_semester'])?$_POST['vpn_semester']:null;
-	$GLOBALS['vpn_adresse'] = isset($_POST['vpn_adresse'])?$_POST['vpn_adresse']:null;
-	$GLOBALS['vpn_tele1'] = isset($_POST['vpn_tele1'])?$_POST['vpn_tele1']:null;
-	$GLOBALS['vpn_tele2'] = isset($_POST['vpn_tele2'])?$_POST['vpn_tele2']:null;
-	$GLOBALS['vpn_email'] = isset($_POST['vpn_email'])?$_POST['vpn_email']:null;
-	$GLOBALS['vl_name'] =  htmlspecialchars($_POST['vl_name'], ENT_QUOTES, 'UTF-8');
-	$GLOBALS['vl_tele'] =  htmlspecialchars($_POST['vl_tele'], ENT_QUOTES, 'UTF-8');
-	$GLOBALS['vl_email'] =  htmlspecialchars($_POST['vl_email'], ENT_QUOTES, 'UTF-8');
-	$GLOBALS['exp_name'] = htmlspecialchars($_POST['exp_name'], ENT_QUOTES, 'UTF-8');
-	$GLOBALS['exp_zusatz'] = htmlspecialchars($_POST['exp_zusatz'], ENT_QUOTES, 'UTF-8');
-	$GLOBALS['exp_mail'] = htmlspecialchars($_POST['exp_mail'], ENT_QUOTES, 'UTF-8');
-	$GLOBALS['exp_ort'] = htmlspecialchars($_POST['exp_ort'], ENT_QUOTES, 'UTF-8');
-	$GLOBALS['exp_start'] = isset($_POST['exp_start'])?date_parse_from_format('d.m.Y', $_POST['exp_start']):null;
-	$GLOBALS['exp_end'] = isset($_POST['exp_end'])?date_parse_from_format('d.m.Y', $_POST['exp_end']):null;
+	$GLOBALS['vpn_gebdat'] = isset($_POST['vpn_gebdat'])?$_POST['vpn_gebdat']:'';
+	$GLOBALS['vpn_fach'] = isset($_POST['vpn_fach'])?$_POST['vpn_fach']:'';
+	$GLOBALS['vpn_semester'] = isset($_POST['vpn_semester'])?$_POST['vpn_semester']:'';
+	$GLOBALS['vpn_adresse'] = isset($_POST['vpn_adresse'])?$_POST['vpn_adresse']:'';
+	$GLOBALS['vpn_tele1'] = isset($_POST['vpn_tele1'])?$_POST['vpn_tele1']:'';
+	$GLOBALS['vpn_tele2'] = isset($_POST['vpn_tele2'])?$_POST['vpn_tele2']:'';
+	$GLOBALS['vpn_email'] = isset($_POST['vpn_email'])?$_POST['vpn_email']:'';
+	$GLOBALS['vl_name'] =  htmlspecialchars((string)($_POST['vl_name'] ?? ''), ENT_QUOTES, 'UTF-8');
+	$GLOBALS['vl_tele'] =  htmlspecialchars((string)($_POST['vl_tele'] ?? ''), ENT_QUOTES, 'UTF-8');
+	$GLOBALS['vl_email'] =  htmlspecialchars((string)($_POST['vl_email'] ?? ''), ENT_QUOTES, 'UTF-8');
+	$GLOBALS['exp_name'] = htmlspecialchars((string)($_POST['exp_name'] ?? ''), ENT_QUOTES, 'UTF-8');
+	$GLOBALS['exp_zusatz'] = htmlspecialchars((string)($_POST['exp_zusatz'] ?? ''), ENT_QUOTES, 'UTF-8');
+	$GLOBALS['exp_mail'] = htmlspecialchars((string)($_POST['exp_mail'] ?? ''), ENT_QUOTES, 'UTF-8');
+	$GLOBALS['exp_ort'] = htmlspecialchars((string)($_POST['exp_ort'] ?? ''), ENT_QUOTES, 'UTF-8');
+	$GLOBALS['exp_start'] = isset($_POST['exp_start'])?date_parse_from_format('d.m.Y', $_POST['exp_start']):'';
+	$GLOBALS['exp_end'] = isset($_POST['exp_end'])?date_parse_from_format('d.m.Y', $_POST['exp_end']):'';
 	
 	if( isset($_POST['vpn_gebdat_o'])&&$_POST['vpn_gebdat_o'] == 1 ) { $GLOBALS['vpn_gebdat'] = 2; };
 	if( !isset($_POST['vpn_gebdat'])||$_POST['vpn_gebdat'] == 0 ) { $GLOBALS['vpn_gebdat'] = 0; };

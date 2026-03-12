@@ -376,7 +376,8 @@ $( document ).ready(function() {
 				<br />
 			</td> 
 			<td>
-				<input name="expid" type="hidden" value="<?php echo $_GET['expid'];?>" />
+				<input name="expid" type="hidden" value="<?php echo (int)$_GET['expid'];?>" />
+			<input type="hidden" name="csrf_token" value="<?php echo h(generateCsrfToken()); ?>" />
 				<input name="admin" type="hidden" value="1" />
 				<input name="editexp" type="submit" value="Übernehmen" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 				<input name="addcancel" type="button" value="Abbrechen" onclick="javascript: window.parent.$('[id=changeexp]').dialog('close');" />

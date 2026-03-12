@@ -67,7 +67,7 @@ $( document ).ready(function() {
 
 	$("a#logout-link").click(function (event) {
         event.preventDefault();
-        logout('<?php echo (isset($_SERVER['REMOTE_USER']) ? $_SERVER['REMOTE_USER'] : '');?>');
+        logout(<?php echo json_encode(isset($_SERVER['REMOTE_USER']) ? $_SERVER['REMOTE_USER'] : '');?>);
     })
 });
 </script>
@@ -90,7 +90,7 @@ $( document ).ready(function() {
     <div id="login-box">
         <?php
         if(isset($_SERVER['REMOTE_USER'])) {
-            echo 'Angemeldet als: ' . $_SERVER['REMOTE_USER'] . ' <a id="logout-link" href="">[abmelden]</a>';
+            echo 'Angemeldet als: ' . h($_SERVER['REMOTE_USER']) . ' <a id="logout-link" href="">[abmelden]</a>';
         }
         else {
             echo '&nbsp;';

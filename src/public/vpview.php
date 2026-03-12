@@ -13,6 +13,11 @@ $mysqli = $dbf->get();
 /*-------------------------------*/
 if(isset($_POST['editvpbut'])) {
 
+	if(!validateCsrfToken()) {
+		header('Location: ' . $_SERVER['PHP_SELF'] . (isset($_GET['expid']) ? '?expid=' . (int)$_GET['expid'] : ''));
+		exit;
+	}
+
 	$gebdat = formatDateForMysql($_POST['gebdat']);
 
 	$update = sprintf( '
@@ -62,12 +67,12 @@ if(isset($_POST['termin']) && isset($_POST['del_ch_vpid'])) {
 require_once 'pageelements/header.php';
 
 if(isset($_GET['expid'])) {
-	$abfrage = "SELECT * FROM ".TABELLE_EXPERIMENTE." WHERE id=".$_GET['expid']." LIMIT 1";
+	$abfrage = "SELECT * FROM ".TABELLE_EXPERIMENTE." WHERE id=".(int)$_GET['expid']." LIMIT 1";
 	$erg = $mysqli->query($abfrage) or die($mysqli->error);
 	$data = $erg->fetch_assoc();
 	
 	if(null !== $data) {
-		?><h1><?php echo $data['exp_name']; ?>: Versuchspersonen</h1><?php
+		?><h1><?php echo h($data['exp_name']); ?>: Versuchspersonen</h1><?php
 	}
 }
 else {

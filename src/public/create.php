@@ -1,6 +1,9 @@
 <?php
-ini_set('display_errors', '1');
-error_reporting(-1);
+// WARNING: create.php is NOT protected by Nginx auth — do not enable display_errors in production
+if(getenv('APP_ENV') === 'development') {
+    ini_set('display_errors', '1');
+    error_reporting(-1);
+}
 ?>
 
 <html>

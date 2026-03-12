@@ -145,7 +145,7 @@ if($terminManuell) {
 		<td colspan="5">
 		 <div style="text-align:center">
 		 <br />
-		<input type="button" name="editsess" id="editsess" value="Ändern" data-id="<?php echo $termin['id'];?>" data-expid="<?php echo $_GET['expid'];?>" />&nbsp;&nbsp;
+		<input type="button" name="editsess" id="editsess" value="Ändern" data-id="<?php echo $termin['id'];?>" data-expid="<?php echo (int)$_GET['expid'];?>" />&nbsp;&nbsp;
 		<input type="button" name="editcancel" id="editcancel" value="Abbrechen" />
 		</div>
 		</td>  
@@ -217,17 +217,17 @@ else {
 	</head>
 	<body>
 		<h3>
-			<?php echo $terminDatum;?>&nbsp;<?php echo $beginn;?>&nbsp;&#8212;&nbsp;<?php echo $ende;?>&nbsp;Uhr
+			<?php echo h($terminDatum);?>&nbsp;<?php echo h($beginn);?>&nbsp;&#8212;&nbsp;<?php echo h($ende);?>&nbsp;Uhr
 		</h3>
 		<div class="optionGroup">
 			<div>
 				<span class="h3 optionLabel">Experiment:&nbsp;</span>
-				<a href="admin.php?expid=<?php echo $termin['exp_id'];?>"><?php echo $termin['exp_name'];?></a>
+				<a href="admin.php?expid=<?php echo (int)$termin['exp_id'];?>"><?php echo h($termin['exp_name']);?></a>
 			</div>
 			<div style="clear:both;"></div>
 			<div>
 				<span class="h3 optionLabel">Raum:&nbsp;</span>
-				<a href="admin.php?menu=lab&id=<?php echo $termin['lab_id'];?>"><?php echo $termin['lab_name'];?></a>
+				<a href="admin.php?menu=lab&id=<?php echo (int)$termin['lab_id'];?>"><?php echo h($termin['lab_name']);?></a>
 			</div>
 		</div>
 	

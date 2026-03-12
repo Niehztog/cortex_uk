@@ -1,8 +1,11 @@
 <?php
 /* VP EINTRAG ÄNDERN */
 
-if(!isset($_GET['editvp'])) {
-	die('missing parameter editvp');
+if(!isset($_GET['editvp']) || (int)$_GET['editvp'] <= 0) {
+	http_response_code(400); exit;
+}
+if(isset($_GET['expid']) && (int)$_GET['expid'] <= 0) {
+	http_response_code(400); exit;
 }
 
 require_once __DIR__ . '/../include/functions.php';
@@ -86,17 +89,18 @@ $( document ).ready(function() {
 </script>
 </head>
 <body>
-<h1><?php echo  $data['vorname']; ?> <?php echo  $data['nachname'];?></h1>
-	
-<form action="vpview.php?<?php echo http_build_query(array('expid'=>$_GET['expid']));?>" method="post" enctype="multipart/form-data" name="vpaendern">
+<h1><?php echo h($data['vorname']); ?> <?php echo h($data['nachname']);?></h1>
+
+<form action="vpview.php?<?php echo http_build_query(array('expid'=>(int)$_GET['expid']));?>" method="post" enctype="multipart/form-data" name="vpaendern">
+<input type="hidden" name="csrf_token" value="<?php echo h(generateCsrfToken()); ?>" />
 <table>
 <tr>
 	<td width=110px><b>Vorname: </b></td>
-	<td><input name="vorname" type="text" size=30 value="<?php echo  $data['vorname']; ?>"></td>
+	<td><input name="vorname" type="text" size=30 value="<?php echo h($data['vorname']); ?>"></td>
 </tr>
 <tr>
 	<td><b>Nachname: </b></td>
-	<td><input name="nachname" type="text" size=30 value="<?php echo  $data['nachname']; ?>"></td>
+	<td><input name="nachname" type="text" size=30 value="<?php echo h($data['nachname']); ?>"></td>
 </tr>
 <?php if(!empty($_GET['expid'])) {
 	?>		  
@@ -109,7 +113,7 @@ $( document ).ready(function() {
 		<?php
 	}
 	
-	$abfrage3 = "SELECT * FROM ".TABELLE_SITZUNGEN." WHERE `exp` = '$_GET[expid]'" ;
+	$abfrage3 = sprintf("SELECT * FROM %s WHERE `exp` = %d", TABELLE_SITZUNGEN, (int)$_GET['expid']);
 	$erg3 = $mysqli->query($abfrage3);
 	while ($data3 = $erg3->fetch_assoc()) {  
 		?>
@@ -132,27 +136,27 @@ $( document ).ready(function() {
 </tr>
 <tr>
 	<td><b>Studienfach: </b></td>
-	<td><input name="fach" type="text" size=30 value="<?php echo  $data['fach']; ?>"></td>
+	<td><input name="fach" type="text" size=30 value="<?php echo h($data['fach']); ?>"></td>
 </tr>
 <tr>
 	<td><b>Anschrift: </b></td>
-	<td><textarea name="anschrift" cols=27 rows=5><?php echo  $data['anschrift']; ?></textarea></td>
+	<td><textarea name="anschrift" cols=27 rows=5><?php echo h($data['anschrift']); ?></textarea></td>
 </tr>
 <tr>
 	<td><b>Telefon 1: </b></td>
-	<td><input name="telefon1" type="text" size=30 value="<?php echo  $data['telefon1']; ?>"></td>
+	<td><input name="telefon1" type="text" size=30 value="<?php echo h($data['telefon1']); ?>"></td>
 </tr>
 <tr>
 	<td><b>Telefon 2: </b></td>
-	<td><input name="telefon2" type="text" size=30 value="<?php echo  $data['telefon2']; ?>"></td>
+	<td><input name="telefon2" type="text" size=30 value="<?php echo h($data['telefon2']); ?>"></td>
 </tr>
 <tr>
 	<td><b>Email: </b></td>
-	<td><input name="email" type="text" size=30 value="<?php echo  $data['email']; ?>"><br><br></td>
+	<td><input name="email" type="text" size=30 value="<?php echo h($data['email']); ?>"><br><br></td>
 </tr>
 <tr>
 	<td colspan="2">
-		<input name="vpid" type="hidden" value="<?php echo  $data['id']; ?>">
+		<input name="vpid" type="hidden" value="<?php echo (int)$data['id']; ?>">
 		<input type="submit" name="editvpbut" value="Ändern" />&nbsp;&nbsp;&nbsp;
 		<input type="button" name="delvp2" id="delvp2" value="Löschen" />&nbsp;&nbsp;&nbsp;
 		<input type="button" name="addcancel" id="addcancel" value="Abbrechen" />
@@ -162,12 +166,12 @@ $( document ).ready(function() {
 <?php if (isset($_GET['vpnsuche']) && $_GET['vpnsuche'] == '1') {
 	?>
 	<input name="vpnsuche" type="hidden" value="1">
-	<input name="vpn_vorname" type="hidden" value="<?php echo  $_GET['vpn_vorname']; ?>">
-	<input name="vpn_nachname" type="hidden" value="<?php echo  $_GET['vpn_nachname']; ?>">
-	<input name="vpn_geschlecht" type="hidden" value="<?php echo  $_GET['vpn_geschlecht']; ?>">
-	<input name="vpn_alter_sym" type="hidden" value="<?php echo  $_GET['vpn_alter_sym']; ?>">
-	<input name="vpn_alter" type="hidden" value="<?php echo  $_GET['vpn_alter']; ?>">
-	<input name="sortby" type="hidden" value="<?php echo  $_GET['sortby']; ?>">
+	<input name="vpn_vorname" type="hidden" value="<?php echo h($_GET['vpn_vorname'] ?? ''); ?>">
+	<input name="vpn_nachname" type="hidden" value="<?php echo h($_GET['vpn_nachname'] ?? ''); ?>">
+	<input name="vpn_geschlecht" type="hidden" value="<?php echo h($_GET['vpn_geschlecht'] ?? ''); ?>">
+	<input name="vpn_alter_sym" type="hidden" value="<?php echo h($_GET['vpn_alter_sym'] ?? ''); ?>">
+	<input name="vpn_alter" type="hidden" value="<?php echo h($_GET['vpn_alter'] ?? ''); ?>">
+	<input name="sortby" type="hidden" value="<?php echo h($_GET['sortby'] ?? ''); ?>">
 	<?php }
 ?>
 </form>
